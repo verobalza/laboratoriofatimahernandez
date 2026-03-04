@@ -1,0 +1,42 @@
+.home-container {
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+}
+
+.home-container h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.home-container p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #6b7280;
+}
+
+.info-box {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: left;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.info-box h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--secondary-color);
+}
+
+.info-box ul {
+  list-style: none;
+}
+
+.info-box li {
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #4b5563;
+}
