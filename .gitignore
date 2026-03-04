@@ -1,0 +1,32 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Backend
+backend/__pycache__/
+backend/.pytest_cache/
+backend/*.egg-info/
+backend/dist/
+backend/build/
+backend/.venv/
+backend/venv/
+
+# Frontend
+frontend/node_modules/
+frontend/.dist/
+frontend/.turbo/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*

@@ -1,0 +1,219 @@
+/**
+ * MenuHamburguesa.css
+ * 
+ * Estilos para el menú hamburguesa con animaciones suaves.
+ */
+
+/* Botón hamburguesa */
+.hamburger-button {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  transition: all 0.3s ease;
+}
+
+.hamburger-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.hamburger-button:active {
+  transform: translateY(0);
+}
+
+/* Líneas del hamburguesa */
+.hamburger-line {
+  width: 1.5rem;
+  height: 0.2rem;
+  background-color: white;
+  border-radius: 0.1rem;
+  transition: all 0.3s ease;
+}
+
+.hamburger-button.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(0.65rem, 0.65rem);
+}
+
+.hamburger-button.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.hamburger-button.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(0.5rem, -0.5rem);
+}
+
+/* Fondo oscuro */
+.menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Menú hamburguesa */
+.hamburger-menu {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100vh;
+  background: white;
+  z-index: 99;
+  transition: right 0.3s ease;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.hamburger-menu.open {
+  right: 0;
+}
+
+/* Lista de menú */
+.menu-list {
+  list-style: none;
+  padding: 1.5rem 0;
+  margin: 0;
+}
+
+/* Items del menú */
+.menu-item {
+  display: block;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.975rem;
+  font-weight: 500;
+  color: #1e293b;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.menu-link:hover {
+  background-color: #f1f5f9;
+  color: #6366f1;
+  padding-left: 2rem;
+}
+
+.menu-link:active {
+  background-color: #e0e7ff;
+}
+
+/* Ícono del menú */
+.menu-icon {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+}
+
+.menu-label {
+  flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .hamburger-button {
+    width: 2.75rem;
+    height: 2.75rem;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .hamburger-line {
+    width: 1.25rem;
+  }
+
+  .hamburger-menu {
+    width: 100%;
+    right: -100%;
+  }
+
+  .menu-list {
+    padding: 1rem 0;
+  }
+
+  .menu-link {
+    padding: 0.875rem 1rem;
+  }
+
+  .menu-link:hover {
+    padding-left: 1.5rem;
+  }
+}
+
+/* Modo oscuro (opcional) */
+@media (prefers-color-scheme: dark) {
+  .hamburger-menu {
+    background: #1e293b;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .menu-item {
+    border-bottom-color: #334155;
+  }
+
+  .menu-link {
+    color: #f1f5f9;
+  }
+
+  .menu-link:hover {
+    background-color: #0f172a;
+    color: #818cf8;
+  }
+
+  .menu-link:active {
+    background-color: #312e81;
+  }
+}
+
+/* Reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .hamburger-button,
+  .hamburger-line,
+  .hamburger-menu,
+  .menu-link {
+    transition: none !important;
+  }
+}
