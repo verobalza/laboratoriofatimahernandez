@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
+import MenuPage from './pages/MenuPage'
 import api from './services/api'
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/menu" element={<MenuPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </Router>
