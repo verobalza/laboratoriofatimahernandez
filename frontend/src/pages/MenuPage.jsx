@@ -94,12 +94,6 @@ function MenuPage() {
             {/* Overlay elegante con glass effect */}
             <div className="menu-lab-overlay"></div>
           </div>
-
-          {/* Información del usuario (subtil) */}
-          <div className="menu-user-welcome-subtle">
-            <p className="menu-welcome-text">Modo de Demostración - Menú Hamburguesa</p>
-            <p className="menu-info-text">Haz click en el ☰ para ver la animación del menú</p>
-          </div>
         </div>
       </main>
     </div>
