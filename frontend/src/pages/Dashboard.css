@@ -1,74 +1,86 @@
 /**
- * Dashboard.css
+ * Dashboard.css - Rediseño Minimalista
  * 
- * Estilos minimalistas para el dashboard.
- * - Fondo azul suave
- * - Diseño limpio y moderno
- * - Tarjetas con sombra suave
- * - Animaciones fluidas
+ * Nuevo diseño elegante y profesional:
+ * - Branding del laboratorio en esquina superior izquierda
+ * - Imagen alusiva a laboratorio centrada
+ * - Fondo azul suave y moderno
+ * - Glass effect con overlay
+ * - Responsive y minimalista
+ * - Menú hamburguesa mantiene su comportamiento
  */
 
 :root {
-  --primary-color: #6366f1;
-  --primary-light: #e0e7ff;
-  --primary-lighter: #f0f4ff;
-  --secondary-color: #3b82f6;
+  --primary-blue: #3b82f6;
+  --primary-light: #dbeafe;
+  --primary-lighter: #eff6ff;
+  --secondary-blue: #2563eb;
+  --accent-indigo: #6366f1;
   --text-dark: #1e293b;
   --text-light: #64748b;
-  --border-light: #e2e8f0;
-  --bg-light: #f8fafc;
-  --success-color: #10b981;
-  --error-color: #ef4444;
+  --white: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.2);
 }
 
+/* Contenedor principal */
 .dashboard-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #bfdbfe 100%);
+  background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 30%, #bfdbfe 60%, #a5d8ff 100%);
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
 }
 
-/* Efecto de fondo con circulos suave */
+/* Efecto de fondo decorativo sutil */
 .dashboard-container::before {
   content: '';
   position: fixed;
-  top: -10%;
-  right: -5%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+  top: -20%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
+  animation: float 20s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(30px); }
 }
 
 .dashboard-container::after {
   content: '';
   position: fixed;
-  bottom: -5%;
-  left: -10%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+  bottom: -15%;
+  left: -5%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
+  animation: float 25s infinite ease-in-out reverse;
 }
 
-/* Contenido principal */
-.dashboard-content {
-  position: relative;
-  z-index: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  animation: fadeIn 0.5s ease;
+/* Branding del laboratorio - Esquina superior izquierda */
+.lab-branding {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  z-index: 10;
+  animation: fadeInDown 0.8s ease;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -76,18 +88,105 @@
   }
 }
 
-/* Card de bienvenida */
-.welcome-card {
-  background: white;
-  border-radius: 1rem;
-  padding: 2.5rem 2rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  margin-bottom: 2rem;
-  border-left: 4px solid var(--primary-color);
-  animation: slideUp 0.5s ease;
+.lab-branding-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-@keyframes slideUp {
+.lab-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.lab-subtitle {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-light);
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* Contenido central */
+.dashboard-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* Contenedor visual del laboratorio */
+.lab-visual-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Wrapper de imagen con overlay */
+.lab-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1;
+  animation: scaleIn 0.8s ease 0.2s both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* SVG de imagen */
+.lab-image {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 20px 50px rgba(59, 130, 246, 0.15));
+}
+
+/* Overlay elegante con glass effect */
+.lab-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(219, 234, 254, 0.4) 0%,
+    rgba(224, 231, 255, 0.2) 50%,
+    rgba(191, 219, 254, 0.3) 100%);
+  border-radius: 30px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.1);
+}
+
+/* Bienvenida subtil */
+.user-welcome-subtle {
+  text-align: center;
+  padding: 1.5rem 2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  animation: fadeInUp 0.8s ease 0.4s both;
+}
+
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -98,150 +197,17 @@
   }
 }
 
-.welcome-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  animation: bounce 0.6s ease;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.welcome-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.welcome-subtitle {
-  font-size: 1rem;
-  color: var(--text-light);
-  margin: 0 0 1.5rem 0;
-}
-
-/* Información del usuario */
-.user-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin: 1.5rem 0 2rem 0;
-  padding: 1.5rem;
-  background-color: var(--primary-lighter);
-  border-radius: 0.75rem;
-  border: 1px solid var(--primary-light);
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.info-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.info-value {
-  font-size: 1rem;
+.welcome-text {
+  margin: 0;
+  font-size: 1.1rem;
   font-weight: 500;
   color: var(--text-dark);
-  word-break: break-word;
+  letter-spacing: -0.3px;
 }
 
-/* Botón de logout */
-.logout-button {
-  padding: 0.75rem 1.5rem;
-  background-color: var(--error-color);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-}
-
-.logout-button:hover {
-  background-color: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
-}
-
-.logout-button:active {
-  transform: translateY(0);
-}
-
-/* Sección de acceso rápido */
-.quick-access {
-  margin-top: 3rem;
-}
-
-.quick-access-title {
-  font-size: 1.5rem;
+.welcome-text strong {
+  color: var(--accent-indigo);
   font-weight: 700;
-  color: var(--text-dark);
-  margin: 0 0 1.5rem 0;
-}
-
-.quick-access-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-}
-
-.quick-access-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  background: white;
-  border: 2px solid var(--border-light);
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  text-decoration: none;
-  font-family: inherit;
-}
-
-.quick-access-item:hover {
-  border-color: var(--primary-color);
-  background-color: var(--primary-lighter);
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15);
-}
-
-.quick-access-item:active {
-  transform: translateY(-2px);
-}
-
-.quick-access-icon {
-  font-size: 2rem;
-}
-
-.quick-access-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  text-align: center;
-  line-height: 1.3;
 }
 
 /* Estado de carga */
@@ -253,73 +219,74 @@
   font-size: 1.2rem;
   color: var(--text-light);
   font-weight: 500;
+  z-index: 5;
 }
 
-/* Responsive */
+/* Responsive - Tablets */
 @media (max-width: 768px) {
+  .lab-branding {
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+
+  .lab-name {
+    font-size: 1rem;
+  }
+
+  .lab-subtitle {
+    font-size: 0.8rem;
+  }
+
   .dashboard-content {
-    padding: 1rem;
-  }
-
-  .welcome-card {
     padding: 1.5rem;
+    min-height: auto;
+    padding-top: 8rem;
   }
 
-  .welcome-title {
-    font-size: 1.5rem;
+  .lab-image-wrapper {
+    max-width: 400px;
   }
 
-  .user-info {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-    gap: 1rem;
+  .user-welcome-subtle {
+    padding: 1.25rem 1.5rem;
   }
 
-  .quick-access-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.75rem;
+  .welcome-text {
+    font-size: 1rem;
+  }
+}
+
+/* Responsive - Móviles */
+@media (max-width: 480px) {
+  .lab-branding {
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
   }
 
-  .quick-access-item {
-    padding: 1rem;
+  .lab-name {
+    font-size: 0.95rem;
   }
 
-  .quick-access-icon {
-    font-size: 1.75rem;
-  }
-
-  .quick-access-label {
+  .lab-subtitle {
     font-size: 0.75rem;
   }
-}
 
-@media (max-width: 480px) {
   .dashboard-content {
-    padding: 0.75rem;
-  }
-
-  .welcome-card {
     padding: 1rem;
+    padding-top: 7rem;
   }
 
-  .welcome-title {
-    font-size: 1.25rem;
+  .lab-image-wrapper {
+    max-width: 300px;
   }
 
-  .welcome-icon {
-    font-size: 2.5rem;
+  .user-welcome-subtle {
+    padding: 1rem 1.25rem;
   }
 
-  .quick-access-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .user-info {
-    grid-template-columns: 1fr;
-  }
-
-  .logout-button {
-    width: 100%;
+  .welcome-text {
+    font-size: 0.95rem;
   }
 }
 
@@ -328,47 +295,49 @@
   :root {
     --text-dark: #f1f5f9;
     --text-light: #cbd5e1;
-    --border-light: #334155;
-    --bg-light: #1e293b;
+    --glass-bg: rgba(15, 23, 42, 0.6);
+    --glass-border: rgba(148, 163, 184, 0.2);
   }
 
   .dashboard-container {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #0c1221 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #1e3a8a 60%, #1e40af 100%);
   }
 
-  .welcome-card {
-    background: #1e293b;
-    border-left-color: #818cf8;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  .lab-name {
+    color: #f1f5f9;
   }
 
-  .user-info {
-    background-color: rgba(99, 102, 241, 0.1);
-    border-color: rgba(99, 102, 241, 0.2);
+  .lab-subtitle {
+    color: #94a3b8;
   }
 
-  .quick-access-item {
-    background: #1e293b;
-    border-color: #334155;
+  .lab-overlay {
+    background: linear-gradient(135deg, 
+      rgba(15, 23, 42, 0.5) 0%,
+      rgba(30, 41, 59, 0.4) 50%,
+      rgba(30, 58, 138, 0.3) 100%);
+    border-color: rgba(148, 163, 184, 0.2);
   }
 
-  .quick-access-item:hover {
-    background-color: rgba(99, 102, 241, 0.1);
-    border-color: #818cf8;
+  .welcome-text {
+    color: #f1f5f9;
+  }
+
+  .welcome-text strong {
+    color: #60a5fa;
   }
 }
 
-/* Reducir movimiento */
+/* Respetar preferencias de movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-content,
-  .welcome-card,
-  .welcome-icon,
-  .quick-access-item {
+  .dashboard-container::before,
+  .dashboard-container::after {
     animation: none !important;
   }
 
-  .logout-button,
-  .quick-access-item {
-    transition: none !important;
+  .lab-branding,
+  .lab-image-wrapper,
+  .user-welcome-subtle {
+    animation: none !important;
   }
 }

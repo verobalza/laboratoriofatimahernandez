@@ -1,12 +1,12 @@
 /**
  * DashboardPage.jsx
  * 
- * Página dashboard protegida con menú hamburguesa.
- * Diseño minimalista:
- * - Fondo azul suave con degradación
- * - Menú hamburguesa en esquina superior derecha
- * - Card central con bienvenida
- * - Botón de logout
+ * Dashboard rediseñado con branding minimalista.
+ * - Menú hamburguesa intacto en esquina superior derecha
+ * - Branding del laboratorio en esquina superior izquierda (fijo)
+ * - Imagen alusiva a análisis de laboratorio
+ * - Fondo azul suave y moderno
+ * - Glass effect y overlay elegante
  */
 
 import React, { useEffect, useState } from 'react'
@@ -39,38 +39,12 @@ function DashboardPage() {
     }
   }, [navigate])
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('user')
-    navigate('/login')
-  }
-
   const menuItems = [
-    {
-      label: 'Registro pacientes',
-      icon: '👤',
-      onClick: () => console.log('Registro pacientes')
-    },
-    {
-      label: 'Pruebas',
-      icon: '🧪',
-      onClick: () => console.log('Pruebas')
-    },
-    {
-      label: 'Facturación',
-      icon: '💳',
-      onClick: () => console.log('Facturación')
-    },
-    {
-      label: 'Exámenes',
-      icon: '📋',
-      onClick: () => console.log('Exámenes')
-    },
-    {
-      label: 'Registro financiero',
-      icon: '💰',
-      onClick: () => console.log('Registro financiero')
-    }
+    { label: 'Registro pacientes', icon: '👤', onClick: () => console.log('Registro pacientes') },
+    { label: 'Pruebas', icon: '🧪', onClick: () => console.log('Pruebas') },
+    { label: 'Facturación', icon: '💳', onClick: () => console.log('Facturación') },
+    { label: 'Exámenes', icon: '📋', onClick: () => console.log('Exámenes') },
+    { label: 'Registro financiero', icon: '💰', onClick: () => console.log('Registro financiero') }
   ]
 
   if (loading) {
@@ -81,68 +55,79 @@ function DashboardPage() {
     )
   }
 
-  if (!user) {
-    return null
-  }
-
   return (
     <div className="dashboard-container">
-      {/* Menú hamburguesa */}
+      {/* Menú hamburguesa - Se mantiene intacto */}
       <MenuHamburguesa items={menuItems} />
 
-      {/* Contenido principal */}
-      <main className="dashboard-content">
-        {/* Card de bienvenida */}
-        <div className="welcome-card">
-          <div className="welcome-icon">👋</div>
-          <h1 className="welcome-title">Bienvenido/a, {user.nombre}!</h1>
-          <p className="welcome-subtitle">
-            {user.email}
-          </p>
-          
-          <div className="user-info">
-            <div className="info-item">
-              <span className="info-label">Nombre completo:</span>
-              <span className="info-value">{user.nombre} {user.apellido}</span>
-            </div>
-            <div className="info-item">
-              <span className="info-label">Correo:</span>
-              <span className="info-value">{user.email}</span>
-            </div>
-            {user.creado_en && (
-              <div className="info-item">
-                <span className="info-label">Cuenta creada:</span>
-                <span className="info-value">
-                  {new Date(user.creado_en).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </span>
-              </div>
-            )}
-          </div>
-
-          <button onClick={handleLogout} className="logout-button">
-            Cerrar sesión
-          </button>
+      {/* Branding del laboratorio - Esquina superior izquierda */}
+      <div className="lab-branding">
+        <div className="lab-branding-text">
+          <h3 className="lab-name">Laboratorio Bioclínico</h3>
+          <p className="lab-subtitle">Lc. Fátima Hernández</p>
         </div>
+      </div>
 
-        {/* Grid de accesos rápidos */}
-        <div className="quick-access">
-          <h2 className="quick-access-title">Acceso rápido</h2>
-          <div className="quick-access-grid">
-            {menuItems.map((item, index) => (
-              <button
-                key={index}
-                className="quick-access-item"
-                onClick={item.onClick}
-              >
-                <div className="quick-access-icon">{item.icon}</div>
-                <div className="quick-access-label">{item.label}</div>
-              </button>
-            ))}
+      {/* Contenido principal - Imagen + Overlay */}
+      <main className="dashboard-content">
+        <div className="lab-visual-container">
+          {/* Imagen de laboratorio con overlay */}
+          <div className="lab-image-wrapper">
+            <svg className="lab-image" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+              {/* Microscopio */}
+              <g className="microscope-illustration">
+                {/* Base del microscopio */}
+                <ellipse cx="200" cy="350" rx="80" ry="20" fill="#4f46e5" opacity="0.3" />
+                
+                {/* Tubo principal */}
+                <rect x="190" y="120" width="20" height="200" fill="#6366f1" rx="10" />
+                
+                {/* Lentes objetivos */}
+                <circle cx="200" cy="280" r="25" fill="none" stroke="#3b82f6" strokeWidth="3" />
+                <circle cx="200" cy="280" r="20" fill="#dbeafe" opacity="0.5" />
+                
+                {/* Ocular */}
+                <circle cx="200" cy="100" r="20" fill="none" stroke="#3b82f6" strokeWidth="3" />
+                <circle cx="200" cy="100" r="15" fill="#e0e7ff" opacity="0.6" />
+                
+                {/* Especie (preparado) */}
+                <rect x="175" y="295" width="50" height="3" fill="#10b981" />
+                <circle cx="200" cy="298" r="35" fill="none" stroke="#10b981" strokeWidth="2" strokeDasharray="5,5" opacity="0.5" />
+              </g>
+
+              {/* Tubos de ensayo */}
+              <g className="test-tubes">
+                {/* Tubo 1 */}
+                <rect x="70" y="150" width="30" height="140" fill="none" stroke="#7c3aed" strokeWidth="3" rx="8" />
+                <ellipse cx="85" cy="150" rx="15" ry="8" fill="#c4b5fd" opacity="0.4" />
+                <path d="M 85 170 Q 90 200 85 220" stroke="#a78bfa" strokeWidth="2" fill="none" opacity="0.6" />
+
+                {/* Tubo 2 */}
+                <rect x="310" y="180" width="30" height="110" fill="none" stroke="#06b6d4" strokeWidth="3" rx="8" />
+                <ellipse cx="325" cy="180" rx="15" ry="8" fill="#cffafe" opacity="0.4" />
+                <path d="M 325 200 Q 330 230 325 250" stroke="#67e8f9" strokeWidth="2" fill="none" opacity="0.6" />
+              </g>
+
+              {/* Partículas/Células decorativas */}
+              <g className="particles" opacity="0.5">
+                <circle cx="120" cy="100" r="4" fill="#ec4899" />
+                <circle cx="280" cy="120" r="3" fill="#f59e0b" />
+                <circle cx="150" cy="250" r="3" fill="#14b8a6" />
+                <circle cx="300" cy="280" r="4" fill="#3b82f6" />
+                <circle cx="250" cy="80" r="3" fill="#8b5cf6" />
+              </g>
+            </svg>
+
+            {/* Overlay elegante con glass effect */}
+            <div className="lab-overlay"></div>
           </div>
+
+          {/* Información del usuario (subtil) */}
+          {user && (
+            <div className="user-welcome-subtle">
+              <p className="welcome-text">Bienvenido/a, <strong>{user.nombre}</strong></p>
+            </div>
+          )}
         </div>
       </main>
     </div>
