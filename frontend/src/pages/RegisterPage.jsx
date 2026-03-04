@@ -103,8 +103,8 @@ function RegisterPage() {
         </div>
 
         {error && <div className="auth-alert error">{error}</div>}
-        {success && <div className="auth-alert success">{success}</div>}
 
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <input
               type="text"
