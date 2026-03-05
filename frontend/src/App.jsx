@@ -6,6 +6,11 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import MenuPage from './pages/MenuPage'
+import RegistroPacientes from './pages/RegistroPacientes'
+import FichaPaciente from './pages/FichaPaciente'
+import Pruebas from './pages/Pruebas'
+import Examenes from './pages/Examenes'
+import Facturacion from './pages/Facturacion'
 import api from './services/api'
 
 function App() {
@@ -26,6 +31,11 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/menu" element={<MenuPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/registro-pacientes" element={<RegistroPacientes />} />
+        <Route path="/ficha-paciente/:id" element={<FichaPaciente />} />
+        <Route path="/pruebas" element={<Pruebas />} />
+        <Route path="/examenes" element={<Examenes />} />
+        <Route path="/facturacion" element={<Facturacion />} />
       </Routes>
     </Router>
   )

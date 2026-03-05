@@ -79,6 +79,30 @@ gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
 - `GET /health` - Verifica que el servidor está funcionando
 - `GET /` - Mensaje de bienvenida
 
+### Pacientes
+- `POST /pacientes` - Crear paciente (nombre, apellido, edad, telefono obligatorios)
+- `GET /pacientes` - Listar pacientes; acepta query `search` para filtrar por nombre, apellido o teléfono
+- `GET /pacientes/{id}` - Obtener ficha completa de un paciente
+- `PUT /pacientes/{id}` - Actualizar datos del paciente
+
+### Pruebas (Catálogo de pruebas disponibles)
+- `POST /pruebas` - Crear prueba de laboratorio
+- `GET /pruebas` - Listar todas las pruebas
+- `GET /pruebas?search=` - Buscar prueba por nombre
+- `GET /pruebas/{id}` - Obtener datos de una prueba
+- `PUT /pruebas/{id}` - Actualizar prueba
+
+### Exámenes (Resultados de pruebas para pacientes)
+- `POST /examenes` - Registrar examen individual
+- `POST /examenes/batch` - Registrar múltiples exámenes a la vez (array)
+- `GET /examenes` - Listar todos los exámenes
+- `GET /examenes?fecha=YYYY-MM-DD` - Listar exámenes de una fecha específica
+- `GET /examenes/count?fecha=YYYY-MM-DD` - Contar exámenes de un día
+- `GET /examenes/paciente/{paciente_id}` - Listar exámenes de un paciente
+- `GET /examenes/paciente/{paciente_id}?fecha=` - Exámenes de paciente en fecha específica
+- `PUT /examenes/{id}` - Actualizar resultados u observaciones
+
+
 ## Deployment
 
 ### Railway

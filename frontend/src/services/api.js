@@ -108,6 +108,147 @@ export const api = {
   async logout() {
     localStorage.removeItem('access_token')
     localStorage.removeItem('user')
+  },
+
+  /* Pacientes */
+  async createPaciente(data) {
+    return request(`${API_URL}/pacientes`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async searchPacientes(search) {
+    const url = new URL(`${API_URL}/pacientes`)
+    if (search) url.searchParams.append('search', search)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async getPaciente(id) {
+    return request(`${API_URL}/pacientes/${id}`, { method: 'GET' })
+  },
+
+  async updatePaciente(id, data) {
+    return request(`${API_URL}/pacientes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  /* Pruebas */
+  async createPrueba(data) {
+    return request(`${API_URL}/pruebas`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async searchPruebas(search) {
+    const url = new URL(`${API_URL}/pruebas`)
+    if (search) url.searchParams.append('search', search)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async getPrueba(id) {
+    return request(`${API_URL}/pruebas/${id}`, { method: 'GET' })
+  },
+
+  async updatePrueba(id, data) {
+    return request(`${API_URL}/pruebas/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async getPruebasCount() {
+    return request(`${API_URL}/pruebas/count/total`, { method: 'GET' })
+  },
+
+  async getAllPruebas() {
+    return request(`${API_URL}/pruebas`, { method: 'GET' })
+  },
+
+  /* Examenes */
+  async createExamen(data) {
+    return request(`${API_URL}/examenes`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async createExamenesBatch(examenes) {
+    return request(`${API_URL}/examenes/batch`, {
+      method: 'POST',
+      body: JSON.stringify(examenes),
+    })
+  },
+
+  async getExamenesByDate(fecha) {
+    const url = new URL(`${API_URL}/examenes`)
+    url.searchParams.append('fecha', fecha)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async countExamenesByDate(fecha) {
+    const url = new URL(`${API_URL}/examenes/count`)
+    url.searchParams.append('fecha', fecha)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async getExamenesPaciente(paciente_id, fecha = null) {
+    const url = new URL(`${API_URL}/examenes/paciente/${paciente_id}`)
+    if (fecha) url.searchParams.append('fecha', fecha)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async searchExamenes(search) {
+    const url = new URL(`${API_URL}/examenes`)
+    if (search) url.searchParams.append('search', search)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async getExamen(id) {
+    return request(`${API_URL}/examenes/${id}`, { method: 'GET' })
+  },
+
+  async updateExamen(id, data) {
+    return request(`${API_URL}/examenes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  /* Facturación */
+  async buscarPacientesFact(search) {
+    const url = new URL(`${API_URL}/facturacion/pacientes`)
+    if (search) url.searchParams.append('search', search)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async obtenerVisitas(pacienteId) {
+    return request(`${API_URL}/facturacion/visitas/${pacienteId}`, { method: 'GET' })
+  },
+
+  async obtenerDetalleVisita(pacienteId, fecha) {
+    return request(`${API_URL}/facturacion/visita/${pacienteId}/${fecha}`, { method: 'GET' })
+  },
+
+  async generarTicket(data) {
+    return request(`${API_URL}/facturacion/ticket`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async generarFactura(data) {
+    return request(`${API_URL}/facturacion/factura`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async obtenerFactura(facturaId) {
+    return request(`${API_URL}/facturacion/factura/${facturaId}`, { method: 'GET' })
   }
 }
 

@@ -40,10 +40,10 @@ function DashboardPage() {
   }, [navigate])
 
   const menuItems = [
-    { label: 'Registro pacientes', icon: '👤', onClick: () => console.log('Registro pacientes') },
-    { label: 'Pruebas', icon: '🧪', onClick: () => console.log('Pruebas') },
+    { label: 'Registro pacientes', icon: '👤', onClick: () => navigate('/registro-pacientes') },
+    { label: 'Pruebas', icon: '🧪', onClick: () => navigate('/pruebas') },
     { label: 'Facturación', icon: '💳', onClick: () => console.log('Facturación') },
-    { label: 'Exámenes', icon: '📋', onClick: () => console.log('Exámenes') },
+    { label: 'Exámenes', icon: '📋', onClick: () => navigate('/examenes') },
     { label: 'Registro financiero', icon: '💰', onClick: () => console.log('Registro financiero') }
   ]
 

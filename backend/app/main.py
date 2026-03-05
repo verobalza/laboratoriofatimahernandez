@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
-from .routes import auth
+from .routes import auth, pacientes, pruebas, examenes, facturacion
 
 app = FastAPI(
     title="Laboratorio API",
@@ -20,6 +20,10 @@ app.add_middleware(
 
 # Incluir routers
 app.include_router(auth.router)
+app.include_router(pacientes.router)
+app.include_router(pruebas.router)
+app.include_router(examenes.router)
+app.include_router(facturacion.router)
 
 
 @app.get("/health")

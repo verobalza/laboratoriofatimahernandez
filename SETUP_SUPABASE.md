@@ -58,6 +58,68 @@ CREATE TABLE usuarios (
   creado_en TIMESTAMP DEFAULT now()
 );
 
+```sql
+-- tabla de pacientes
+CREATE TABLE pacientes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre TEXT NOT NULL,
+  apellido TEXT NOT NULL,
+  edad INT NOT NULL,
+  telefono TEXT NOT NULL,
+  direccion TEXT,
+  sexo TEXT,
+  creado_en TIMESTAMP DEFAULT now()
+);
+
+CREATE INDEX idx_pacientes_nombre ON pacientes(nombre);
+CREATE INDEX idx_pacientes_apellido ON pacientes(apellido);
+CREATE INDEX idx_pacientes_telefono ON pacientes(telefono);
+
+ALTER TABLE pacientes ENABLE ROW LEVEL SECURITY;
+
+-- tabla de pruebas (catálogo de pruebas disponibles)
+CREATE TABLE pruebas (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre_prueba TEXT NOT NULL UNIQUE,
+  unidad_medida TEXT NOT NULL,
+  tipo_muestra TEXT NOT NULL,
+  valor_referencia_min FLOAT,
+  valor_referencia_max FLOAT,
+  descripcion TEXT,
+  creado_en TIMESTAMP DEFAULT now()
+);
+
+CREATE INDEX idx_pruebas_nombre ON pruebas(nombre_prueba);
+
+ALTER TABLE pruebas ENABLE ROW LEVEL SECURITY;
+
+-- tabla de exámenes (resultados de pruebas para pacientes)
+CREATE TABLE examenes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  paciente_id UUID REFERENCES pacientes(id) ON DELETE CASCADE,
+  prueba_id UUID REFERENCES pruebas(id) ON DELETE CASCADE,
+  fecha DATE NOT NULL,
+  resultado TEXT,
+  observaciones TEXT,
+  creado_en TIMESTAMP DEFAULT now()
+);
+
+CREATE INDEX idx_examenes_paciente ON examenes(paciente_id);
+CREATE INDEX idx_examenes_prueba ON examenes(prueba_id);
+CREATE INDEX idx_examenes_fecha ON examenes(fecha);
+
+ALTER TABLE examenes ENABLE ROW LEVEL SECURITY;
+```
+  fecha DATE NOT NULL,
+  creado_en TIMESTAMP DEFAULT now()
+);
+
+CREATE INDEX idx_examenes_paciente ON examenes(paciente_id);
+CREATE INDEX idx_examenes_nombre ON examenes(nombre);
+
+ALTER TABLE examenes ENABLE ROW LEVEL SECURITY;
+```
+
 CREATE INDEX idx_usuarios_email ON usuarios(email);
 
 -- Permitir acceso
