@@ -570,6 +570,20 @@
   color: var(--secondary-blue);
 }
 
+.precio-bs {
+  display: block;
+  font-weight: 700;
+  color: var(--secondary-blue);
+  margin-bottom: 0.25rem;
+}
+
+.precio-usd {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
 /* Totales */
 .factura-totales {
   background: var(--bg-light);
@@ -581,9 +595,29 @@
 .total-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: var(--spacing-md) 0;
   font-weight: 600;
   color: var(--text-dark);
+}
+
+.total-valores {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.total-valores > span:first-child {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--secondary-blue);
+}
+
+.valor-usd {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  font-weight: 500;
 }
 
 .total-row.base {
@@ -611,13 +645,199 @@
   font-size: 1rem;
 }
 
-/* Botones de acción */
-.factura-acciones {
+/* ===========================================
+   NUEVOS ESTILOS PARA CALENDARIO Y EXÁMENES DEL DÍA
+   =========================================== */
+
+.facturacion-controls {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid var(--primary-light);
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.date-selector label {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 1rem;
+}
+
+.date-input {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--primary-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text-dark);
+  background: white;
+  transition: var(--transition-fast);
+  min-width: 200px;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.examenes-dia-section {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid var(--primary-light);
+}
+
+.examenes-dia-section h3 {
+  margin: 0 0 var(--spacing-lg) 0;
+  color: var(--text-dark);
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.examenes-dia-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.examen-dia-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: var(--bg-light);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: var(--transition-fast);
+}
+
+.examen-dia-item:hover {
+  background: #f1f5f9;
+  border-color: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.examen-info {
+  flex: 1;
+}
+
+.examen-paciente {
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--text-dark);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.examen-detalles {
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.examen-fecha {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.examen-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-completed {
+  background: var(--success);
+  color: white;
+}
+
+.no-examenes {
+  text-align: center;
+  color: var(--text-light);
+  font-style: italic;
+  padding: var(--spacing-xl);
+  margin: 0;
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--text-light);
+  font-style: italic;
+  padding: var(--spacing-lg);
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .facturacion-controls {
+    padding: var(--spacing-md);
+  }
+  
+  .date-selector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .date-input {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .examenes-dia-section {
+    padding: var(--spacing-md);
+  }
+  
+  .examenes-dia-list {
+    max-height: 300px;
+  }
+  
+  .examen-dia-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .examen-status {
+    align-self: flex-end;
+  }
+}
+
+.acciones-generacion {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-lg);
-  padding-top: var(--spacing-lg);
-  border-top: 2px solid var(--primary-light);
+}
+
+.acciones-compartir {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
 }
 
 .btn {
@@ -660,6 +880,17 @@
 .btn-factura:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-pdf {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: white;
+  border: none;
+}
+
+.btn-pdf:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
 }
 
 .btn-whatsapp {
@@ -783,6 +1014,35 @@
 
   .factura-panel {
     gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .tabla-pruebas {
+    font-size: 0.9rem;
+    overflow-x: auto;
+  }
+
+  .precio-bs,
+  .precio-usd {
+    font-size: 0.85rem;
+  }
+
+  .total-valores > span:first-child {
+    font-size: 1rem;
+  }
+
+  .valor-usd {
+    font-size: 0.75rem;
+  }
+
+  .acciones-generacion,
+  .acciones-compartir {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    padding: 1rem var(--spacing-lg);
+    font-size: 0.95rem;
   }
 
   .search-input-large {

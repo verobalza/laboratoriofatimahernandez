@@ -8,11 +8,22 @@
  * - Cierre al hacer clic fuera
  */
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './MenuHamburguesa.css'
+import { getStoredPermissions, getStoredUser, getPermissionKeyFromLabel } from '../utils/permissions'
 
 function MenuHamburguesa({ items = [] }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [permissions, setPermissions] = useState(getStoredPermissions())
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setPermissions(getStoredPermissions())
+    }
+
+    window.addEventListener('permissionsUpdated', handleUpdate)
+    return () => window.removeEventListener('permissionsUpdated', handleUpdate)
+  }, [])
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -33,12 +44,28 @@ function MenuHamburguesa({ items = [] }) {
   const defaultItems = [
     { label: 'Registro pacientes', icon: '👤' },
     { label: 'Pruebas', icon: '🧪' },
-    { label: 'Facturación', icon: '💳' },
     { label: 'Exámenes', icon: '📋' },
+    { label: 'Facturación', icon: '💳' },
+    { label: 'Inventario', icon: '📦' },
     { label: 'Registro financiero', icon: '💰' }
   ]
 
-  const menuItems = items.length > 0 ? items : defaultItems
+  const user = getStoredUser()
+
+  const allowedItems = (items.length > 0 ? items : defaultItems).filter((item) => {
+    const permissionKey = item.permissionKey || getPermissionKeyFromLabel(item.label)
+    if (!permissionKey) {
+      return true
+    }
+
+    if (user && user.email?.toLowerCase() === 'veronicabalza19@gmail.com') {
+      return true
+    }
+
+    return Boolean(permissions[permissionKey])
+  })
+
+  const menuItems = allowedItems
 
   return (
     <>

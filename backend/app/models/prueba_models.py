@@ -14,7 +14,8 @@ class PruebaBase(BaseModel):
     valor_referencia_min: Optional[float] = None
     valor_referencia_max: Optional[float] = None
     descripcion: Optional[str] = None
-    precio: float
+    precio_bs: float
+    grupo_id: Optional[str] = None
 
     @field_validator("nombre_prueba", "unidad_medida", "tipo_muestra")
     @classmethod
@@ -23,7 +24,7 @@ class PruebaBase(BaseModel):
             raise ValueError("Este campo es obligatorio")
         return v.strip()
 
-    @field_validator("precio")
+    @field_validator("precio_bs")
     @classmethod
     def validate_price(cls, v: float) -> float:
         if v <= 0:
@@ -44,6 +45,7 @@ class PruebaUpdate(BaseModel):
     valor_referencia_max: Optional[float] = None
     descripcion: Optional[str] = None
     precio: Optional[float] = None
+    grupo_id: Optional[str] = None
 
     @field_validator("nombre_prueba", "unidad_medida", "tipo_muestra")
     @classmethod
@@ -65,6 +67,36 @@ class PruebaUpdate(BaseModel):
 
 
 class PruebaOut(PruebaBase):
+    id: int
+    creado_en: Optional[str] = None
+    precio_usd: Optional[float] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ============================
+#   MODELOS PARA GRUPOS
+# ============================
+
+class GrupoPruebaBase(BaseModel):
+    nombre: str
+    descripcion: Optional[str] = None
+    activo: Optional[bool] = True
+
+    @field_validator("nombre")
+    @classmethod
+    def validate_nombre(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("El nombre del grupo es obligatorio")
+        return v.strip()
+
+
+class GrupoPruebaCreate(GrupoPruebaBase):
+    pass
+
+
+class GrupoPruebaOut(GrupoPruebaBase):
     id: str
     creado_en: Optional[str] = None
 

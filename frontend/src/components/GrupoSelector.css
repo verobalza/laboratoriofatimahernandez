@@ -1,0 +1,171 @@
+/**
+ * GrupoSelector.css
+ * Estilos para el selector de grupos de pruebas
+ */
+
+.grupo-selector {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
+  border: 1px solid #7ab8d1;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.grupo-titulo {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0c5a7e;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.grupo-buttons-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.grupo-button {
+  background: white;
+  border: 2px solid #7ab8d1;
+  border-radius: 6px;
+  padding: 12px 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 70px;
+}
+
+.grupo-button:hover {
+  border-color: #0c5a7e;
+  box-shadow: 0 2px 8px rgba(12, 90, 126, 0.1);
+  transform: translateY(-2px);
+}
+
+.grupo-button.active {
+  background: #0c5a7e;
+  color: white;
+  border-color: #0c5a7e;
+  font-weight: 600;
+}
+
+.grupo-button.partial {
+  background: #e2f0f7;
+  border-color: #0c5a7e;
+}
+
+.grupo-button-name {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.grupo-button-count {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 3px;
+}
+
+.grupo-button.active .grupo-button-count {
+  opacity: 1;
+  color: #ffeb3b;
+}
+
+.grupo-pruebas-lista {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.grupo-pruebas-lista h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0c5a7e;
+  margin: 0 0 10px 0;
+}
+
+.sin-grupos,
+.sin-seleccion {
+  font-size: 13px;
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
+}
+
+.grupo-pruebas-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.grupo-prueba-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+  padding: 10px 12px;
+  border-radius: 4px;
+  border-left: 3px solid #7ab8d1;
+  gap: 10px;
+}
+
+.grupo-prueba-nombre {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.grupo-prueba-grupo {
+  background: #e2f0f7;
+  color: #0c5a7e;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.grupo-prueba-remove {
+  background: transparent;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  transition: all 0.2s ease;
+  border-radius: 3px;
+}
+
+.grupo-prueba-remove:hover {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grupo-buttons-container {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
+  .grupo-button {
+    min-height: 60px;
+    padding: 10px 8px;
+  }
+
+  .grupo-button-name {
+    font-size: 12px;
+  }
+}

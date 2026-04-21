@@ -311,12 +311,16 @@
 /* Botones edición */
 .edit-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-top: 1rem;
 }
 
 .btn-guardar,
-.btn-cancelar {
+.btn-eliminar,
+.btn-cancelar,
+.btn-submit,
+.btn-delete,
+.btn-cancel {
   flex: 1;
   padding: 0.875rem;
   border: none;
@@ -325,26 +329,35 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 100px;
 }
 
-.btn-guardar {
+.btn-guardar,
+.btn-submit,
+.btn-eliminar,
+.btn-delete {
   background: var(--primary-blue);
   color: var(--white);
 }
 
-.btn-guardar:hover {
+.btn-guardar:hover,
+.btn-submit:hover,
+.btn-eliminar:hover,
+.btn-delete:hover {
   background: var(--secondary-blue);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
 }
 
-.btn-cancelar {
+.btn-cancelar,
+.btn-cancel {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   color: var(--text-dark);
 }
 
-.btn-cancelar:hover {
+.btn-cancelar:hover,
+.btn-cancel:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 

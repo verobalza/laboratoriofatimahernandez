@@ -20,6 +20,7 @@ from ..models.auth import (
     RegisterResponse,
     UserResponse,
 )
+import logging
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -57,7 +58,7 @@ async def register(request: RegisterRequest):
                 )
         except Exception as e:
             if "already registered" not in str(e).lower():
-                print(f"Error verificando email: {str(e)}")
+                logging.error(f"Error verificando email: {e}")
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail="Error al verificar el correo"
@@ -98,7 +99,7 @@ async def register(request: RegisterRequest):
         except HTTPException:
             raise
         except Exception as e:
-            print(f"Error insertando usuario: {str(e)}")
+            logging.error(f"Error insertando usuario: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Error al crear el usuario: {str(e)}"
@@ -107,7 +108,7 @@ async def register(request: RegisterRequest):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(f"Error general en registro: {str(e)}")
+        logging.error(f"Error general en registro: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al registrar el usuario"
@@ -140,7 +141,7 @@ async def login(request: LoginRequest):
         try:
             response = supabase.table("usuarios").select("*").eq("email", request.email.lower().strip()).execute()
         except Exception as e:
-            print(f"Error buscando usuario: {str(e)}")
+            logging.error(f"Error buscando usuario: {e}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Error al acceder a la base de datos"
@@ -184,7 +185,7 @@ async def login(request: LoginRequest):
     except HTTPException as e:
         raise e
     except Exception as e:
-        print(f"Error en login: {str(e)}")
+        logging.error(f"Error en login: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al iniciar sesión"
@@ -258,7 +259,7 @@ async def get_current_user(authorization: str = Header(None)):
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error en /auth/me: {str(e)}")
+        logging.error(f"Error en /auth/me: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Error al obtener información del usuario"

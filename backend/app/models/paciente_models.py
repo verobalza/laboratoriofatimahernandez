@@ -12,6 +12,7 @@ import re
 class PacienteBase(BaseModel):
     nombre: str
     apellido: str
+    cedula: Optional[str] = None
     edad: int
     telefono: str
     direccion: Optional[str] = None
@@ -54,6 +55,7 @@ class PacienteUpdate(BaseModel):
     """Modelo para actualizar paciente (campos opcionales)."""
     nombre: Optional[str] = None
     apellido: Optional[str] = None
+    cedula: Optional[str] = None
     edad: Optional[int] = None
     telefono: Optional[str] = None
     direccion: Optional[str] = None

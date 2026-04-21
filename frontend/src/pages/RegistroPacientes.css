@@ -6,9 +6,9 @@
  */
 
 :root {
-  --primary-blue: #3b82f6;
+  --primary-blue: #384762;
   --primary-light: #dbeafe;
-  --secondary-blue: #2563eb;
+  --secondary-blue: #163983;
   --accent-indigo: #6366f1;
   --text-dark: #1e293b;
   --text-light: #64748b;
@@ -247,7 +247,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  transition: background 0.2s ease;
+  transition:  0.2s ease;
 }
 
 .result-item:hover {
@@ -374,30 +374,261 @@
   color: var(--error);
 }
 
-/* Botón guardar */
-.btn-guardar {
-  padding: 0.875rem 1.5rem;
-  background: var(--primary-blue);
-  color: var(--white);
-  border: none;
+/* Botones comunes */
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.btn-submit,
+.btn-delete,
+.btn-cancel {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.875rem 1rem;
   border-radius: 8px;
+  border: none;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   letter-spacing: -0.2px;
-  margin-top: 0.5rem;
 }
 
-.btn-guardar:hover:not(:disabled) {
+.btn-submit,
+.btn-delete {
+  background: var(--primary-blue);
+  color: var(--white);
+}
+
+.btn-submit:hover:not(:disabled),
+.btn-delete:hover:not(:disabled) {
   background: var(--secondary-blue);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
 }
 
-.btn-guardar:disabled {
+.btn-submit:disabled,
+.btn-delete:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.btn-cancel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-dark);
+}
+
+.btn-cancel:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Panel de lista de pacientes */
+.pacientes-list-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  animation: slideUp 0.6s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+}
+
+.list-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.3px;
+}
+
+.pacientes-count {
+  background: var(--primary-blue);
+  color: var(--white);
+  padding: 0.5rem 0.75rem;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+
+.list-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.95rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.pacientes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 600px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.pacientes-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pacientes-list::-webkit-scrollbar-track {
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 10px;
+}
+
+.pacientes-list::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.4);
+  border-radius: 10px;
+}
+
+.pacientes-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.6);
+}
+
+.paciente-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-wrap: wrap;
+}
+
+.paciente-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--primary-blue);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.paciente-item.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--primary-blue);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.paciente-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.paciente-nombre {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.paciente-cedula {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.paciente-telefono {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.item-arrow {
+  font-size: 1.5rem;
+  color: var(--primary-blue);
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.paciente-item:hover .item-arrow {
+  opacity: 1;
+}
+
+.no-pacientes {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.no-pacientes p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Panel de formulario */
+.paciente-form-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  animation: slideUp 0.6s ease;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.3px;
+}
+
+.btn-cancel-header {
+  padding: 0.5rem 1rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-dark);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel-header:hover {
+  background: rgba(255,255,255,0.15);
 }
 
 /* Responsive - Tablet */
@@ -412,6 +643,8 @@
     gap: 1.5rem;
   }
 
+  .pacientes-list-panel,
+  .paciente-form-panel,
   .search-section,
   .form-section {
     padding: 1.5rem;
@@ -419,6 +652,10 @@
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .pacientes-list {
+    max-height: 400px;
   }
 }
 
@@ -447,13 +684,17 @@
     grid-template-columns: 1fr;
   }
 
+  .pacientes-list-panel,
+  .paciente-form-panel,
   .search-section,
   .form-section {
     padding: 1rem;
   }
 
   .search-section h2,
-  .form-section h2 {
+  .form-section h2,
+  .list-header h2,
+  .form-header h2 {
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
@@ -462,10 +703,20 @@
     grid-template-columns: 1fr;
   }
 
+  .pacientes-list {
+    max-height: 300px;
+  }
+
+  .list-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
   .search-results {
     max-height: 300px;
   }
-}
+
 
 /* Modo oscuro */
 @media (prefers-color-scheme: dark) {
@@ -499,4 +750,41 @@
     color: #f1f5f9;
     border-color: rgba(148, 163, 184, 0.3);
   }
+}
+
+/* Ajustes específicos para la lista de pacientes (RegistroPacientes) */
+.registro-pacientes-container .registro-wrapper {
+  grid-template-columns: minmax(0, 420px) 1fr;
+}
+
+.registro-pacientes-container .pacientes-list-panel {
+  max-width: 440px;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.registro-pacientes-container .pacientes-list {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.registro-pacientes-container .paciente-item {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.registro-pacientes-container .paciente-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.registro-pacientes-container .paciente-nombre,
+.registro-pacientes-container .paciente-cedula,
+.registro-pacientes-container .paciente-telefono {
+  white-space: normal;
+  overflow-wrap: break-word;
 }

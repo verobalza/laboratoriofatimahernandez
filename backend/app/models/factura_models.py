@@ -11,7 +11,7 @@ from datetime import datetime
 
 class FacturaDetalleItem(BaseModel):
     """Detalle de prueba en una factura."""
-    prueba_id: str
+    prueba_id: Optional[int]
     nombre_prueba: str
     precio: float
     cantidad: int = 1

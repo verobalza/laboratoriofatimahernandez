@@ -10,7 +10,9 @@
  * console.log(response) // { status: 'ok' }
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// Normalizar para evitar doble slash (ej. "https://host/" + "/health" => "https://host//health")
+const API_URL = rawApiUrl.replace(/\/+$/,'')
 
 /**
  * Función auxiliar para hacer requests
@@ -33,11 +35,54 @@ async function request(url, options = {}) {
   })
 
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.detail || `HTTP ${response.status}`)
+    let errorMessage = `HTTP ${response.status}`
+
+    try {
+      const errorData = await response.json()
+      const detail = errorData?.detail
+      if (typeof detail === 'string') {
+        errorMessage = detail
+      } else if (Array.isArray(detail)) {
+        errorMessage = detail
+          .map((d) => {
+            if (typeof d === 'string') return d
+            const location = Array.isArray(d?.loc) ? d.loc.join('.') : 'campo'
+            return `${location}: ${d?.msg || JSON.stringify(d)}`
+          })
+          .join(' | ')
+      } else if (detail && typeof detail === 'object') {
+        errorMessage = JSON.stringify(detail)
+      } else {
+        errorMessage = errorData?.message || errorMessage
+      }
+    } catch (parseError) {
+      // Si la respuesta no es JSON (ej. HTML de error), incluir el texto en el mensaje
+      const text = await response.text().catch(() => null)
+      if (text) errorMessage += ` - ${text.slice(0, 200)}`
+    }
+
+    throw new Error(errorMessage)
   }
 
-  return await response.json()
+  // Manejar respuestas 204 No Content (sin body)
+  if (response.status === 204) {
+    const method = options.method || 'GET'
+    // Para GET, retornar array vacío; para acciones, retornar success
+    return method === 'GET' ? [] : { success: true }
+  }
+
+  // Intentar parsear la respuesta JSON siempre
+  // (no confiar en content-length porque algunos servidores no lo envían correctamente)
+  try {
+    const jsonData = await response.json()
+    return jsonData
+  } catch (parseError) {
+    // Si falla el parse JSON, significa que no hay contenido
+    const method = options.method || 'GET'
+    console.warn('Failed to parse JSON response:', parseError)
+    // Para GET, retornar array vacío; para acciones, retornar success
+    return method === 'GET' ? [] : { success: true }
+  }
 }
 
 export const api = {
@@ -102,12 +147,38 @@ export const api = {
     })
   },
 
+  async getMyPermissions() {
+    return request(`${API_URL}/roles/me`, { method: 'GET' })
+  },
+
+  async getRoleUsers() {
+    return request(`${API_URL}/roles/users`, { method: 'GET' })
+  },
+
+  async getUserPermissions(userId) {
+    return request(`${API_URL}/roles/${userId}/permissions`, { method: 'GET' })
+  },
+
+  async saveUserPermissions(userId, permissions) {
+    return request(`${API_URL}/roles/${userId}/permissions`, {
+      method: 'POST',
+      body: JSON.stringify({ permissions })
+    })
+  },
+
+  async deleteUser(userId) {
+    return request(`${API_URL}/roles/${userId}`, {
+      method: 'DELETE'
+    })
+  },
+
   /**
    * Cerrar sesión
    */
   async logout() {
     localStorage.removeItem('access_token')
     localStorage.removeItem('user')
+    localStorage.removeItem('user_permissions')
   },
 
   /* Pacientes */
@@ -121,6 +192,7 @@ export const api = {
   async searchPacientes(search) {
     const url = new URL(`${API_URL}/pacientes`)
     if (search) url.searchParams.append('search', search)
+    console.debug('[api] searchPacientes URL:', url.toString())
     return request(url.toString(), { method: 'GET' })
   },
 
@@ -132,6 +204,12 @@ export const api = {
     return request(`${API_URL}/pacientes/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
+    })
+  },
+
+  async deletePaciente(id) {
+    return request(`${API_URL}/pacientes/${id}`, {
+      method: 'DELETE',
     })
   },
 
@@ -160,12 +238,73 @@ export const api = {
     })
   },
 
+  async deletePrueba(id) {
+    return request(`${API_URL}/pruebas/${id}`, {
+      method: 'DELETE',
+    })
+  },
+
   async getPruebasCount() {
     return request(`${API_URL}/pruebas/count/total`, { method: 'GET' })
   },
 
   async getAllPruebas() {
     return request(`${API_URL}/pruebas`, { method: 'GET' })
+  },
+
+  async createUnidadMedida(nombre) {
+    return request(`${API_URL}/pruebas/unidades`, {
+      method: 'POST',
+      body: JSON.stringify({ nombre })
+    })
+  },
+
+  async getUnidadesMedida() {
+    return request(`${API_URL}/pruebas/unidades`, { method: 'GET' })
+  },
+
+  async createTipoMuestra(nombre) {
+    return request(`${API_URL}/pruebas/tipos`, {
+      method: 'POST',
+      body: JSON.stringify({ nombre })
+    })
+  },
+
+  async getTiposMuestra() {
+    return request(`${API_URL}/pruebas/tipos`, { method: 'GET' })
+  },
+
+  /* Grupos de Pruebas */
+  async getAllGrupos() {
+    return request(`${API_URL}/grupos`, { method: 'GET' })
+  },
+
+  async getGrupo(id) {
+    return request(`${API_URL}/grupos/${id}`, { method: 'GET' })
+  },
+
+  async createGrupo(data) {
+    return request(`${API_URL}/grupos`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async updateGrupo(id, data) {
+    return request(`${API_URL}/grupos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async deleteGrupo(id) {
+    return request(`${API_URL}/grupos/${id}`, {
+      method: 'DELETE',
+    })
+  },
+
+  async getPruebasByGrupo(grupo_id) {
+    return request(`${API_URL}/grupos/${grupo_id}/pruebas`, { method: 'GET' })
   },
 
   /* Examenes */
@@ -249,7 +388,169 @@ export const api = {
 
   async obtenerFactura(facturaId) {
     return request(`${API_URL}/facturacion/factura/${facturaId}`, { method: 'GET' })
+  },
+
+  async guardarFacturaPDF(pdfData) {
+    return request(`${API_URL}/facturacion/pdf`, {
+      method: 'POST',
+      body: JSON.stringify(pdfData),
+    })
+  },
+
+  async obtenerPDFsPaciente(pacienteId) {
+    return request(`${API_URL}/facturacion/pdf/${pacienteId}`, { method: 'GET' })
+  },
+
+  async obtenerPDFFactura(facturaId) {
+    return request(`${API_URL}/facturacion/pdf/factura/${facturaId}`, { method: 'GET' })
+  },
+
+  /* Financiero */
+  async obtenerTasaCambio() {
+    return request(`${API_URL}/api/financiero/tasa`, { method: 'GET' })
+  },
+
+  async actualizarTasaCambio(tasa) {
+    return request(`${API_URL}/api/financiero/tasa`, {
+      method: 'POST',
+      body: JSON.stringify({ tasa }),
+    })
+  },
+
+  async registrarMovimientoFinanciero(datos) {
+    return request(`${API_URL}/api/financiero/movimiento`, {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    })
+  },
+
+  /* Examenes PDF */
+  async getExamenesPDF(fecha) {
+    const url = new URL(`${API_URL}/examenes/pdf`)
+    if (fecha) url.searchParams.append('fecha', fecha)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async getExamenesPDFByPaciente(pacienteId) {
+    return request(`${API_URL}/examenes/pdf/paciente/${pacienteId}`, { method: 'GET' })
+  },
+
+  async getExamenPDF(id) {
+    return request(`${API_URL}/examenes/pdf/${id}`, { method: 'GET' })
+  },
+
+  async saveExamenPDF(datos) {
+    return request(`${API_URL}/examenes/pdf`, {
+      method: 'POST',
+      body: JSON.stringify(datos),
+    })
+  },
+
+  async uploadPDF(formData) {
+    // usa fetch directo porque es multipart
+    const response = await fetch(`${API_URL}/examenes/pdf/upload`, {
+      method: 'POST',
+      body: formData
+    })
+    if (!response.ok) {
+      const err = await response.text()
+      throw new Error(err || 'Failed to upload PDF')
+    }
+    return await response.json()
+  },
+
+  async obtenerMovimientosFinancieros() {
+    return request(`${API_URL}/api/financiero/movimientos`, { method: 'GET' })
+  },
+
+  async obtenerMovimientosFiltrando(tipo, fechaDesde, fechaHasta) {
+    const url = new URL(`${API_URL}/api/financiero/movimientos/filtro`)
+    if (tipo) url.searchParams.append('tipo', tipo)
+    if (fechaDesde) url.searchParams.append('fecha_desde', fechaDesde)
+    if (fechaHasta) url.searchParams.append('fecha_hasta', fechaHasta)
+    return request(url.toString(), { method: 'GET' })
+  },
+
+  async obtenerResumenFinanciero() {
+    return request(`${API_URL}/api/financiero/resumen`, { method: 'GET' })
+  },
+
+  async obtenerResumenPorTipo() {
+    return request(`${API_URL}/api/financiero/resumen/tipos`, { method: 'GET' })
+  },
+
+  /* === EXÁMENES ESPECIALIZADOS: ORINA Y HECES === */
+
+  /* ORINA */
+  async createOrina(data) {
+    return request(`${API_URL}/api/orina`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async getOrina(orinaId) {
+    return request(`${API_URL}/api/orina/${orinaId}`, { method: 'GET' })
+  },
+
+  async updateOrina(orinaId, data) {
+    return request(`${API_URL}/api/orina/${orinaId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async deleteOrina(orinaId) {
+    return request(`${API_URL}/api/orina/${orinaId}`, { method: 'DELETE' })
+  },
+
+  async getOrinaByPaciente(pacienteId) {
+    return request(`${API_URL}/api/orina/paciente/${pacienteId}`, { method: 'GET' })
+  },
+
+  /* HECES */
+  async createHeces(data) {
+    return request(`${API_URL}/api/heces`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async getHeces(hecesId) {
+    return request(`${API_URL}/api/heces/${hecesId}`, { method: 'GET' })
+  },
+
+  async updateHeces(hecesId, data) {
+    return request(`${API_URL}/api/heces/${hecesId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async deleteHeces(hecesId) {
+    return request(`${API_URL}/api/heces/${hecesId}`, { method: 'DELETE' })
+  },
+
+  async getHecesByPaciente(pacienteId) {
+    return request(`${API_URL}/api/heces/paciente/${pacienteId}`, { method: 'GET' })
+  },
+
+  /* PDF */
+  async generarPDF(facturaId) {
+    return request(`${API_URL}/facturacion/pdf/${facturaId}`, { method: 'POST' })
+  },
+
+  async generarPDFTicket(ticketData) {
+    return request(`${API_URL}/facturacion/ticket/pdf`, {
+      method: 'POST',
+      body: JSON.stringify(ticketData),
+    })
+  },
+
+  async obtenerPDF(id) {
+    return request(`${API_URL}/facturacion/pdf/${id}`, { method: 'GET' })
   }
+  
 }
 
 export default api

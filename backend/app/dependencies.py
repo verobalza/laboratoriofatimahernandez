@@ -12,7 +12,8 @@ from jose import JWTError, jwt
 from .config import settings
 
 # Contexto de encriptación de contraseñas
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+
 
 # Cliente de Supabase (se inicializa una sola vez)
 _supabase_client: Optional[Client] = None
@@ -20,25 +21,27 @@ _supabase_client: Optional[Client] = None
 
 def get_supabase_client() -> Client:
     """
-    Obtiene o crea el cliente de Supabase.
-    Se reutiliza la misma instancia para toda la aplicación.
+    Cliente de Supabase usando SERVICE_ROLE.
+    Este cliente ignora RLS y tiene permisos completos.
+    Úsalo solo en el backend.
     """
     global _supabase_client
     
     if _supabase_client is None:
-        supabase_url = os.getenv("SUPABASE_URL") or settings.SUPABASE_URL
-        supabase_key = os.getenv("SUPABASE_KEY") or settings.SUPABASE_KEY
-        
+        supabase_url = settings.SUPABASE_URL
+        supabase_key = settings.SUPABASE_SERVICE_ROLE  # ← USAMOS SERVICE_ROLE
+
+        print("DEBUG ENV:", settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE)
+
         if not supabase_url or not supabase_key:
             raise ValueError(
-                "SUPABASE_URL y SUPABASE_KEY deben estar configurados "
-                "como variables de entorno o en el archivo .env"
+                "SUPABASE_URL y SUPABASE_SERVICE_ROLE deben estar configurados "
+                "en el archivo .env"
             )
-        
+
         _supabase_client = create_client(supabase_url, supabase_key)
     
     return _supabase_client
-
 
 def hash_password(password: str) -> str:
     """
@@ -112,6 +115,8 @@ def verify_token(token: str) -> Optional[dict]:
             settings.JWT_SECRET,
             algorithms=[settings.JWT_ALGORITHM]
         )
+        
+
         return payload
     except JWTError:
         return None

@@ -1,13 +1,5 @@
 /**
- * Dashboard.css - Rediseño Minimalista
- * 
- * Nuevo diseño elegante y profesional:
- * - Branding del laboratorio en esquina superior izquierda
- * - Imagen alusiva a laboratorio centrada
- * - Fondo azul suave y moderno
- * - Glass effect con overlay
- * - Responsive y minimalista
- * - Menú hamburguesa mantiene su comportamiento
+ * Dashboard.css - Fondo con imagen + overlay + diseño responsive
  */
 
 :root {
@@ -23,71 +15,48 @@
   --glass-border: rgba(255, 255, 255, 0.2);
 }
 
-/* Contenedor principal */
+/* Evitar scroll horizontal global */
+html, body {
+  overflow: hidden;
+}
+
+/* Contenedor principal con imagen de fondo */
 .dashboard-container {
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 30%, #bfdbfe 60%, #a5d8ff 100%);
-  background-attachment: fixed;
+  background-image: url('/assets/2ddd715bb433ca6e56d26bf2efa21237.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
 }
 
-/* Efecto de fondo decorativo sutil */
+/* Overlay oscuro para mejorar legibilidad */
 .dashboard-container::before {
-  content: '';
-  position: fixed;
-  top: -20%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(2px);
   z-index: 0;
-  animation: float 20s infinite ease-in-out;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(30px); }
-}
-
-.dashboard-container::after {
-  content: '';
-  position: fixed;
-  bottom: -15%;
-  left: -5%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  animation: float 25s infinite ease-in-out reverse;
-}
-
-/* Branding del laboratorio - Esquina superior izquierda */
+/* Branding del laboratorio */
 .lab-branding {
   position: fixed;
   top: 2rem;
   left: 2rem;
-  z-index: 10;
+  z-index: 2;
   animation: fadeInDown 0.8s ease;
 }
 
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .lab-branding-text {
@@ -99,116 +68,55 @@
 .lab-name {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--white);
   margin: 0;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
 }
 
 .lab-subtitle {
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--text-light);
+  color: #e2e8f0;
   margin: 0;
-  letter-spacing: 0.3px;
 }
 
-/* Contenido central */
+/* Contenido principal */
 .dashboard-content {
   position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 2;
   min-height: 100vh;
-  padding: 2rem;
-}
-
-/* Contenedor visual del laboratorio */
-.lab-visual-container {
+  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  max-width: 600px;
-  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Wrapper de imagen con overlay */
-.lab-image-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  aspect-ratio: 1;
-  animation: scaleIn 0.8s ease 0.2s both;
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* SVG de imagen */
-.lab-image {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 20px 50px rgba(59, 130, 246, 0.15));
-}
-
-/* Overlay elegante con glass effect */
-.lab-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, 
-    rgba(219, 234, 254, 0.4) 0%,
-    rgba(224, 231, 255, 0.2) 50%,
-    rgba(191, 219, 254, 0.3) 100%);
-  border-radius: 30px;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  pointer-events: none;
-  box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.1);
-}
-
-/* Bienvenida subtil */
+/* Contenedor del saludo */
 .user-welcome-subtle {
   text-align: center;
   padding: 1.5rem 2rem;
-  background: var(--glass-bg);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 20px;
-  animation: fadeInUp 0.8s ease 0.4s both;
+  animation: fadeInUp 0.8s ease;
+  max-width: 90%;
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .welcome-text {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: 500;
-  color: var(--text-dark);
-  letter-spacing: -0.3px;
+  color: white;
 }
 
 .welcome-text strong {
-  color: var(--accent-indigo);
+  color: #93c5fd;
   font-weight: 700;
 }
 
@@ -219,7 +127,7 @@
   justify-content: center;
   height: 100vh;
   font-size: 1.2rem;
-  color: var(--text-light);
+  color: var(--white);
   font-weight: 500;
   z-index: 5;
 }
@@ -241,20 +149,11 @@
 
   .dashboard-content {
     padding: 1.5rem;
-    min-height: auto;
     padding-top: 8rem;
   }
 
-  .lab-image-wrapper {
-    max-width: 400px;
-  }
-
-  .user-welcome-subtle {
-    padding: 1.25rem 1.5rem;
-  }
-
   .welcome-text {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 }
 
@@ -263,7 +162,6 @@
   .lab-branding {
     top: 1rem;
     left: 1rem;
-    right: 1rem;
   }
 
   .lab-name {
@@ -279,30 +177,15 @@
     padding-top: 7rem;
   }
 
-  .lab-image-wrapper {
-    max-width: 300px;
-  }
-
-  .user-welcome-subtle {
-    padding: 1rem 1.25rem;
-  }
-
   .welcome-text {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 }
 
 /* Modo oscuro */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --text-dark: #f1f5f9;
-    --text-light: #cbd5e1;
-    --glass-bg: rgba(15, 23, 42, 0.6);
-    --glass-border: rgba(148, 163, 184, 0.2);
-  }
-
-  .dashboard-container {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #1e3a8a 60%, #1e40af 100%);
+  .dashboard-container::before {
+    background: rgba(0, 0, 0, 0.55);
   }
 
   .lab-name {
@@ -310,15 +193,7 @@
   }
 
   .lab-subtitle {
-    color: #94a3b8;
-  }
-
-  .lab-overlay {
-    background: linear-gradient(135deg, 
-      rgba(15, 23, 42, 0.5) 0%,
-      rgba(30, 41, 59, 0.4) 50%,
-      rgba(30, 58, 138, 0.3) 100%);
-    border-color: rgba(148, 163, 184, 0.2);
+    color: #cbd5e1;
   }
 
   .welcome-text {
@@ -330,16 +205,158 @@
   }
 }
 
-/* Respetar preferencias de movimiento reducido */
+/* Reducir animaciones si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-container::before,
-  .dashboard-container::after {
-    animation: none !important;
-  }
-
   .lab-branding,
-  .lab-image-wrapper,
   .user-welcome-subtle {
     animation: none !important;
+  }
+}
+
+/* ============ PANEL DE TASA DE CAMBIO ============ */
+.dashboard-tasa-panel {
+  position: fixed;
+  top: 20px;
+  right: 80px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 280px;
+  max-width: 320px;
+}
+
+.tasa-panel-header {
+  margin-bottom: 0.75rem;
+}
+
+.tasa-current {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tasa-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.tasa-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.tasa-compact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tasa-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.currency-prefix,
+.currency-suffix {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.form-input-compact {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--text-dark);
+  background: var(--white);
+  transition: border-color 0.3s ease;
+  width: 80px;
+}
+
+.form-input-compact:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input-compact.error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.btn-compact {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  min-width: 32px;
+}
+
+.btn-compact:hover:not(:disabled) {
+  background: var(--secondary-blue);
+}
+
+.btn-compact:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message-compact {
+  color: #ef4444;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.dashboard-message {
+  position: fixed;
+  top: 140px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  max-width: 280px;
+  font-size: 0.85rem;
+}
+
+.dashboard-message.message-success {
+  border-left: 4px solid #10b981;
+}
+
+.dashboard-message.message-error {
+  border-left: 4px solid #ef4444;
+}
+
+/* Responsive para el panel de tasa */
+@media (max-width: 768px) {
+  .dashboard-tasa-panel {
+    position: static;
+    margin: 1rem;
+    min-width: auto;
+    max-width: none;
+  }
+
+  .dashboard-message {
+    position: static;
+    margin: 1rem;
+    max-width: none;
   }
 }

@@ -14,6 +14,15 @@ import './FichaPaciente.css'
 function FichaPaciente() {
   const { id } = useParams()
   const navigate = useNavigate()
+
+  const menuItems = [
+    { label: 'Registro pacientes', icon: '👤', onClick: () => navigate('/registro-pacientes') },
+    { label: 'Pruebas', icon: '🧪', onClick: () => navigate('/pruebas') },
+    { label: 'Exámenes', icon: '📋', onClick: () => navigate('/examenes') },
+    { label: 'Facturación', icon: '💳', onClick: () => navigate('/facturacion') },
+    { label: 'Inventario', icon: '📦', onClick: () => navigate('/inventario') },
+    { label: 'Registro financiero', icon: '💰', onClick: () => navigate('/registro-financiero') }
+  ]
   
   const [paciente, setPaciente] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -64,13 +73,21 @@ function FichaPaciente() {
     setEditMode(false)
   }
 
-  const menuItems = [
-    { label: 'Registro pacientes', icon: '👤', onClick: () => navigate('/registro-pacientes') },
-    { label: 'Pruebas', icon: '🧪', onClick: () => navigate('/pruebas') },
-    { label: 'Facturación', icon: '💳', onClick: () => console.log('Facturación') },
-    { label: 'Exámenes', icon: '📋', onClick: () => navigate('/examenes') },
-    { label: 'Registro financiero', icon: '💰', onClick: () => console.log('Registro financiero') }
-  ]
+  const handleDeletePaciente = async () => {
+    const confirmDelete = window.confirm('¿De verdad quieres borrar este paciente?')
+    if (!confirmDelete) return
+
+    try {
+      await api.deletePaciente(id)
+      setMessage({ type: 'success', text: '✅ Paciente eliminado correctamente' })
+      setTimeout(() => {
+        navigate('/registro-pacientes')
+      }, 1000)
+    } catch (error) {
+      console.error('Error eliminando paciente:', error)
+      setMessage({ type: 'error', text: 'Error al eliminar paciente' })
+    }
+  }
 
   if (loading) {
     return (
@@ -211,6 +228,9 @@ function FichaPaciente() {
                 <div className="edit-buttons">
                   <button className="btn-guardar" onClick={handleSaveEdit}>
                     💾 Guardar cambios
+                  </button>
+                  <button className="btn-eliminar" onClick={handleDeletePaciente}>
+                    🗑️ Eliminar
                   </button>
                   <button className="btn-cancelar" onClick={handleCancelEdit}>
                     Cancelar
