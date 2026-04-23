@@ -20,8 +20,8 @@ from fastapi import APIRouter, HTTPException, status
 from datetime import date
 from typing import List
 
-from backend.app.dependencies import get_supabase_client
-from backend.app.models.orina_heces_models import (
+from ..dependencies import get_supabase_client
+from ..models.orina_heces_models import (
 
     OrinaCreate, OrinaOut, OrinaUpdate,
     HecesCreate, HecesOut, HecesUpdate

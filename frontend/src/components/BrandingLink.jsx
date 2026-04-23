@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "./brandingLink.css";
+import "./BrandingLink.css";
 
 export default function BrandingLink() {
   return (
