@@ -10,7 +10,7 @@
  * console.log(response) // { status: 'ok' }
  */
 
-const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const rawApiUrl = import.meta.env.VITE_API_URL 
 // Normalizar para evitar doble slash (ej. "https://host/" + "/health" => "https://host//health")
 const API_URL = rawApiUrl.replace(/\/+$/,'')
 
