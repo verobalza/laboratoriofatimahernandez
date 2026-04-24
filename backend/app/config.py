@@ -21,7 +21,6 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
-        "https://deann-overoptimistic-teacherly.ngrok-free.dev",
         "https://laboratoriofatimahernandez-k1oq.vercel.app",
         "https://laboratoriofatimahernandez.vercel.app"
 
