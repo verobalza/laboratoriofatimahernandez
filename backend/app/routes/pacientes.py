@@ -19,7 +19,7 @@ import logging
 router = APIRouter(prefix="/pacientes", tags=["pacientes"])
 
 
-@router.post("/", response_model=PacienteOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=PacienteOut, status_code=status.HTTP_201_CREATED)
 async def create_paciente(request: Request,paciente: PacienteCreate):
     """Inserta un nuevo paciente en la tabla `pacientes`."""
 
@@ -75,7 +75,7 @@ async def create_paciente(request: Request,paciente: PacienteCreate):
     return PacienteOut(**created)
 
 
-@router.get("/", response_model=List[PacienteOut])
+@router.get("", response_model=List[PacienteOut])
 async def list_pacientes(search: Optional[str] = Query(None, description="Texto para buscar por nombre, apellido, cédula o teléfono")):
     """
     Lista pacientes; si se pasa `search` filtra por nombre, apellido, cédula o teléfono.
@@ -105,7 +105,7 @@ async def list_pacientes(search: Optional[str] = Query(None, description="Texto 
     return [PacienteOut(**p) for p in (resp.data or [])]
 
 
-@router.get("/{paciente_id}", response_model=PacienteOut)
+@router.get("{paciente_id}", response_model=PacienteOut)
 async def get_paciente(paciente_id: str):
     """Devuelve la ficha completa de un paciente por su ID."""
     supabase = get_supabase_client()

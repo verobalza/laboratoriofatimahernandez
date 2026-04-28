@@ -20,7 +20,10 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI(
     title="Laboratorio API",
     description="API para el proyecto fullstack",
-    version="1.0.0"
+    version="1.0.0",
+    redirect_slashes=False
+
+
 )
 
 # Configurar CORS
