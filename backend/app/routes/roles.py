@@ -113,7 +113,7 @@ async def get_permissions_for_user(user_id: UUID, authorization: Optional[str] =
     return PermissionsResponse(permissions=_get_user_permissions(str(user_id), supabase))
 
 
-@router.post('{user_id}/permissions', response_model=PermissionsResponse)
+@router.post('/{user_id}/permissions', response_model=PermissionsResponse)
 async def save_permissions_for_user(user_id: UUID, request: PermissionRequest, authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()
