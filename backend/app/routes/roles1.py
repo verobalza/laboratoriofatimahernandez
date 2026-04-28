@@ -73,11 +73,7 @@ def _assert_roles_admin(caller, supabase):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Acceso denegado')
 
 
-# ============================
-# RUTAS CORREGIDAS
-# ============================
-
-@router.get('/me', response_model=PermissionsResponse)
+@router.get('me', response_model=PermissionsResponse)
 async def get_my_permissions(authorization: Optional[str] = Header(None)):
     user = _get_authenticated_user(authorization)
     if str(user.get('email', '')).lower() == MASTER_EMAIL:
@@ -87,7 +83,7 @@ async def get_my_permissions(authorization: Optional[str] = Header(None)):
     return PermissionsResponse(permissions=_get_user_permissions(str(user['id']), supabase))
 
 
-@router.get('/users', response_model=list[RoleUserResponse])
+@router.get('users', response_model=list[RoleUserResponse])
 async def get_role_users(authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()
@@ -100,7 +96,7 @@ async def get_role_users(authorization: Optional[str] = Header(None)):
     return [RoleUserResponse(**user) for user in (response.data or [])]
 
 
-@router.get('/{user_id}/permissions', response_model=PermissionsResponse)
+@router.get('{user_id}/permissions', response_model=PermissionsResponse)
 async def get_permissions_for_user(user_id: UUID, authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()
@@ -148,28 +144,33 @@ async def save_permissions_for_user(user_id: UUID, request: PermissionRequest, a
     return PermissionsResponse(permissions=permissions)
 
 
-@router.delete('/{user_id}')
+@router.delete('{user_id}')
 async def delete_user(user_id: UUID, authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()
     _assert_roles_admin(caller, supabase)
 
+    # Obtener información del usuario a borrar
     target_user = supabase.table('usuarios').select('id, email').eq('id', str(user_id)).execute()
     if not target_user.data or len(target_user.data) == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuario no encontrado')
 
     target_email = str(target_user.data[0].get('email', '')).lower()
 
+    # No permitir borrar al master
     if target_email == MASTER_EMAIL:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='No puedes eliminar al usuario master.')
 
+    # No permitir borrar al usuario actual
     if str(caller['id']) == str(user_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='No puedes eliminar tu propio usuario.')
 
+    # Primero borrar los permisos del usuario
     delete_perms_response = supabase.table('roles_usuarios').delete().eq('usuario_id', str(user_id)).execute()
     if delete_perms_response.data is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error al eliminar permisos del usuario')
 
+    # Luego borrar el usuario
     delete_user_response = supabase.table('usuarios').delete().eq('id', str(user_id)).execute()
     if delete_user_response.data is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error al eliminar usuario')
