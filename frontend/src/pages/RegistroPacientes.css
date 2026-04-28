@@ -631,6 +631,23 @@
   background: rgba(255,255,255,0.15);
 }
 
+/* Responsive - Laptops pequeñas / Tablets */
+@media (max-width: 992px) {
+  .registro-content {
+    padding: 2rem 1rem 2rem;
+  }
+
+  .registro-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .search-section,
+  .form-section {
+    padding: 1.5rem;
+  }
+}
+
 /* Responsive - Tablet */
 @media (max-width: 768px) {
   .registro-content {

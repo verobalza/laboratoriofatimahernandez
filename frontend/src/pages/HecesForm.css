@@ -253,12 +253,23 @@
   .heces-form {
     padding: 20px;
   }
+}
+
+@media (max-width: 480px) {
+  .heces-form-content {
+    padding: 15px 10px;
+  }
+
+  .heces-form {
+    padding: 16px;
+  }
 
   .heces-form-header h1 {
-    font-size: 2rem;
+    font-size: 1.9rem;
   }
 
   .form-row {
+    gap: 15px;
     grid-template-columns: 1fr;
   }
 

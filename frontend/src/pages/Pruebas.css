@@ -112,7 +112,8 @@ html {
   position: relative;
   z-index: 1;
   padding: 2rem 2rem 2rem 18rem;
-  max-width: 1400px;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 2rem auto;
   animation: fadeInUp 0.8s ease 0.2s both;
 }
@@ -630,6 +631,28 @@ html {
 }
 
 /* ============ RESPONSIVE ============ */
+@media (max-width: 992px) {
+  .pruebas-content {
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-wrapper {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .btn-add {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
 @media (max-width: 768px) {
   .pruebas-content {
     padding: 1rem;
@@ -1137,7 +1160,10 @@ html {
   background: var(--white);
   padding: 1.5rem;
   border-radius: 8px;
-  min-width: 300px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .modal-form label {

@@ -525,7 +525,9 @@
 .tabla-pruebas {
   border: 1px solid var(--primary-light);
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  width: 100%;
+  min-width: 0;
 }
 
 .tabla-header {
@@ -793,6 +795,44 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 992px) {
+  .facturacion-content {
+    padding: var(--spacing-xl) var(--spacing-md) var(--spacing-xl);
+  }
+
+  .facturacion-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .facturacion-sidebar,
+  .facturacion-main,
+  .pacientes-list,
+  .visitas-list,
+  .factura-panel,
+  .factura-totales,
+  .examenes-dia-section {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .facturacion-sidebar {
+    order: 2;
+  }
+
+  .facturacion-main {
+    order: 1;
+  }
+
+  .tabla-pruebas {
+    overflow-x: auto;
+  }
+
+  .tabla-row,
+  .tabla-header {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .facturacion-controls {
     padding: var(--spacing-md);

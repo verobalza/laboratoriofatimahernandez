@@ -252,12 +252,23 @@
   .orina-form {
     padding: 20px;
   }
+}
+
+@media (max-width: 480px) {
+  .orina-form-content {
+    padding: 15px 10px;
+  }
+
+  .orina-form {
+    padding: 16px;
+  }
 
   .orina-form-header h1 {
-    font-size: 2rem;
+    font-size: 1.9rem;
   }
 
   .form-row {
+    gap: 15px;
     grid-template-columns: 1fr;
   }
 

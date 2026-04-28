@@ -22,8 +22,9 @@ html, body {
 
 /* Contenedor principal con imagen de fondo */
 .dashboard-container {
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
   background-image: url('/assets/2ddd715bb433ca6e56d26bf2efa21237.jpg');
   background-size: cover;
   background-position: center;
@@ -130,6 +131,32 @@ html, body {
   color: var(--white);
   font-weight: 500;
   z-index: 5;
+}
+
+/* Responsive - Laptops pequeñas / Tablets horizontales */
+@media (max-width: 992px) {
+  .dashboard-container {
+    min-width: 0;
+  }
+
+  .dashboard-content {
+    padding: 1.5rem;
+    padding-top: 8rem;
+  }
+
+  .dashboard-tasa-panel,
+  .dashboard-message {
+    position: static;
+    margin: 1rem auto 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .dashboard-tasa-panel {
+    right: auto;
+    left: auto;
+    top: auto;
+  }
 }
 
 /* Responsive - Tablets */
