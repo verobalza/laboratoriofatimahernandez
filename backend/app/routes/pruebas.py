@@ -13,7 +13,7 @@ from ..models.prueba_models import (
 from ..routes.financiero import get_tasa_actual
 import logging
 
-router = APIRouter(prefix="pruebas", tags=["pruebas"])
+router = APIRouter(prefix="/pruebas", tags=["pruebas"])
 
 
 @router.post("", response_model=PruebaOut, status_code=status.HTTP_201_CREATED)
