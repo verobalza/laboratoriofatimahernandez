@@ -2,17 +2,17 @@
 Rutas para exámenes especializados de Orina y Heces.
 
 Endpoints:
-- POST /orina          → Crear examen de orina
-- GET /orina/{id}      → Obtener examen de orina
-- PUT /orina/{id}      → Actualizar examen de orina
-- DELETE /orina/{id}   → Eliminar examen de orina
-- GET /orina/paciente/{paciente_id}  → Obtener exámenes de orina de paciente
+- POST orina          → Crear examen de orina
+- GET orina/{id}      → Obtener examen de orina
+- PUT orina/{id}      → Actualizar examen de orina
+- DELETE orina/{id}   → Eliminar examen de orina
+- GET orina/paciente/{paciente_id}  → Obtener exámenes de orina de paciente
 
-- POST /heces          → Crear examen de heces
-- GET /heces/{id}      → Obtener examen de heces
-- PUT /heces/{id}      → Actualizar examen de heces
-- DELETE /heces/{id}   → Eliminar examen de heces
-- GET /heces/paciente/{paciente_id}  → Obtener exámenes de heces de paciente
+- POST heces          → Crear examen de heces
+- GET heces/{id}      → Obtener examen de heces
+- PUT heces/{id}      → Actualizar examen de heces
+- DELETE heces/{id}   → Eliminar examen de heces
+- GET heces/paciente/{paciente_id}  → Obtener exámenes de heces de paciente
 """
 
 import logging
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 #   EXÁMENES DE ORINA
 # ============================
 
-@router.post("/orina", response_model=OrinaOut, status_code=status.HTTP_201_CREATED)
+@router.post("orina", response_model=OrinaOut, status_code=status.HTTP_201_CREATED)
 async def create_orina(orina: OrinaCreate):
     """
     Crear nuevo examen de orina.
@@ -71,7 +71,7 @@ async def create_orina(orina: OrinaCreate):
         )
 
 
-@router.get("/orina/{orina_id}", response_model=OrinaOut)
+@router.get("orina/{orina_id}", response_model=OrinaOut)
 async def get_orina(orina_id: str):
     """Obtener examen de orina por ID"""
     supabase = get_supabase_client()
@@ -139,7 +139,7 @@ async def delete_orina(orina_id: str):
         )
 
 
-@router.get("/orina/paciente/{paciente_id}", response_model=List[OrinaOut])
+@router.get("orina/paciente/{paciente_id}", response_model=List[OrinaOut])
 async def get_orina_by_paciente(paciente_id: str):
     """
     Obtener todos los exámenes de orina de un paciente.
@@ -168,7 +168,7 @@ async def get_orina_by_paciente(paciente_id: str):
 #   EXÁMENES DE HECES
 # ============================
 
-@router.post("/heces", response_model=HecesOut, status_code=status.HTTP_201_CREATED)
+@router.post("heces", response_model=HecesOut, status_code=status.HTTP_201_CREATED)
 async def create_heces(heces: HecesCreate):
     """
     Crear nuevo examen de heces.
@@ -207,7 +207,7 @@ async def create_heces(heces: HecesCreate):
         )
 
 
-@router.get("/heces/{heces_id}", response_model=HecesOut)
+@router.get("heces/{heces_id}", response_model=HecesOut)
 async def get_heces(heces_id: str):
     """Obtener examen de heces por ID"""
     supabase = get_supabase_client()
@@ -275,7 +275,7 @@ async def delete_heces(heces_id: str):
         )
 
 
-@router.get("/heces/paciente/{paciente_id}", response_model=List[HecesOut])
+@router.get("heces/paciente/{paciente_id}", response_model=List[HecesOut])
 async def get_heces_by_paciente(paciente_id: str):
     """
     Obtener todos los exámenes de heces de un paciente.

@@ -79,7 +79,7 @@ async def list_examenes_paciente(
     return [ExamenOut(**x) for x in (resp.data or [])]
 
 
-@router.post("/", response_model=ExamenOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ExamenOut, status_code=status.HTTP_201_CREATED)
 async def create_examen(examen: ExamenCreate):
     """
     Registrar un examen individual.
@@ -101,7 +101,7 @@ async def create_examen(examen: ExamenCreate):
     return ExamenOut(**resp.data[0])
 
 
-@router.post("/batch", response_model=List[ExamenOut], status_code=status.HTTP_201_CREATED)
+@router.post("batch", response_model=List[ExamenOut], status_code=status.HTTP_201_CREATED)
 async def create_examenes_batch(examenes: List[ExamenCreate]):
     """
     Registrar múltiples exámenes a la vez.
@@ -164,7 +164,7 @@ from fastapi import UploadFile, File, Form
 import uuid
 
 
-@router.post("/pdf/upload", response_model=ExamenPDFOut, status_code=status.HTTP_201_CREATED)
+@router.post("pdf/upload", response_model=ExamenPDFOut, status_code=status.HTTP_201_CREATED)
 async def upload_pdf(
     file: UploadFile = File(...),
     paciente_id: str = Form(...),
@@ -383,7 +383,7 @@ async def list_pdfs_by_paciente(paciente_id: str):
     results.sort(key=lambda item: item.fecha, reverse=True)
     return results
 
-@router.post("/pdf", response_model=ExamenPDFOut, status_code=status.HTTP_201_CREATED)
+@router.post("pdf", response_model=ExamenPDFOut, status_code=status.HTTP_201_CREATED)
 async def create_pdf(record: ExamenPDFCreate):
     """Registrar un PDF de examen (ya subido a storage).
     El campo url_pdf debe apuntar al archivo en Supabase Storage."""

@@ -15,7 +15,7 @@ import logging
 router = APIRouter(prefix="/grupos", tags=["grupos"])
 
 
-@router.post("/", response_model=GrupoPruebaOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=GrupoPruebaOut, status_code=status.HTTP_201_CREATED)
 async def create_grupo(grupo: GrupoPruebaCreate):
     """
     Crea un nuevo grupo de pruebas.
@@ -41,7 +41,7 @@ async def create_grupo(grupo: GrupoPruebaCreate):
     return GrupoPruebaOut(**resp.data[0])
 
 
-@router.get("/", response_model=List[GrupoPruebaOut])
+@router.get("", response_model=List[GrupoPruebaOut])
 async def list_grupos():
     """
     Lista todos los grupos de pruebas.
@@ -60,7 +60,7 @@ async def list_grupos():
     return [GrupoPruebaOut(**g) for g in (resp.data or [])]
 
 
-@router.get("/{grupo_id}", response_model=GrupoPruebaOut)
+@router.get("{grupo_id}", response_model=GrupoPruebaOut)
 async def get_grupo(grupo_id: str):
     """
     Obtiene un grupo por su ID.
@@ -91,7 +91,7 @@ async def get_grupo(grupo_id: str):
     return GrupoPruebaOut(**resp.data)
 
 
-@router.get("/{grupo_id}/pruebas", response_model=List[PruebaOut])
+@router.get("{grupo_id}/pruebas", response_model=List[PruebaOut])
 async def get_pruebas_by_grupo(grupo_id: str):
     """
     Obtiene todas las pruebas de un grupo específico.

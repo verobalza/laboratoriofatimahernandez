@@ -73,7 +73,7 @@ def _assert_roles_admin(caller, supabase):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Acceso denegado')
 
 
-@router.get('/me', response_model=PermissionsResponse)
+@router.get('me', response_model=PermissionsResponse)
 async def get_my_permissions(authorization: Optional[str] = Header(None)):
     user = _get_authenticated_user(authorization)
     if str(user.get('email', '')).lower() == MASTER_EMAIL:
@@ -83,7 +83,7 @@ async def get_my_permissions(authorization: Optional[str] = Header(None)):
     return PermissionsResponse(permissions=_get_user_permissions(str(user['id']), supabase))
 
 
-@router.get('/users', response_model=list[RoleUserResponse])
+@router.get('users', response_model=list[RoleUserResponse])
 async def get_role_users(authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()
@@ -96,7 +96,7 @@ async def get_role_users(authorization: Optional[str] = Header(None)):
     return [RoleUserResponse(**user) for user in (response.data or [])]
 
 
-@router.get('/{user_id}/permissions', response_model=PermissionsResponse)
+@router.get('{user_id}/permissions', response_model=PermissionsResponse)
 async def get_permissions_for_user(user_id: UUID, authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()
@@ -113,7 +113,7 @@ async def get_permissions_for_user(user_id: UUID, authorization: Optional[str] =
     return PermissionsResponse(permissions=_get_user_permissions(str(user_id), supabase))
 
 
-@router.post('/{user_id}/permissions', response_model=PermissionsResponse)
+@router.post('{user_id}/permissions', response_model=PermissionsResponse)
 async def save_permissions_for_user(user_id: UUID, request: PermissionRequest, authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()
@@ -144,7 +144,7 @@ async def save_permissions_for_user(user_id: UUID, request: PermissionRequest, a
     return PermissionsResponse(permissions=permissions)
 
 
-@router.delete('/{user_id}')
+@router.delete('{user_id}')
 async def delete_user(user_id: UUID, authorization: Optional[str] = Header(None)):
     caller = _get_authenticated_user(authorization)
     supabase = get_supabase_client()

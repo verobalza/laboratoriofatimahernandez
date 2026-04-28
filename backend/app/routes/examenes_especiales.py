@@ -20,7 +20,7 @@ router = APIRouter()
 #   ENDPOINTS PARA ORINA
 # ============================
 
-@router.post("/orina", response_model=OrinaOut)
+@router.post("orina", response_model=OrinaOut)
 async def create_orina(orina: OrinaCreate, supabase=Depends(get_supabase_client)):
     """Crear examen de orina"""
     try:
@@ -34,7 +34,7 @@ async def create_orina(orina: OrinaCreate, supabase=Depends(get_supabase_client)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/orina/{orina_id}", response_model=OrinaOut)
+@router.get("orina/{orina_id}", response_model=OrinaOut)
 async def get_orina(orina_id: str, supabase=Depends(get_supabase_client)):
     """Obtener examen de orina por ID"""
     try:
@@ -47,7 +47,7 @@ async def get_orina(orina_id: str, supabase=Depends(get_supabase_client)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/orina/{orina_id}", response_model=OrinaOut)
+@router.put("orina/{orina_id}", response_model=OrinaOut)
 async def update_orina(orina_id: str, orina: OrinaUpdate, supabase=Depends(get_supabase_client)):
     """Actualizar examen de orina"""
     try:
@@ -63,7 +63,7 @@ async def update_orina(orina_id: str, orina: OrinaUpdate, supabase=Depends(get_s
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/orina/{orina_id}")
+@router.delete("orina/{orina_id}")
 async def delete_orina(orina_id: str, supabase=Depends(get_supabase_client)):
     """Eliminar examen de orina"""
     try:
@@ -76,7 +76,7 @@ async def delete_orina(orina_id: str, supabase=Depends(get_supabase_client)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/orina/examen/{examen_id}", response_model=OrinaOut)
+@router.get("orina/examen/{examen_id}", response_model=OrinaOut)
 async def get_orina_by_examen(examen_id: str, supabase=Depends(get_supabase_client)):
     """Obtener examen de orina por ID de examen"""
     try:
@@ -93,7 +93,7 @@ async def get_orina_by_examen(examen_id: str, supabase=Depends(get_supabase_clie
 #   ENDPOINTS PARA HECES
 # ============================
 
-@router.post("/heces", response_model=HecesOut)
+@router.post("heces", response_model=HecesOut)
 async def create_heces(heces: HecesCreate, supabase=Depends(get_supabase_client)):
     """Crear examen de heces"""
     try:
@@ -107,7 +107,7 @@ async def create_heces(heces: HecesCreate, supabase=Depends(get_supabase_client)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/heces/{heces_id}", response_model=HecesOut)
+@router.get("heces/{heces_id}", response_model=HecesOut)
 async def get_heces(heces_id: str, supabase=Depends(get_supabase_client)):
     """Obtener examen de heces por ID"""
     try:
@@ -120,7 +120,7 @@ async def get_heces(heces_id: str, supabase=Depends(get_supabase_client)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/heces/{heces_id}", response_model=HecesOut)
+@router.put("heces/{heces_id}", response_model=HecesOut)
 async def update_heces(heces_id: str, heces: HecesUpdate, supabase=Depends(get_supabase_client)):
     """Actualizar examen de heces"""
     try:
@@ -136,7 +136,7 @@ async def update_heces(heces_id: str, heces: HecesUpdate, supabase=Depends(get_s
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/heces/{heces_id}")
+@router.delete("heces/{heces_id}")
 async def delete_heces(heces_id: str, supabase=Depends(get_supabase_client)):
     """Eliminar examen de heces"""
     try:
@@ -149,7 +149,7 @@ async def delete_heces(heces_id: str, supabase=Depends(get_supabase_client)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/heces/examen/{examen_id}", response_model=HecesOut)
+@router.get("heces/examen/{examen_id}", response_model=HecesOut)
 async def get_heces_by_examen(examen_id: str, supabase=Depends(get_supabase_client)):
     """Obtener examen de heces por ID de examen"""
     try:

@@ -13,10 +13,10 @@ from ..models.prueba_models import (
 from ..routes.financiero import get_tasa_actual
 import logging
 
-router = APIRouter(prefix="/pruebas", tags=["pruebas"])
+router = APIRouter(prefix="pruebas", tags=["pruebas"])
 
 
-@router.post("/", response_model=PruebaOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=PruebaOut, status_code=status.HTTP_201_CREATED)
 async def create_prueba(prueba: PruebaCreate):
     """
     Crea una nueva prueba de laboratorio.
@@ -45,7 +45,7 @@ async def create_prueba(prueba: PruebaCreate):
     return PruebaOut(**resp.data[0])
 63
 
-@router.get("/", response_model=List[PruebaOut])
+@router.get("", response_model=List[PruebaOut])
 async def list_pruebas(search: Optional[str] = Query(None, description="Texto para buscar por nombre")):
     """
     Lista pruebas; si se pasa `search` filtra por nombre.
@@ -73,7 +73,7 @@ async def list_pruebas(search: Optional[str] = Query(None, description="Texto pa
     return [PruebaOut(**p) for p in (resp.data or [])]
 
 
-@router.get("/count/total", response_model=dict)
+@router.get("count/total", response_model=dict)
 async def count_pruebas():
     """
     Obtener cantidad total de pruebas registradas.
@@ -92,7 +92,7 @@ async def count_pruebas():
         )
 
 
-@router.post("/unidades", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("unidades", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_unidad_medida(data: dict):
     """
     Crea una nueva unidad de medida.
@@ -129,7 +129,7 @@ async def create_unidad_medida(data: dict):
     return resp.data[0]
 
 
-@router.get("/unidades", response_model=List[dict])
+@router.get("unidades", response_model=List[dict])
 async def list_unidades_medida():
     """
     Lista todas las unidades de medida.
@@ -148,7 +148,7 @@ async def list_unidades_medida():
     return resp.data or []
 
 
-@router.post("/tipos", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("tipos", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_tipo_muestra(data: dict):
     """
     Crea un nuevo tipo de muestra.
@@ -185,7 +185,7 @@ async def create_tipo_muestra(data: dict):
     return resp.data[0]
 
 
-@router.get("/tipos", response_model=List[dict])
+@router.get("tipos", response_model=List[dict])
 async def list_tipos_muestra():
     """
     Lista todos los tipos de muestra.
@@ -204,7 +204,7 @@ async def list_tipos_muestra():
     return resp.data or []
 
 
-@router.get("/{prueba_id}", response_model=PruebaOut)
+@router.get("{prueba_id}", response_model=PruebaOut)
 async def get_prueba(prueba_id: str):
     """
     Obtiene una prueba por su ID.

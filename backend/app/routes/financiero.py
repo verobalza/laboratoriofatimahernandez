@@ -84,7 +84,7 @@ def guardar_movimientos(movimientos: list):
 
 # ============ ENDPOINTS TASA DE CAMBIO ============
 
-@router.get("/tasa", response_model=TasaCambioOut)
+@router.get("tasa", response_model=TasaCambioOut)
 async def obtener_tasa():
     """Obtiene la tasa de cambio actual"""
     tasa = get_tasa_actual()
@@ -95,7 +95,7 @@ async def obtener_tasa():
     )
 
 
-@router.post("/tasa", response_model=TasaCambioOut)
+@router.post("tasa", response_model=TasaCambioOut)
 async def actualizar_tasa(data: TasaCambioCreate):
     """Actualiza la tasa de cambio"""
     try:
@@ -112,7 +112,7 @@ async def actualizar_tasa(data: TasaCambioCreate):
 
 # ============ ENDPOINTS MOVIMIENTOS FINANCIEROS ============
 
-@router.post("/movimiento", response_model=MovimientoFinancieroOut)
+@router.post("movimiento", response_model=MovimientoFinancieroOut)
 async def registrar_movimiento(datos: MovimientoFinancieroCreate):
     """Registra un movimiento financiero (ticket o factura)"""
     try:
@@ -136,14 +136,14 @@ async def registrar_movimiento(datos: MovimientoFinancieroCreate):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/movimientos", response_model=list[MovimientoFinancieroOut])
+@router.get("movimientos", response_model=list[MovimientoFinancieroOut])
 async def obtener_movimientos_list():
     """Obtiene todos los movimientos financieros"""
     movimientos = obtener_movimientos()
     return [MovimientoFinancieroOut(**m) for m in movimientos]
 
 
-@router.get("/movimientos/filtro")
+@router.get("movimientos/filtro")
 async def obtener_movimientos_filtro(
     tipo: str = Query(None),
     fecha_desde: str = Query(None),
@@ -168,7 +168,7 @@ async def obtener_movimientos_filtro(
 
 # ============ ENDPOINTS RESUMEN FINANCIERO ============
 
-@router.get("/resumen", response_model=ResumenFinanciero)
+@router.get("resumen", response_model=ResumenFinanciero)
 async def obtener_resumen_financiero():
     """Obtiene el resumen financiero (totales por período)"""
     movimientos = obtener_movimientos()
@@ -227,7 +227,7 @@ async def obtener_resumen_financiero():
     )
 
 
-@router.get("/resumen/tipos", response_model=TotalesPorTipo)
+@router.get("resumen/tipos", response_model=TotalesPorTipo)
 async def obtener_resumen_por_tipo():
     """Obtiene totales separados por tipo (ticket/factura)"""
     movimientos = obtener_movimientos()

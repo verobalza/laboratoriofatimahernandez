@@ -32,7 +32,7 @@ import requests
 router = APIRouter(prefix="/facturacion", tags=["facturacion"])
 
 
-@router.get("/pacientes", response_model=List[PacienteInfo])
+@router.get("pacientes", response_model=List[PacienteInfo])
 async def buscar_pacientes(search: str = Query(..., min_length=1)):
     """Buscar pacientes por nombre o apellido."""
     supabase = get_supabase_client()
@@ -52,7 +52,7 @@ async def buscar_pacientes(search: str = Query(..., min_length=1)):
         )
 
 
-@router.get("/visitas/{paciente_id}", response_model=List[VisitaInfo])
+@router.get("visitas/{paciente_id}", response_model=List[VisitaInfo])
 async def obtener_visitas(paciente_id: str):
     """Obtener todas las fechas en que un paciente tiene exámenes."""
     supabase = get_supabase_client()
@@ -645,7 +645,7 @@ def _build_detalle_from_examenes_pdf(supabase, paciente_id: str, fecha_iso: str)
     )
 
 
-@router.get("/visita/{paciente_id}/{fecha}", response_model=DetalleVisita)
+@router.get("visita/{paciente_id}/{fecha}", response_model=DetalleVisita)
 async def obtener_detalle_visita(paciente_id: str, fecha: str):
     """Obtener todas las pruebas realizadas en una fecha específica."""
     supabase = get_supabase_client()
@@ -681,7 +681,7 @@ async def obtener_detalle_visita(paciente_id: str, fecha: str):
         )
 
 
-@router.post("/ticket", response_model=Dict[str, Any])
+@router.post("ticket", response_model=Dict[str, Any])
 async def generar_ticket(ticket: TicketCreate):
     """Generar ticket de caja (sin IVA)."""
     try:
@@ -725,7 +725,7 @@ async def generar_ticket(ticket: TicketCreate):
         )
 
 
-@router.post("/factura", response_model=FacturaOut)
+@router.post("factura", response_model=FacturaOut)
 async def generar_factura(factura: FacturaCreate):
     """Generar factura con IVA e incrementar número autoincremental."""
     supabase = get_supabase_client()
@@ -795,7 +795,7 @@ async def generar_factura(factura: FacturaCreate):
         )
 
 
-@router.get("/factura/{factura_id}", response_model=Dict[str, Any])
+@router.get("factura/{factura_id}", response_model=Dict[str, Any])
 async def obtener_factura(factura_id: int):
     """Obtener factura generada por ID."""
     supabase = get_supabase_client()
@@ -849,7 +849,7 @@ async def obtener_factura(factura_id: int):
 #   ENDPOINTS PARA PDFs
 # ============================
 
-@router.post("/pdf/{factura_id}", response_model=Dict[str, Any])
+@router.post("pdf/{factura_id}", response_model=Dict[str, Any])
 async def generar_pdf_factura(factura_id: int):
     """Generar PDF de factura y subir a Storage."""
     supabase = get_supabase_client()
@@ -900,7 +900,7 @@ async def generar_pdf_factura(factura_id: int):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al generar PDF")
 
 
-@router.get("/pdf/{paciente_id}", response_model=List[Dict[str, Any]])
+@router.get("pdf/{paciente_id}", response_model=List[Dict[str, Any]])
 async def obtener_pdfs_paciente(paciente_id: str):
     """Obtener todos los PDFs de facturas de un paciente."""
     supabase = get_supabase_client()
@@ -919,7 +919,7 @@ async def obtener_pdfs_paciente(paciente_id: str):
         )
 
 
-@router.get("/pdf/factura/{factura_id}", response_model=Optional[Dict[str, Any]])
+@router.get("pdf/factura/{factura_id}", response_model=Optional[Dict[str, Any]])
 async def obtener_pdf_factura(factura_id: int):
     """Obtener PDF de una factura específica."""
     supabase = get_supabase_client()
@@ -941,7 +941,7 @@ async def obtener_pdf_factura(factura_id: int):
         )
 
 
-@router.post("/ticket/pdf", response_model=Dict[str, Any])
+@router.post("ticket/pdf", response_model=Dict[str, Any])
 async def generar_pdf_ticket(ticket_data: Dict[str, Any]):
     """Generar PDF de ticket y devolver URL temporal."""
     supabase = get_supabase_client()
