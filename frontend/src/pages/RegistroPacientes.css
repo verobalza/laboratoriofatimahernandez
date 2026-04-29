@@ -606,6 +606,19 @@
   }
 }
 
+/* Responsive - Tablet amplio */
+@media (max-width: 840px) {
+  .registro-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .registro-wrapper {
+    width: 100%;
+  }
+}
+
 /* Responsive - Tablet */
 @media (max-width: 768px) {
   .registro-content {
