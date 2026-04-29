@@ -607,16 +607,19 @@
 }
 
 /* Responsive - Tablet amplio */
-@media (max-width: 840px) {
+@media (max-width: 840px) { 
+
   .registro-content,
-  .registro-wrapper{
+  .registro-wrapper{ 
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
+
+
   .pacientes-list-panel {
     max-width: 100%;
-
+ }
   .registro-wrapper {
     width: 100%;
   }
