@@ -5,6 +5,24 @@
   text-decoration: none;
   z-index: 999;
   pointer-events: auto;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: inline-block;
+}
+
+.branding-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+}
+
+.branding-link:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .branding-text {
@@ -18,19 +36,37 @@
   font-weight: 700;
   color: white;
   margin: 0;
+  letter-spacing: -0.3px;
 }
 
 .branding-subtitle {
   font-size: 0.85rem;
   font-weight: 500;
-  color: #e2e8f0;
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
+}
+
+@media (max-width: 768px) {
+  .branding-link {
+    top: 1.5rem;
+    left: 1.5rem;
+    padding: 0.9rem 1.3rem;
+  }
+
+  .branding-name {
+    font-size: 1rem;
+  }
+
+  .branding-subtitle {
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 480px) {
   .branding-link {
     top: 1rem;
     left: 1rem;
+    padding: 0.8rem 1.1rem;
   }
 
   .branding-name {

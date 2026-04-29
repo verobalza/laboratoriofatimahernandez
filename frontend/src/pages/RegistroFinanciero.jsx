@@ -15,6 +15,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MenuHamburguesa from '../components/MenuHamburguesa'
+import BrandingLink from '../components/BrandingLink'
 import api from '../services/api'
 import './RegistroFinanciero.css'
 
@@ -248,12 +249,7 @@ function RegistroFinanciero() {
       <MenuHamburguesa items={menuItems} />
 
       {/* Branding */}
-      <div className="financiero-branding">
-        <div className="financiero-branding-text">
-          <h3 className="financiero-lab-name">Laboratorio Bioclínico</h3>
-          <p className="financiero-lab-subtitle">Lc. Fátima Hernández</p>
-        </div>
-      </div>
+      <BrandingLink />
 
       {/* Contenido Principal */}
       <main className="financiero-content">

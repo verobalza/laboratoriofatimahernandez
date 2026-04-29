@@ -15,6 +15,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MenuHamburguesa from '../components/MenuHamburguesa'
+import BrandingLink from '../components/BrandingLink'
 import api from '../services/api'
 import './Pruebas.css'
 
@@ -608,12 +609,7 @@ function Pruebas() {
       <MenuHamburguesa items={menuItems} />
 
       {/* Branding */}
-      <div className="pruebas-branding">
-        <div className="pruebas-branding-text">
-          <h3 className="pruebas-lab-name">Laboratorio Bioclínico</h3>
-          <p className="pruebas-lab-subtitle">Lc. Fátima Hernández</p>
-        </div>
-      </div>
+      <BrandingLink />
 
       {/* Contenido Principal */}
       <main className="pruebas-content">

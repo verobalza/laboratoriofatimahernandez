@@ -64,48 +64,6 @@
   animation: float 25s infinite ease-in-out reverse;
 }
 
-/* Branding */
-.ficha-branding {
-  position: fixed;
-  top: 2rem;
-  left: 2rem;
-  z-index: 10;
-  animation: fadeInDown 0.8s ease;
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.ficha-branding-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.ficha-lab-name {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin: 0;
-  letter-spacing: -0.5px;
-}
-
-.ficha-lab-subtitle {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-light);
-  margin: 0;
-  letter-spacing: 0.3px;
-}
-
 /* Botón volver */
 .btn-volver {
   position: fixed;

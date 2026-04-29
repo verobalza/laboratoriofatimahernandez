@@ -8,6 +8,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import MenuHamburguesa from '../components/MenuHamburguesa'
+import BrandingLink from '../components/BrandingLink'
 import api from '../services/api'
 import './FichaPaciente.css'
 
@@ -113,12 +114,7 @@ function FichaPaciente() {
       <MenuHamburguesa items={menuItems} />
 
       {/* Branding */}
-      <div className="ficha-branding">
-        <div className="ficha-branding-text">
-          <h3 className="ficha-lab-name">Laboratorio Bioclínico</h3>
-          <p className="ficha-lab-subtitle">Lc. Fátima Hernández</p>
-        </div>
-      </div>
+      <BrandingLink />
 
       {/* Botón volver */}
       <button className="btn-volver" onClick={() => navigate('/registro-pacientes')}>
