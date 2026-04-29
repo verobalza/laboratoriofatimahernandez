@@ -608,7 +608,8 @@
 
 /* Responsive - Tablet amplio */
 @media (max-width: 840px) {
-  .registro-content {
+  .registro-content,
+  .registro-wrapper{
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
