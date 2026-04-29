@@ -164,7 +164,7 @@ from fastapi import UploadFile, File, Form
 import uuid
 
 
-@router.post("pdf/upload", response_model=ExamenPDFOut, status_code=status.HTTP_201_CREATED)
+@router.post("/pdf/upload", response_model=ExamenPDFOut, status_code=status.HTTP_201_CREATED)
 async def upload_pdf(
     file: UploadFile = File(...),
     paciente_id: str = Form(...),
