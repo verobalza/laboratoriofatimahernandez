@@ -57,3 +57,4 @@ def health_check():
 def read_root():
     """Endpoint raíz."""
     return {"message": "Bienvenido a la API de Laboratorio"}
+print("FORZANDO DEPLOY RAILWAY")
