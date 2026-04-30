@@ -202,7 +202,7 @@ ${detallesPruebas}
 Gracias por confiar en nosotros.
     `.trim()
 
-    const urlWhatsApp = `https://wa.me/57${telefono}?text=${encodeURIComponent(mensaje)}`
+    const urlWhatsApp = `https://wa.me/58${telefono}?text=${encodeURIComponent(mensaje)}`
     window.open(urlWhatsApp, '_blank')
   }
 

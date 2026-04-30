@@ -33,8 +33,10 @@ function RegistroPacientes() {
     edad: '',
     telefono: '',
     direccion: '',
-    sexo: ''
+    sexo: '',
+    procedencia: ''
   })
+  const [isEntityMode, setIsEntityMode] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
 
@@ -81,6 +83,7 @@ function RegistroPacientes() {
   const handleSelectPaciente = (paciente) => {
     setSelectedPacienteId(paciente.id)
     setIsEditMode(true)
+    setIsEntityMode(false) // Asumir que seleccionados son pacientes
     setFormData({
       nombre: paciente.nombre || '',
       apellido: paciente.apellido || '',
@@ -88,25 +91,25 @@ function RegistroPacientes() {
       edad: paciente.edad || '',
       telefono: paciente.telefono || '',
       direccion: paciente.direccion || '',
-      sexo: paciente.sexo || ''
+      sexo: paciente.sexo || '',
+      procedencia: paciente.procedencia || ''
     })
     setMessage({ type: '', text: '' })
   }
 
   /**
-   * Limpiar formulario para crear nuevo paciente
+   * Cambiar a modo entidad
    */
-  const handleNewPaciente = () => {
+  const handleCreateEntity = () => {
+    setIsEntityMode(true)
     setSelectedPacienteId(null)
     setIsEditMode(false)
     setFormData({
-      nombre: '',
-      apellido: '',
-      cedula: '',
-      edad: '',
+      nombre_entidad: '',
+      rif: '',
       telefono: '',
-      direccion: '',
-      sexo: ''
+      direccion_fiscal: '',
+      procedencia: ''
     })
     setMessage({ type: '', text: '' })
   }
@@ -128,14 +131,23 @@ function RegistroPacientes() {
   const validateForm = () => {
     const errors = []
     
-    if (!formData.nombre.trim()) errors.push('Nombre requerido')
-    if (!formData.apellido.trim()) errors.push('Apellido requerido')
-    if (!formData.edad || parseInt(formData.edad) < 0 || parseInt(formData.edad) > 120) {
-      errors.push('Edad inválida')
-    }
-    if (!formData.telefono.trim()) errors.push('Teléfono requerido')
-    if (formData.telefono.replace(/\D/g, '').length < 7) {
-      errors.push('Teléfono muy corto')
+    if (isEntityMode) {
+      if (!formData.nombre_entidad.trim()) errors.push('Nombre de entidad requerido')
+      if (!formData.rif.trim()) errors.push('RIF requerido')
+      if (!formData.telefono.trim()) errors.push('Teléfono requerido')
+      if (formData.telefono.replace(/\D/g, '').length < 7) {
+        errors.push('Teléfono muy corto')
+      }
+    } else {
+      if (!formData.nombre.trim()) errors.push('Nombre requerido')
+      if (!formData.apellido.trim()) errors.push('Apellido requerido')
+      if (!formData.edad || parseInt(formData.edad) < 0 || parseInt(formData.edad) > 120) {
+        errors.push('Edad inválida')
+      }
+      if (!formData.telefono.trim()) errors.push('Teléfono requerido')
+      if (formData.telefono.replace(/\D/g, '').length < 7) {
+        errors.push('Teléfono muy corto')
+      }
     }
 
     return errors
@@ -158,7 +170,11 @@ function RegistroPacientes() {
       let response
       let successMsg
 
-      if (isEditMode && selectedPacienteId) {
+      if (isEntityMode) {
+        // Crear nueva entidad
+        response = await api.createEntidad(formData) // Asumir que existe
+        successMsg = `✅ Entidad ${formData.nombre_entidad} registrada correctamente`
+      } else if (isEditMode && selectedPacienteId) {
         // Actualizar paciente existente
         response = await api.updatePaciente(selectedPacienteId, formData)
         successMsg = `✅ ${formData.nombre} ${formData.apellido} actualizado correctamente`
@@ -197,8 +213,8 @@ function RegistroPacientes() {
       }, 2000)
 
     } catch (error) {
-      console.error('Error guardando paciente:', error)
-      setMessage({ type: 'error', text: error.message || 'Error al guardar paciente' })
+      console.error('Error guardando:', error)
+      setMessage({ type: 'error', text: error.message || 'Error al guardar' })
     } finally {
       setLoading(false)
     }
@@ -217,6 +233,7 @@ function RegistroPacientes() {
       setMessage({ type: 'success', text: '✅ Paciente eliminado correctamente' })
       setSelectedPacienteId(null)
       setIsEditMode(false)
+      setIsEntityMode(false)
       setFormData({
         nombre: '',
         apellido: '',
@@ -224,7 +241,8 @@ function RegistroPacientes() {
         edad: '',
         telefono: '',
         direccion: '',
-        sexo: ''
+        sexo: '',
+        procedencia: ''
       })
     } catch (error) {
       console.error('Error eliminando paciente:', error)
@@ -304,10 +322,15 @@ function RegistroPacientes() {
           {/* PANEL DERECHO: Formulario */}
           <section className="paciente-form-panel">
             <div className="form-header">
-              <h2>{isEditMode ? 'Editar Paciente' : 'Registrar Nuevo Paciente'}</h2>
+              <h2>{isEntityMode ? 'Registrar Nueva Entidad' : isEditMode ? 'Editar Paciente' : 'Registrar Nuevo Paciente'}</h2>
               {isEditMode && (
                 <button className="btn-cancel" onClick={handleNewPaciente} title="Crear nuevo">
                   ➕ Nuevo
+                </button>
+              )}
+              {!isEntityMode && !isEditMode && (
+                <button className="btn-secondary" onClick={handleCreateEntity} title="Crear entidad">
+                  Crear Entidad
                 </button>
               )}
             </div>
@@ -320,98 +343,169 @@ function RegistroPacientes() {
 
             <form onSubmit={handleSubmit} className="paciente-form">
 
-              {/* Fila 1: Nombre y Apellido */}
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Nombre *</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleFormChange}
-                    placeholder="Ej: Juan"
-                    className="form-input"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Apellido *</label>
-                  <input
-                    type="text"
-                    name="apellido"
-                    value={formData.apellido}
-                    onChange={handleFormChange}
-                    placeholder="Ej: Pérez"
-                    className="form-input"
-                  />
-                </div>
-              </div>
+              {isEntityMode ? (
+                <>
+                  {/* Nombre de Entidad */}
+                  <div className="form-group">
+                    <label>Nombre de Entidad *</label>
+                    <input
+                      type="text"
+                      name="nombre_entidad"
+                      value={formData.nombre_entidad || ''}
+                      onChange={handleFormChange}
+                      placeholder="Ej: Empresa XYZ"
+                      className="form-input"
+                    />
+                  </div>
 
-              {/* Fila 2: Cédula y Edad */}
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Cédula</label>
-                  <input
-                    type="text"
-                    name="cedula"
-                    value={formData.cedula}
-                    onChange={handleFormChange}
-                    placeholder="Ej: V-12345678"
-                    className="form-input"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Edad *</label>
-                  <input
-                    type="number"
-                    name="edad"
-                    value={formData.edad}
-                    onChange={handleFormChange}
-                    placeholder="Ej: 30"
-                    className="form-input"
-                    min="0"
-                    max="120"
-                  />
-                </div>
-              </div>
+                  {/* RIF */}
+                  <div className="form-group">
+                    <label>RIF *</label>
+                    <input
+                      type="text"
+                      name="rif"
+                      value={formData.rif || ''}
+                      onChange={handleFormChange}
+                      placeholder="Ej: J-12345678-9"
+                      className="form-input"
+                    />
+                  </div>
 
-              {/* Fila 3: Teléfono y Sexo */}
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Teléfono *</label>
-                  <input
-                    type="tel"
-                    name="telefono"
-                    value={formData.telefono}
-                    onChange={handleFormChange}
-                    placeholder="Ej: +58 412-1234567"
-                    className="form-input"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Sexo</label>
-                  <select
-                    name="sexo"
-                    value={formData.sexo}
-                    onChange={handleFormChange}
-                    className="form-input"
-                  >
-                    <option value="">Seleccionar...</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
-                    <option value="O">Otro</option>
-                  </select>
-                </div>
-              </div>
+                  {/* Teléfono */}
+                  <div className="form-group">
+                    <label>Teléfono *</label>
+                    <input
+                      type="tel"
+                      name="telefono"
+                      value={formData.telefono}
+                      onChange={handleFormChange}
+                      placeholder="Ej: +58 412-1234567"
+                      className="form-input"
+                    />
+                  </div>
 
-              {/* Dirección */}
+                  {/* Dirección Fiscal */}
+                  <div className="form-group">
+                    <label>Dirección Fiscal</label>
+                    <input
+                      type="text"
+                      name="direccion_fiscal"
+                      value={formData.direccion_fiscal || ''}
+                      onChange={handleFormChange}
+                      placeholder="Ej: Calle Principal 123"
+                      className="form-input"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Fila 1: Nombre y Apellido */}
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Nombre *</label>
+                      <input
+                        type="text"
+                        name="nombre"
+                        value={formData.nombre}
+                        onChange={handleFormChange}
+                        placeholder="Ej: Juan"
+                        className="form-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Apellido *</label>
+                      <input
+                        type="text"
+                        name="apellido"
+                        value={formData.apellido}
+                        onChange={handleFormChange}
+                        placeholder="Ej: Pérez"
+                        className="form-input"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Fila 2: Cédula y Edad */}
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Cédula</label>
+                      <input
+                        type="text"
+                        name="cedula"
+                        value={formData.cedula}
+                        onChange={handleFormChange}
+                        placeholder="Ej: V-12345678"
+                        className="form-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Edad *</label>
+                      <input
+                        type="number"
+                        name="edad"
+                        value={formData.edad}
+                        onChange={handleFormChange}
+                        placeholder="Ej: 30"
+                        className="form-input"
+                        min="0"
+                        max="120"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Fila 3: Teléfono y Sexo */}
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Teléfono *</label>
+                      <input
+                        type="tel"
+                        name="telefono"
+                        value={formData.telefono}
+                        onChange={handleFormChange}
+                        placeholder="Ej: +58 412-1234567"
+                        className="form-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Sexo</label>
+                      <select
+                        name="sexo"
+                        value={formData.sexo}
+                        onChange={handleFormChange}
+                        className="form-input"
+                      >
+                        <option value="">Seleccionar...</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="O">Otro</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Dirección */}
+                  <div className="form-group">
+                    <label>Dirección</label>
+                    <input
+                      type="text"
+                      name="direccion"
+                      value={formData.direccion}
+                      onChange={handleFormChange}
+                      placeholder="Ej: Calle Principal 123"
+                      className="form-input"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Procedencia */}
               <div className="form-group">
-                <label>Dirección</label>
+                <label>Procedencia</label>
                 <input
                   type="text"
-                  name="direccion"
-                  value={formData.direccion}
+                  name="procedencia"
+                  value={formData.procedencia}
                   onChange={handleFormChange}
-                  placeholder="Ej: Calle Principal 123"
+                  placeholder="Ej: Recomendado por Dr. García"
                   className="form-input"
                 />
               </div>
@@ -423,7 +517,7 @@ function RegistroPacientes() {
                   className="btn-submit"
                   disabled={loading}
                 >
-                  {loading ? 'Guardando...' : isEditMode ? 'Actualizar' : 'Registrar'}
+                  {loading ? 'Guardando...' : isEntityMode ? 'Registrar Entidad' : isEditMode ? 'Actualizar' : 'Registrar'}
                 </button>
 
                 {isEditMode && (
@@ -445,6 +539,16 @@ function RegistroPacientes() {
                       Cancelar
                     </button>
                   </>
+                )}
+                {isEntityMode && (
+                  <button 
+                    type="button" 
+                    className="btn-cancel"
+                    onClick={handleNewPaciente}
+                    disabled={loading}
+                  >
+                    Cancelar
+                  </button>
                 )}
               </div>
             </form>

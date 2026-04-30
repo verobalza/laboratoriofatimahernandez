@@ -36,6 +36,8 @@ function Pruebas() {
   const [modalOpen, setModalOpen] = useState(false)
   const [formData, setFormData] = useState({
     nombre_prueba: '',
+    tipo_prueba: 'numerica',
+    area: '',
     unidad_medida: '',
     tipo_muestra: '',
     valor_referencia_min: '',
@@ -73,6 +75,7 @@ function Pruebas() {
   // ============ UNIDADES Y TIPOS ============
   const [unidadesMedida, setUnidadesMedida] = useState([])
   const [tiposMuestra, setTiposMuestra] = useState([])
+  const [areas, setAreas] = useState([])
 
   // ============ MENÚ HAMBURGUESA ============
   const menuItems = [
@@ -90,6 +93,7 @@ function Pruebas() {
     loadGrupos()
     loadUnidadesMedida()
     loadTiposMuestra()
+    loadAreas()
     loadTasaCambio()
   }, [])
 
@@ -145,6 +149,15 @@ function Pruebas() {
     }
   }
 
+  const loadAreas = async () => {
+    try {
+      const areasData = await api.getAreas()
+      setAreas(areasData || [])
+    } catch (error) {
+      console.error('Error cargando áreas:', error)
+    }
+  }
+
   const loadTasaCambio = async () => {
     try {
       const tasaData = await api.obtenerTasaCambio()
@@ -178,6 +191,8 @@ function Pruebas() {
     setIsEditMode(false)
     setFormData({
       nombre_prueba: '',
+      tipo_prueba: 'numerica',
+      area: '',
       unidad_medida: '',
       tipo_muestra: '',
       valor_referencia_min: '',
@@ -204,6 +219,8 @@ function Pruebas() {
     setIsEditMode(true)
     setFormData({
       nombre_prueba: prueba.nombre_prueba || '',
+      tipo_prueba: prueba.tipo_prueba || 'numerica',
+      area: prueba.area || '',
       unidad_medida: prueba.unidad_medida || '',
       tipo_muestra: prueba.tipo_muestra || '',
       valor_referencia_min: prueba.valor_referencia_min ?? '',
@@ -225,36 +242,45 @@ function Pruebas() {
       newErrors.nombre_prueba = 'El nombre es obligatorio'
     }
 
-    if (!formData.unidad_medida.trim()) {
-      newErrors.unidad_medida = 'La unidad de medida es obligatoria'
+    if (!formData.area.trim()) {
+      newErrors.area = 'El área es obligatoria'
+    }
+
+    // Para serología: no requiere unidad_medida ni valores de referencia
+    if (formData.tipo_prueba === 'numerica') {
+      if (!formData.unidad_medida.trim()) {
+        newErrors.unidad_medida = 'La unidad de medida es obligatoria'
+      }
     }
 
     if (!formData.tipo_muestra.trim()) {
       newErrors.tipo_muestra = 'El tipo de muestra es obligatorio'
     }
 
-    // Validar valores numéricos si se proporcionan
-    if (formData.valor_referencia_min && isNaN(parseFloat(formData.valor_referencia_min))) {
-      newErrors.valor_referencia_min = 'Ingrese un número válido'
-    }
+    // Validar valores numéricos si se proporcionan y la prueba es numérica
+    if (formData.tipo_prueba === 'numerica') {
+      if (formData.valor_referencia_min && isNaN(parseFloat(formData.valor_referencia_min))) {
+        newErrors.valor_referencia_min = 'Ingrese un número válido'
+      }
 
-    if (formData.valor_referencia_max && isNaN(parseFloat(formData.valor_referencia_max))) {
-      newErrors.valor_referencia_max = 'Ingrese un número válido'
+      if (formData.valor_referencia_max && isNaN(parseFloat(formData.valor_referencia_max))) {
+        newErrors.valor_referencia_max = 'Ingrese un número válido'
+      }
+
+      // Validar que min <= max si ambos están presentes
+      if (
+        formData.valor_referencia_min &&
+        formData.valor_referencia_max &&
+        parseFloat(formData.valor_referencia_min) > parseFloat(formData.valor_referencia_max)
+      ) {
+        newErrors.valores = 'El valor mínimo no puede ser mayor que el máximo'
+      }
     }
 
     if (!formData.precio_bs.trim()) {
       newErrors.precio_bs = 'El precio en BS es obligatorio'
     } else if (isNaN(parseFloat(formData.precio_bs)) || parseFloat(formData.precio_bs) <= 0) {
       newErrors.precio_bs = 'Ingrese un precio válido en BS (mayor a 0)'
-    }
-
-    // Validar que min <= max si ambos están presentes
-    if (
-      formData.valor_referencia_min &&
-      formData.valor_referencia_max &&
-      parseFloat(formData.valor_referencia_min) > parseFloat(formData.valor_referencia_max)
-    ) {
-      newErrors.valores = 'El valor mínimo no puede ser mayor que el máximo'
     }
 
     setErrors(newErrors)
@@ -274,17 +300,28 @@ function Pruebas() {
 
     const dataToSend = {
       nombre_prueba: formData.nombre_prueba.trim(),
-      unidad_medida: formData.unidad_medida.trim(),
+      tipo_prueba: formData.tipo_prueba,
+      area: formData.area.trim(),
       tipo_muestra: formData.tipo_muestra.trim(),
       precio_bs: parseFloat(formData.precio_bs),
       descripcion: formData.descripcion.trim() || undefined
     }
 
-    if (formData.valor_referencia_min !== '') {
-      dataToSend.valor_referencia_min = parseFloat(formData.valor_referencia_min)
-    }
-    if (formData.valor_referencia_max !== '') {
-      dataToSend.valor_referencia_max = parseFloat(formData.valor_referencia_max)
+    // Solo agregar unidad_medida y valores de referencia si es prueba numérica
+    if (formData.tipo_prueba === 'numerica') {
+      dataToSend.unidad_medida = formData.unidad_medida.trim()
+      
+      if (formData.valor_referencia_min !== '') {
+        dataToSend.valor_referencia_min = parseFloat(formData.valor_referencia_min)
+      }
+      if (formData.valor_referencia_max !== '') {
+        dataToSend.valor_referencia_max = parseFloat(formData.valor_referencia_max)
+      }
+    } else if (formData.tipo_prueba === 'serologia') {
+      // Para serología, establecer unidad como vacío y valores de referencia como null
+      dataToSend.unidad_medida = ''
+      dataToSend.valor_referencia_min = null
+      dataToSend.valor_referencia_max = null
     }
 
     try {
@@ -582,6 +619,32 @@ function Pruebas() {
       return
     }
 
+    if (name === 'area' && value === '__add_new_area__') {
+      const nueva = prompt('Ingrese la nueva área (ej: Hematología, Química Sanguínea, etc.):')
+      if (nueva && nueva.trim()) {
+        try {
+          // Guardar en Supabase
+          await api.createArea(nueva.trim())
+          // Recargar áreas
+          await loadAreas()
+          // Seleccionar la nueva área
+          setFormData((prev) => ({ 
+            ...prev, 
+            area: nueva.trim()
+          }))
+          setMensaje({ type: 'success', text: 'Área agregada correctamente' })
+        } catch (error) {
+          console.error('Error guardando área:', error)
+          setMensaje({ type: 'error', text: 'Error al guardar el área' })
+          setFormData((prev) => ({ ...prev, area: '' }))
+        }
+      } else {
+        // Resetear select si el usuario cancela
+        setFormData((prev) => ({ ...prev, area: '' }))
+      }
+      return
+    }
+
     let updatedData = { ...formData, [name]: value }
 
     // Calcular precio_usd cuando cambia precio_bs
@@ -797,30 +860,74 @@ function Pruebas() {
                 )}
               </div>
 
-              {/* Unidad de medida */}
+              {/* Tipo de prueba */}
               <div className="form-group">
-                <label htmlFor="unidad_medida" className="form-label">
-                  Unidad de medida <span className="required">*</span>
+                <label htmlFor="tipo_prueba" className="form-label">
+                  Tipo de prueba <span className="required">*</span>
                 </label>
                 <select
-                  id="unidad_medida"
-                  name="unidad_medida"
-                  value={formData.unidad_medida}
+                  id="tipo_prueba"
+                  name="tipo_prueba"
+                  value={formData.tipo_prueba}
                   onChange={handleFormChange}
-                  className={`form-input ${errors.unidad_medida ? 'error' : ''}`}
+                  className="form-input"
                 >
-                  <option value="">Seleccionar unidad...</option>
-                  <option value="__add_new_unidad__">+ Agregar nueva unidad</option>
-                  {unidadesMedida.map((unidad) => (
-                    <option key={unidad.id} value={unidad.nombre}>
-                      {unidad.nombre}
+                  <option value="numerica">Prueba numérica</option>
+                  <option value="serologia">Serología (Positivo/Negativo)</option>
+                </select>
+              </div>
+
+              {/* Área */}
+              <div className="form-group">
+                <label htmlFor="area" className="form-label">
+                  Área <span className="required">*</span>
+                </label>
+                <select
+                  id="area"
+                  name="area"
+                  value={formData.area}
+                  onChange={handleFormChange}
+                  className={`form-input ${errors.area ? 'error' : ''}`}
+                >
+                  <option value="">Seleccionar área...</option>
+                  <option value="__add_new_area__">+ Agregar nueva área</option>
+                  {areas.map((area) => (
+                    <option key={area.id} value={area.nombre}>
+                      {area.nombre}
                     </option>
                   ))}
                 </select>
-                {errors.unidad_medida && (
-                  <span className="error-message">{errors.unidad_medida}</span>
+                {errors.area && (
+                  <span className="error-message">{errors.area}</span>
                 )}
               </div>
+
+              {/* Unidad de medida - Solo para pruebas numéricas */}
+              {formData.tipo_prueba === 'numerica' && (
+                <div className="form-group">
+                  <label htmlFor="unidad_medida" className="form-label">
+                    Unidad de medida <span className="required">*</span>
+                  </label>
+                  <select
+                    id="unidad_medida"
+                    name="unidad_medida"
+                    value={formData.unidad_medida}
+                    onChange={handleFormChange}
+                    className={`form-input ${errors.unidad_medida ? 'error' : ''}`}
+                  >
+                    <option value="">Seleccionar unidad...</option>
+                    <option value="__add_new_unidad__">+ Agregar nueva unidad</option>
+                    {unidadesMedida.map((unidad) => (
+                      <option key={unidad.id} value={unidad.nombre}>
+                        {unidad.nombre}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.unidad_medida && (
+                    <span className="error-message">{errors.unidad_medida}</span>
+                  )}
+                </div>
+              )}
 
               {/* Tipo de muestra */}
               <div className="form-group">
@@ -847,49 +954,53 @@ function Pruebas() {
                 )}
               </div>
 
-              {/* Valores de referencia */}
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="valor_referencia_min" className="form-label">
-                    Valor mín. de referencia
-                  </label>
-                  <input
-                    id="valor_referencia_min"
-                    type="number"
-                    name="valor_referencia_min"
-                    placeholder="Ej: 70"
-                    step="0.01"
-                    value={formData.valor_referencia_min}
-                    onChange={handleFormChange}
-                    className={`form-input ${errors.valor_referencia_min ? 'error' : ''}`}
-                  />
-                  {errors.valor_referencia_min && (
-                    <span className="error-message">{errors.valor_referencia_min}</span>
-                  )}
-                </div>
+              {/* Valores de referencia - Solo para pruebas numéricas */}
+              {formData.tipo_prueba === 'numerica' && (
+                <>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="valor_referencia_min" className="form-label">
+                        Valor mín. de referencia
+                      </label>
+                      <input
+                        id="valor_referencia_min"
+                        type="number"
+                        name="valor_referencia_min"
+                        placeholder="Ej: 70"
+                        step="0.01"
+                        value={formData.valor_referencia_min}
+                        onChange={handleFormChange}
+                        className={`form-input ${errors.valor_referencia_min ? 'error' : ''}`}
+                      />
+                      {errors.valor_referencia_min && (
+                        <span className="error-message">{errors.valor_referencia_min}</span>
+                      )}
+                    </div>
 
-                <div className="form-group">
-                  <label htmlFor="valor_referencia_max" className="form-label">
-                    Valor máx. de referencia
-                  </label>
-                  <input
-                    id="valor_referencia_max"
-                    type="number"
-                    name="valor_referencia_max"
-                    placeholder="Ej: 100"
-                    step="0.01"
-                    value={formData.valor_referencia_max}
-                    onChange={handleFormChange}
-                    className={`form-input ${errors.valor_referencia_max ? 'error' : ''}`}
-                  />
-                  {errors.valor_referencia_max && (
-                    <span className="error-message">{errors.valor_referencia_max}</span>
-                  )}
-                </div>
-              </div>
+                    <div className="form-group">
+                      <label htmlFor="valor_referencia_max" className="form-label">
+                        Valor máx. de referencia
+                      </label>
+                      <input
+                        id="valor_referencia_max"
+                        type="number"
+                        name="valor_referencia_max"
+                        placeholder="Ej: 100"
+                        step="0.01"
+                        value={formData.valor_referencia_max}
+                        onChange={handleFormChange}
+                        className={`form-input ${errors.valor_referencia_max ? 'error' : ''}`}
+                      />
+                      {errors.valor_referencia_max && (
+                        <span className="error-message">{errors.valor_referencia_max}</span>
+                      )}
+                    </div>
+                  </div>
 
-              {errors.valores && (
-                <div className="error-message">{errors.valores}</div>
+                  {errors.valores && (
+                    <div className="error-message">{errors.valores}</div>
+                  )}
+                </>
               )}
 
               {/* Descripción */}

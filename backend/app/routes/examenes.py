@@ -203,7 +203,10 @@ async def upload_pdf(
        # Obtener URL pública del archivo
     try:
         bucket_name = "examenes"
-        public_url = supabase.storage.from_(bucket_name).get_public_url(path)
+        signed_url = supabase.storage.from_(bucket_name).create_signed_url(path, 604800)
+        "url_pdf": path
+
+
 
         if not isinstance(public_url, str) or not public_url.startswith("https://"):
             raise Exception("URL pública generada inválida")

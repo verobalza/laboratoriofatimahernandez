@@ -44,7 +44,7 @@ function MenuHamburguesa({ items = [] }) {
   const defaultItems = [
     { label: 'Registro pacientes', icon: '👤' },
     { label: 'Pruebas', icon: '🧪' },
-    { label: 'Exámenes', icon: '📋' },
+    { label: 'Resultados', icon: '📋' },
     { label: 'Facturación', icon: '💳' },
     { label: 'Inventario', icon: '📦' },
     { label: 'Registro financiero', icon: '💰' }

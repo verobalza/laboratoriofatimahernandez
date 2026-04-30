@@ -582,8 +582,9 @@ function Examenes() {
           const res = resultados[String(p.id)] || '—'
           const unidad = p.unidad_medida || ''
 
+          // Para serología, no mostrar rango
           let rango = ''
-          if (p.valor_referencia_min !== null && p.valor_referencia_max !== null) {
+          if (p.tipo_prueba !== 'serologia' && p.valor_referencia_min !== null && p.valor_referencia_max !== null) {
             rango = `(${p.valor_referencia_min} - ${p.valor_referencia_max})`
           }
 
@@ -597,9 +598,14 @@ function Examenes() {
           doc.setTextColor(0, 0, 0)
           doc.text(p.nombre_prueba, 20, ypos)
 
-          const resultadoUnidad = [res, unidad].filter(Boolean).join(' ').trim() || '—'
+          const resultadoUnidad = p.tipo_prueba === 'serologia' 
+            ? res 
+            : [res, unidad].filter(Boolean).join(' ').trim() || '—'
+          
+          // Lógica de fuera de rango solo para pruebas numéricas
           const valorNumerico = parseFloat(res)
           const fueraDeRango = (
+            p.tipo_prueba === 'numerica' &&
             p.valor_referencia_min !== null &&
             p.valor_referencia_max !== null &&
             !Number.isNaN(valorNumerico) &&
@@ -883,7 +889,7 @@ function Examenes() {
       .map((p) => `• ${p}`)
       .join('\n')
     const mensajeTxt = `*Laboratorio Bioclínico*\nLc. Fátima Hernández\n\nHola ${nombre},\n\nAquí tienes tu examen correspondiente al ${record.fecha}.\n\nPruebas realizadas:\n${pruebasText}\n\nPuedes descargar tu examen aquí:\n${record.url_pdf}\n\nGracias por confiar en nosotros.`
-    const url = `https://wa.me/57${telefono}?text=${encodeURIComponent(mensajeTxt)}`
+    const url = `https://wa.me/58${telefono}?text=${encodeURIComponent(mensajeTxt)}`
     window.open(url, '_blank')
   }
 
@@ -1853,25 +1859,43 @@ function Examenes() {
                   <div key={prueba.id} className="resultado-item">
                     <div className="resultado-header">
                       <h4>{prueba.nombre_prueba}</h4>
-                      <span className="unidad">{prueba.unidad_medida}</span>
+                      {prueba.tipo_prueba === 'numerica' && (
+                        <span className="unidad">{prueba.unidad_medida}</span>
+                      )}
                     </div>
-                    {(prueba.valor_referencia_min !== null ||
-                      prueba.valor_referencia_max !== null) && (
+                    {prueba.tipo_prueba === 'numerica' && (
+                      prueba.valor_referencia_min !== null ||
+                      prueba.valor_referencia_max !== null
+                    ) && (
                       <div className="rango-referencia">
                         Rango de referencia: {prueba.valor_referencia_min} -{' '}
                         {prueba.valor_referencia_max}
                       </div>
                     )}
                     <div className="resultado-inputs">
-                      <input
-                        type="text"
-                        placeholder="Resultado"
-                        value={resultados[prueba.id] || ''}
-                        onChange={(e) =>
-                          handleResultadoChange(prueba.id, e.target.value)
-                        }
-                        className="input-resultado"
-                      />
+                      {prueba.tipo_prueba === 'serologia' ? (
+                        <select
+                          value={resultados[prueba.id] || ''}
+                          onChange={(e) =>
+                            handleResultadoChange(prueba.id, e.target.value)
+                          }
+                          className="input-resultado"
+                        >
+                          <option value="">Seleccionar resultado...</option>
+                          <option value="positivo">Positivo</option>
+                          <option value="negativo">Negativo</option>
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          placeholder="Resultado"
+                          value={resultados[prueba.id] || ''}
+                          onChange={(e) =>
+                            handleResultadoChange(prueba.id, e.target.value)
+                          }
+                          className="input-resultado"
+                        />
+                      )}
                       <input
                         type="text"
                         placeholder="Observaciones (opcional)"

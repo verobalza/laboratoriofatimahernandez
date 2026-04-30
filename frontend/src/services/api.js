@@ -213,6 +213,13 @@ export const api = {
     })
   },
 
+  async createEntidad(data) {
+    return request(`${API_URL}/entidades`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
   /* Pruebas */
   async createPrueba(data) {
     return request(`${API_URL}/pruebas`, {
@@ -272,6 +279,17 @@ export const api = {
 
   async getTiposMuestra() {
     return request(`${API_URL}/pruebas/tipos`, { method: 'GET' })
+  },
+
+  async createArea(nombre) {
+    return request(`${API_URL}/pruebas/areas`, {
+      method: 'POST',
+      body: JSON.stringify({ nombre })
+    })
+  },
+
+  async getAreas() {
+    return request(`${API_URL}/pruebas/areas`, { method: 'GET' })
   },
 
   /* Grupos de Pruebas */

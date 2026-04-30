@@ -384,6 +384,29 @@
   background: rgba(255,255,255,0.15);
 }
 
+.btn-secondary {
+  background: var(--accent-indigo);
+  color: var(--white);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Panel de lista de pacientes */
 .pacientes-list-panel {
   background: var(--glass-bg);
