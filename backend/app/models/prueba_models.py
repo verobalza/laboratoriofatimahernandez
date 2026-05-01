@@ -87,6 +87,7 @@ class PruebaUpdate(BaseModel):
 
 
 class PruebaOut(PruebaBase):
+    area: Optional[str] = None
     id: int
     creado_en: Optional[str] = None
     precio_usd: Optional[float] = None
