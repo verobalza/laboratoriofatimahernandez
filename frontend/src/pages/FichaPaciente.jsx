@@ -19,7 +19,7 @@ function FichaPaciente() {
   const menuItems = [
     { label: 'Registro pacientes', icon: '👤', onClick: () => navigate('/registro-pacientes') },
     { label: 'Pruebas', icon: '🧪', onClick: () => navigate('/pruebas') },
-    { label: 'Exámenes', icon: '📋', onClick: () => navigate('/examenes') },
+    { label: 'Resultados', icon: '📋', onClick: () => navigate('/examenes') },
     { label: 'Facturación', icon: '💳', onClick: () => navigate('/facturacion') },
     { label: 'Inventario', icon: '📦', onClick: () => navigate('/inventario') },
     { label: 'Registro financiero', icon: '💰', onClick: () => navigate('/registro-financiero') }

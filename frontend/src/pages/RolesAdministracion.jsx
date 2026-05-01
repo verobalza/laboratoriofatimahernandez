@@ -5,7 +5,7 @@ import './RolesAdministracion.css'
 const SECTIONS = [
   { key: 'registro_pacientes', label: 'Registro de Pacientes' },
   { key: 'pruebas', label: 'Pruebas' },
-  { key: 'examenes', label: 'Exámenes' },
+  { key: 'examenes', label: 'Resultados' },
   { key: 'facturacion', label: 'Facturación' },
   { key: 'registro_financiero', label: 'Registro Financiero' },
   { key: 'inventario', label: 'Inventario' },
