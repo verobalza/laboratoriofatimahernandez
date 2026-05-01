@@ -713,6 +713,7 @@ function Pruebas() {
                 <thead>
                   <tr>
                     <th>Nombre de la prueba</th>
+                    <th>Área</th>
                     <th>Unidad</th>
                     <th>Tipo de muestra</th>
                   </tr>
@@ -728,6 +729,7 @@ function Pruebas() {
                       onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') handleSelectPrueba(prueba) }}
                     >
                       <td className="prueba-nombre">{prueba.nombre_prueba}</td>
+                      <td className="prueba-area">{prueba.area || '—'}</td>
                       <td className="prueba-unidad">{prueba.unidad_medida || '—'}</td>
                       <td className="prueba-tipo">{prueba.tipo_muestra}</td>
                     </tr>
