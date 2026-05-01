@@ -220,6 +220,27 @@ export const api = {
     })
   },
 
+  async getEntidades() {
+    return request(`${API_URL}/entidades`, { method: 'GET' })
+  },
+
+  async getEntidad(id) {
+    return request(`${API_URL}/entidades/${id}`, { method: 'GET' })
+  },
+
+  async updateEntidad(id, data) {
+    return request(`${API_URL}/entidades/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async deleteEntidad(id) {
+    return request(`${API_URL}/entidades/${id}`, {
+      method: 'DELETE',
+    })
+  },
+
   /* Pruebas */
   async createPrueba(data) {
     return request(`${API_URL}/pruebas`, {

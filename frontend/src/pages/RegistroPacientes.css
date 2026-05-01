@@ -461,7 +461,8 @@
   50% { opacity: 0.6; }
 }
 
-.pacientes-list {
+.pacientes-list,
+.entidades-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -473,25 +474,30 @@
   scroll-behavior: smooth;
 }
 
-.pacientes-list::-webkit-scrollbar {
+.pacientes-list::-webkit-scrollbar,
+.entidades-list::-webkit-scrollbar {
   width: 8px;
 }
 
-.pacientes-list::-webkit-scrollbar-track {
+.pacientes-list::-webkit-scrollbar-track,
+.entidades-list::-webkit-scrollbar-track {
   background: rgba(59, 130, 246, 0.1);
   border-radius: 10px;
 }
 
-.pacientes-list::-webkit-scrollbar-thumb {
+.pacientes-list::-webkit-scrollbar-thumb,
+.entidades-list::-webkit-scrollbar-thumb {
   background: rgba(59, 130, 246, 0.4);
   border-radius: 10px;
 }
 
-.pacientes-list::-webkit-scrollbar-thumb:hover {
+.pacientes-list::-webkit-scrollbar-thumb:hover,
+.entidades-list::-webkit-scrollbar-thumb:hover {
   background: rgba(59, 130, 246, 0.6);
 }
 
-.paciente-item {
+.paciente-item,
+.entidad-item {
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -504,20 +510,23 @@
   flex-wrap: wrap;
 }
 
-.paciente-item:hover {
+.paciente-item:hover,
+.entidad-item:hover {
   background: rgba(255, 255, 255, 0.8);
   border-color: var(--primary-blue);
   transform: translateX(4px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
-.paciente-item.active {
+.paciente-item.active,
+.entidad-item.active {
   background: rgba(59, 130, 246, 0.1);
   border-color: var(--primary-blue);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.paciente-info {
+.paciente-info,
+.entidad-info {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -525,7 +534,8 @@
   gap: 0.25rem;
 }
 
-.paciente-nombre {
+.paciente-nombre,
+.entidad-nombre {
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--text-dark);
@@ -533,7 +543,8 @@
   overflow-wrap: break-word;
 }
 
-.paciente-cedula {
+.paciente-cedula,
+.entidad-rif {
   font-size: 0.85rem;
   color: var(--text-light);
   white-space: normal;
@@ -554,7 +565,8 @@
   transition: opacity 0.3s ease;
 }
 
-.paciente-item:hover .item-arrow {
+.paciente-item:hover .item-arrow,
+.entidad-item:hover .item-arrow {
   opacity: 1;
 }
 
@@ -671,7 +683,8 @@
     grid-template-columns: 1fr;
   }
 
-  .pacientes-list {
+  .pacientes-list,
+  .entidades-list {
     max-height: 400px;
   }
 }
@@ -720,7 +733,8 @@
     grid-template-columns: 1fr;
   }
 
-  .pacientes-list {
+  .pacientes-list,
+  .entidades-list {
     max-height: 300px;
   }
 
@@ -782,25 +796,30 @@
   margin: 0 auto;
 }
 
-.registro-pacientes-container .pacientes-list {
+.registro-pacientes-container .pacientes-list,
+.registro-pacientes-container .entidades-list {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
 }
 
-.registro-pacientes-container .paciente-item {
+.registro-pacientes-container .paciente-item,
+.registro-pacientes-container .entidad-item {
   flex-wrap: wrap;
   gap: 0.75rem;
   padding: 1rem;
 }
 
-.registro-pacientes-container .paciente-info {
+.registro-pacientes-container .paciente-info,
+.registro-pacientes-container .entidad-info {
   flex: 1 1 auto;
   min-width: 0;
 }
 
 .registro-pacientes-container .paciente-nombre,
 .registro-pacientes-container .paciente-cedula,
+.registro-pacientes-container .entidad-nombre,
+.registro-pacientes-container .entidad-rif,
 .registro-pacientes-container .paciente-telefono {
   white-space: normal;
   overflow-wrap: break-word;

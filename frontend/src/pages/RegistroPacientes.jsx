@@ -16,17 +16,7 @@ import './RegistroPacientes.css'
 function RegistroPacientes() {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
-
-  // Estado: Lista de pacientes
-  const [pacientes, setPacientes] = useState([])
-  const [pacientesLoading, setPacientesLoading] = useState(false)
-
-  // Estado: Paciente seleccionado / en edición
-  const [selectedPacienteId, setSelectedPacienteId] = useState(null)
-  const [isEditMode, setIsEditMode] = useState(false)
-
-  // Estado: Formulario
-  const [formData, setFormData] = useState({
+  const pacienteInitialData = {
     nombre: '',
     apellido: '',
     cedula: '',
@@ -35,7 +25,28 @@ function RegistroPacientes() {
     direccion: '',
     sexo: '',
     procedencia: ''
-  })
+  }
+  const entidadInitialData = {
+    nombre_entidad: '',
+    rif: '',
+    telefono: '',
+    direccion_fiscal: '',
+    procedencia: ''
+  }
+
+  // Estado: Lista de pacientes
+  const [pacientes, setPacientes] = useState([])
+  const [pacientesLoading, setPacientesLoading] = useState(false)
+  const [entidades, setEntidades] = useState([])
+  const [entidadesLoading, setEntidadesLoading] = useState(false)
+
+  // Estado: Paciente seleccionado / en edición
+  const [selectedPacienteId, setSelectedPacienteId] = useState(null)
+  const [selectedEntidadId, setSelectedEntidadId] = useState(null)
+  const [isEditMode, setIsEditMode] = useState(false)
+
+  // Estado: Formulario
+  const [formData, setFormData] = useState(pacienteInitialData)
   const [isEntityMode, setIsEntityMode] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
@@ -56,6 +67,7 @@ function RegistroPacientes() {
   // Cargar lista completa de pacientes al montar
   useEffect(() => {
     loadPacientes()
+    loadEntidades()
   }, [])
 
   /**
@@ -77,11 +89,28 @@ function RegistroPacientes() {
     }
   }
 
+  const loadEntidades = async () => {
+    setEntidadesLoading(true)
+    try {
+      const results = await api.getEntidades()
+      const sorted = (results || []).sort((a, b) => {
+        return (a.nombre_entidad || '').localeCompare(b.nombre_entidad || '')
+      })
+      setEntidades(sorted)
+    } catch (error) {
+      console.error('Error cargando entidades:', error)
+      setMessage({ type: 'error', text: 'Error al cargar entidades' })
+    } finally {
+      setEntidadesLoading(false)
+    }
+  }
+
   /**
    * Cuando el usuario selecciona un paciente de la lista
    */
   const handleSelectPaciente = (paciente) => {
     setSelectedPacienteId(paciente.id)
+    setSelectedEntidadId(null)
     setIsEditMode(true)
     setIsEntityMode(false) // Asumir que seleccionados son pacientes
     setFormData({
@@ -103,15 +132,34 @@ function RegistroPacientes() {
   const handleCreateEntity = () => {
     setIsEntityMode(true)
     setSelectedPacienteId(null)
+    setSelectedEntidadId(null)
     setIsEditMode(false)
-    setFormData({
-      nombre_entidad: '',
-      rif: '',
-      telefono: '',
-      direccion_fiscal: '',
-      procedencia: ''
-    })
+    setFormData(entidadInitialData)
     setMessage({ type: '', text: '' })
+  }
+
+  const handleSelectEntidad = async (entidadId) => {
+    setLoading(true)
+    try {
+      const entidad = await api.getEntidad(entidadId)
+      setSelectedEntidadId(entidad.id)
+      setSelectedPacienteId(null)
+      setIsEntityMode(true)
+      setIsEditMode(true)
+      setFormData({
+        nombre_entidad: entidad.nombre_entidad || '',
+        rif: entidad.rif || '',
+        telefono: entidad.telefono || '',
+        direccion_fiscal: entidad.direccion_fiscal || '',
+        procedencia: entidad.procedencia || ''
+      })
+      setMessage({ type: '', text: '' })
+    } catch (error) {
+      console.error('Error seleccionando entidad:', error)
+      setMessage({ type: 'error', text: error.message || 'Error al cargar entidad' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   /**
@@ -171,9 +219,29 @@ function RegistroPacientes() {
       let successMsg
 
       if (isEntityMode) {
-        // Crear nueva entidad
-        response = await api.createEntidad(formData)
-        successMsg = `✅ Entidad ${formData.nombre_entidad} registrada correctamente`
+        if (isEditMode && selectedEntidadId) {
+          response = await api.updateEntidad(selectedEntidadId, formData)
+          successMsg = `✅ Entidad ${formData.nombre_entidad} actualizada correctamente`
+
+          if (response && response.id) {
+            const updated = entidades.map(e => (e.id === selectedEntidadId ? response : e))
+            updated.sort((a, b) => (a.nombre_entidad || '').localeCompare(b.nombre_entidad || ''))
+            setEntidades(updated)
+          } else {
+            await loadEntidades()
+          }
+        } else {
+          response = await api.createEntidad(formData)
+          successMsg = `✅ Entidad ${formData.nombre_entidad} registrada correctamente`
+
+          if (response && response.id) {
+            const newList = [...entidades, response]
+            const sorted = newList.sort((a, b) => (a.nombre_entidad || '').localeCompare(b.nombre_entidad || ''))
+            setEntidades(sorted)
+          } else {
+            await loadEntidades()
+          }
+        }
       } else if (isEditMode && selectedPacienteId) {
         // Actualizar paciente existente
         response = await api.updatePaciente(selectedPacienteId, formData)
@@ -232,18 +300,10 @@ function RegistroPacientes() {
       setPacientes(prev => prev.filter(p => p.id !== selectedPacienteId))
       setMessage({ type: 'success', text: '✅ Paciente eliminado correctamente' })
       setSelectedPacienteId(null)
+      setSelectedEntidadId(null)
       setIsEditMode(false)
       setIsEntityMode(false)
-      setFormData({
-        nombre: '',
-        apellido: '',
-        cedula: '',
-        edad: '',
-        telefono: '',
-        direccion: '',
-        sexo: '',
-        procedencia: ''
-      })
+      setFormData(pacienteInitialData)
     } catch (error) {
       console.error('Error eliminando paciente:', error)
       setMessage({ type: 'error', text: error.message || 'Error al eliminar paciente' })
@@ -253,6 +313,41 @@ function RegistroPacientes() {
     }
   }
 
+  const handleDeleteEntidad = async () => {
+    if (!selectedEntidadId) return
+
+    const confirmDelete = window.confirm('¿De verdad quieres borrar esta entidad?')
+    if (!confirmDelete) return
+
+    setLoading(true)
+    try {
+      await api.deleteEntidad(selectedEntidadId)
+      setEntidades(prev => prev.filter(e => e.id !== selectedEntidadId))
+      setMessage({ type: 'success', text: '✅ Entidad eliminada correctamente' })
+      handleCancelEntidad()
+    } catch (error) {
+      console.error('Error eliminando entidad:', error)
+      setMessage({ type: 'error', text: error.message || 'Error al eliminar entidad' })
+    } finally {
+      setLoading(false)
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000)
+    }
+  }
+
+  const handleUpdateEntidad = async (e) => {
+    e.preventDefault()
+    await handleSubmit(e)
+  }
+
+  const handleCancelEntidad = () => {
+    setIsEntityMode(false)
+    setIsEditMode(false)
+    setSelectedEntidadId(null)
+    setSelectedPacienteId(null)
+    setFormData(pacienteInitialData)
+    setMessage({ type: '', text: '' })
+  }
+
   /**
    * Limpiar formulario y volver al estado inicial
    */
@@ -260,16 +355,8 @@ function RegistroPacientes() {
     setIsEditMode(false)
     setIsEntityMode(false)
     setSelectedPacienteId(null)
-    setFormData({
-      nombre: '',
-      apellido: '',
-      cedula: '',
-      edad: '',
-      telefono: '',
-      direccion: '',
-      sexo: '',
-      procedencia: ''
-    })
+    setSelectedEntidadId(null)
+    setFormData(pacienteInitialData)
     setMessage({ type: '', text: '' })
   }
 
@@ -337,12 +424,53 @@ function RegistroPacientes() {
                 <p>No hay pacientes registrados</p>
               </div>
             )}
+
+            <div className="list-header">
+              <h2>Entidades Registradas</h2>
+              <span className="pacientes-count">{entidades.length}</span>
+            </div>
+
+            {entidadesLoading ? (
+              <div className="list-loading">Cargando entidades...</div>
+            ) : entidades.length > 0 ? (
+              <ul className="entidades-list">
+                {entidades.map(entidad => (
+                  <li
+                    key={entidad.id}
+                    className={`entidad-item ${selectedEntidadId === entidad.id ? 'active' : ''}`}
+                    onClick={() => handleSelectEntidad(entidad.id)}
+                  >
+                    <div className="entidad-info">
+                      <div className="entidad-nombre">
+                        {entidad.nombre_entidad}
+                      </div>
+
+                      {entidad.rif && (
+                        <div className="entidad-rif">
+                          RIF: {entidad.rif}
+                        </div>
+                      )}
+
+                      <div className="paciente-telefono">
+                        Tel: {entidad.telefono}
+                      </div>
+                    </div>
+
+                    <div className="item-arrow">›</div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="no-pacientes">
+                <p>No hay entidades registradas</p>
+              </div>
+            )}
           </section>
 
           {/* PANEL DERECHO: Formulario */}
           <section className="paciente-form-panel">
             <div className="form-header">
-              <h2>{isEntityMode ? 'Registrar Nueva Entidad' : isEditMode ? 'Editar Paciente' : 'Registrar Nuevo Paciente'}</h2>
+              <h2>{isEntityMode ? (isEditMode ? 'Editar Entidad' : 'Registrar Nueva Entidad') : isEditMode ? 'Editar Paciente' : 'Registrar Nuevo Paciente'}</h2>
               {isEditMode && (
                 <button className="btn-cancel" onClick={handleNewPaciente} title="Crear nuevo">
                   ➕ Nuevo
@@ -361,7 +489,7 @@ function RegistroPacientes() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="paciente-form">
+            <form onSubmit={isEntityMode && isEditMode ? handleUpdateEntidad : handleSubmit} className="paciente-form">
 
               {isEntityMode ? (
                 <>
@@ -537,10 +665,10 @@ function RegistroPacientes() {
                   className="btn-submit"
                   disabled={loading}
                 >
-                  {loading ? 'Guardando...' : isEntityMode ? 'Registrar Entidad' : isEditMode ? 'Actualizar' : 'Registrar'}
+                  {loading ? 'Guardando...' : isEntityMode ? (isEditMode ? 'ACTUALIZAR' : 'Registrar Entidad') : isEditMode ? 'Actualizar' : 'Registrar'}
                 </button>
 
-                {isEditMode && (
+                {isEditMode && !isEntityMode && (
                   <>
                     <button 
                       type="button" 
@@ -548,7 +676,7 @@ function RegistroPacientes() {
                       onClick={handleDeletePaciente}
                       disabled={loading}
                     >
-                      Eliminar
+                      ELIMINAR
                     </button>
                     <button 
                       type="button" 
@@ -556,20 +684,39 @@ function RegistroPacientes() {
                       onClick={handleNewPaciente}
                       disabled={loading}
                     >
+                      CANCELAR
+                    </button>
+                  </>
+                )}
+                {isEntityMode && isEditMode && (
+                  <>
+                    <button
+                      type="button"
+                      className="btn-delete"
+                      onClick={handleDeleteEntidad}
+                      disabled={loading}
+                    >
+                      Eliminar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-cancel"
+                      onClick={handleCancelEntidad}
+                      disabled={loading}
+                    >
                       Cancelar
                     </button>
                   </>
                 )}
-                {isEntityMode && (
-                  <button 
-                    type="button" 
+                {isEntityMode && !isEditMode && (
+                  <button
+                    type="button"
                     className="btn-cancel"
-                    onClick={handleNewPaciente}
+                    onClick={handleCancelEntidad}
                     disabled={loading}
                   >
                     Cancelar
                   </button>
-                  
                 )}
                 
               </div>
