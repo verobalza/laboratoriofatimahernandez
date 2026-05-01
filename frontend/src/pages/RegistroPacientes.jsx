@@ -253,6 +253,26 @@ function RegistroPacientes() {
     }
   }
 
+  /**
+   * Limpiar formulario y volver al estado inicial
+   */
+  const handleNewPaciente = () => {
+    setIsEditMode(false)
+    setIsEntityMode(false)
+    setSelectedPacienteId(null)
+    setFormData({
+      nombre: '',
+      apellido: '',
+      cedula: '',
+      edad: '',
+      telefono: '',
+      direccion: '',
+      sexo: '',
+      procedencia: ''
+    })
+    setMessage({ type: '', text: '' })
+  }
+
   const menuItems = [
     { label: 'Registro pacientes', icon: '👤', onClick: () => navigate('/registro-pacientes') },
     { label: 'Pruebas', icon: '🧪', onClick: () => navigate('/pruebas') },
@@ -556,8 +576,6 @@ function RegistroPacientes() {
             </form>
             
           </section>
-console.log("FORZANDO DEPLOY FRONTEND");
-
         </div>
       </main>
     </div>
