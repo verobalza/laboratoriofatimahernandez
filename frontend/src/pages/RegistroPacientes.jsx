@@ -549,10 +549,14 @@ function RegistroPacientes() {
                   >
                     Cancelar
                   </button>
+                  
                 )}
+                
               </div>
             </form>
+            
           </section>
+console.log("FORZANDO DEPLOY FRONTEND");
 
         </div>
       </main>
