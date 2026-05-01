@@ -172,7 +172,7 @@ function RegistroPacientes() {
 
       if (isEntityMode) {
         // Crear nueva entidad
-        response = await api.createEntidad(formData) // Asumir que existe
+        response = await api.createEntidad(formData)
         successMsg = `✅ Entidad ${formData.nombre_entidad} registrada correctamente`
       } else if (isEditMode && selectedPacienteId) {
         // Actualizar paciente existente

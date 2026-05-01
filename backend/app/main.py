@@ -7,7 +7,7 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
-from .routes import auth, pacientes, pruebas, examenes, facturacion, financiero, grupos, orina_heces
+from .routes import auth, pacientes, pruebas, examenes, facturacion, financiero, grupos, orina_heces, entidades
 from .routes import roles
 import logging
 
@@ -45,6 +45,7 @@ app.include_router(facturacion.router)
 app.include_router(financiero.router)
 app.include_router(orina_heces.router)
 app.include_router(roles.router)
+app.include_router(entidades.router)
 
 
 @app.get("/health")
