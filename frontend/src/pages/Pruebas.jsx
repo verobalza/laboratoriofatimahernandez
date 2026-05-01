@@ -152,7 +152,7 @@ function Pruebas() {
   const loadAreas = async () => {
     try {
       const areasData = await api.getAreas()
-      setAreas(areasData || [])
+      setAreas(Array.isArray(areasData) ? areasData : [])
     } catch (error) {
       console.error('Error cargando áreas:', error)
     }
@@ -623,14 +623,17 @@ function Pruebas() {
       const nueva = prompt('Ingrese la nueva área (ej: Hematología, Química Sanguínea, etc.):')
       if (nueva && nueva.trim()) {
         try {
-          // Guardar en Supabase
-          await api.createArea(nueva.trim())
-          // Recargar áreas
-          await loadAreas()
+          const nuevaArea = nueva.trim()
+          const response = await api.createArea(nuevaArea)
+          const areaFinal = (response?.area || nuevaArea).trim()
+          setAreas((prev) => {
+            const merged = [...prev, areaFinal]
+            return Array.from(new Set(merged)).sort((a, b) => a.localeCompare(b))
+          })
           // Seleccionar la nueva área
           setFormData((prev) => ({ 
             ...prev, 
-            area: nueva.trim()
+            area: areaFinal
           }))
           setMensaje({ type: 'success', text: 'Área agregada correctamente' })
         } catch (error) {
@@ -873,7 +876,7 @@ function Pruebas() {
                   className="form-input"
                 >
                   <option value="numerica">Prueba numérica</option>
-                  <option value="serologia">Serología (Positivo/Negativo)</option>
+                  <option value="serologia">Serología (Positivo/Negativo/Reactivo/No reactivo)</option>
                 </select>
               </div>
 
@@ -892,8 +895,8 @@ function Pruebas() {
                   <option value="">Seleccionar área...</option>
                   <option value="__add_new_area__">+ Agregar nueva área</option>
                   {areas.map((area) => (
-                    <option key={area.id} value={area.nombre}>
-                      {area.nombre}
+                    <option key={area} value={area}>
+                      {area}
                     </option>
                   ))}
                 </select>

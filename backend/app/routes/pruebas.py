@@ -43,7 +43,6 @@ async def create_prueba(prueba: PruebaCreate):
         )
 
     return PruebaOut(**resp.data[0])
-63
 
 @router.get("", response_model=List[PruebaOut])
 async def list_pruebas(search: Optional[str] = Query(None, description="Texto para buscar por nombre")):
@@ -202,6 +201,46 @@ async def list_tipos_muestra():
         )
     
     return resp.data or []
+
+
+@router.get("/areas", response_model=List[str])
+async def list_areas():
+    """
+    Lista áreas únicas tomadas desde la columna `area` de `pruebas`.
+    """
+    supabase = get_supabase_client()
+
+    try:
+        resp = supabase.table("pruebas").select("area").execute()
+    except Exception as e:
+        logging.error(f"Error listando áreas: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al listar áreas"
+        )
+
+    areas = sorted(
+        {
+            (item.get("area") or "").strip()
+            for item in (resp.data or [])
+            if item.get("area") is not None and str(item.get("area")).strip()
+        }
+    )
+    return areas
+
+
+@router.post("/areas", response_model=dict, status_code=status.HTTP_201_CREATED)
+async def create_area(data: dict):
+    """
+    Recibe una nueva área y la devuelve sin persistir en base de datos.
+    """
+    area = (data.get("area") or "").strip()
+    if not area:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El nombre del área es obligatorio"
+        )
+    return {"area": area}
 
 
 @router.get("/{prueba_id}", response_model=PruebaOut)

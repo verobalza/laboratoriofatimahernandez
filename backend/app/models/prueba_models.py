@@ -10,6 +10,7 @@ from uuid import UUID
 class PruebaBase(BaseModel):
     nombre_prueba: str
     tipo_prueba: Optional[str] = 'numerica'
+    area: str
     unidad_medida: Optional[str] = None
     tipo_muestra: str
     valor_referencia_min: Optional[float] = None
@@ -18,7 +19,7 @@ class PruebaBase(BaseModel):
     precio_bs: float
     grupo_id: Optional[str] = None
 
-    @field_validator("nombre_prueba", "tipo_muestra")
+    @field_validator("nombre_prueba", "tipo_muestra", "area")
     @classmethod
     def validate_required(cls, v: str) -> str:
         if not v or not v.strip():
@@ -48,15 +49,16 @@ class PruebaCreate(PruebaBase):
 class PruebaUpdate(BaseModel):
     nombre_prueba: Optional[str] = None
     tipo_prueba: Optional[str] = None
+    area: Optional[str] = None
     unidad_medida: Optional[str] = None
     tipo_muestra: Optional[str] = None
     valor_referencia_min: Optional[float] = None
     valor_referencia_max: Optional[float] = None
     descripcion: Optional[str] = None
-    precio: Optional[float] = None
+    precio_bs: Optional[float] = None
     grupo_id: Optional[str] = None
 
-    @field_validator("nombre_prueba", "unidad_medida", "tipo_muestra")
+    @field_validator("nombre_prueba", "unidad_medida", "tipo_muestra", "area")
     @classmethod
     def validate_optional_required(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
@@ -74,7 +76,7 @@ class PruebaUpdate(BaseModel):
             raise ValueError("El tipo de prueba debe ser 'numerica' o 'serologia'")
         return v
 
-    @field_validator("precio")
+    @field_validator("precio_bs")
     @classmethod
     def validate_price(cls, v: Optional[float]) -> Optional[float]:
         if v is None:

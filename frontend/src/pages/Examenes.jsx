@@ -1884,6 +1884,8 @@ function Examenes() {
                           <option value="">Seleccionar resultado...</option>
                           <option value="positivo">Positivo</option>
                           <option value="negativo">Negativo</option>
+                          <option value="reactivo">Reactivo</option>
+                          <option value="no reactivo">No reactivo</option>
                         </select>
                       ) : (
                         <input

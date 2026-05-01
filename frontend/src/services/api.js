@@ -302,10 +302,10 @@ export const api = {
     return request(`${API_URL}/pruebas/tipos`, { method: 'GET' })
   },
 
-  async createArea(nombre) {
+  async createArea(area) {
     return request(`${API_URL}/pruebas/areas`, {
       method: 'POST',
-      body: JSON.stringify({ nombre })
+      body: JSON.stringify({ area })
     })
   },
 
