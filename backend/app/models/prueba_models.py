@@ -10,6 +10,7 @@ from uuid import UUID
 class PruebaBase(BaseModel):
     nombre_prueba: str
     tipo_prueba: Optional[str] = 'numerica'
+    serie: Optional[str] = None
     area: str
     unidad_medida: Optional[str] = None
     tipo_muestra: str
@@ -33,6 +34,16 @@ class PruebaBase(BaseModel):
             raise ValueError("El tipo de prueba debe ser 'numerica' o 'serologia'")
         return v
 
+    @field_validator("serie")
+    @classmethod
+    def validate_serie(cls, v: Optional[str]) -> Optional[str]:
+        if v is None or v == '':
+            return v
+        normalized = v.strip().lower()
+        if normalized not in ['roja', 'blanca', 'plaquetaria']:
+            raise ValueError("La serie debe ser 'roja', 'blanca' o 'plaquetaria'")
+        return normalized
+
     @field_validator("precio_bs")
     @classmethod
     def validate_price(cls, v: float) -> float:
@@ -55,6 +66,14 @@ class PruebaUpdate(BaseModel):
     valor_referencia_min: Optional[float] = None
     valor_referencia_max: Optional[float] = None
     descripcion: Optional[str] = None
+    tipo_prueba: Optional[str] = None
+    serie: Optional[str] = None
+    area: Optional[str] = None
+    unidad_medida: Optional[str] = None
+    tipo_muestra: Optional[str] = None
+    valor_referencia_min: Optional[float] = None
+    valor_referencia_max: Optional[float] = None
+    descripcion: Optional[str] = None
     precio_bs: Optional[float] = None
     grupo_id: Optional[str] = None
 
@@ -66,6 +85,25 @@ class PruebaUpdate(BaseModel):
         if not v.strip():
             raise ValueError("Este campo no puede estar vacío")
         return v.strip()
+
+    @field_validator("tipo_prueba")
+    @classmethod
+    def validate_tipo_prueba(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if v not in ['numerica', 'serologia']:
+            raise ValueError("El tipo de prueba debe ser 'numerica' o 'serologia'")
+        return v
+
+    @field_validator("serie")
+    @classmethod
+    def validate_serie(cls, v: Optional[str]) -> Optional[str]:
+        if v is None or v == '':
+            return v
+        normalized = v.strip().lower()
+        if normalized not in ['roja', 'blanca', 'plaquetaria']:
+            raise ValueError("La serie debe ser 'roja', 'blanca' o 'plaquetaria'")
+        return normalized
 
     @field_validator("tipo_prueba")
     @classmethod

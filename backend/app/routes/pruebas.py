@@ -3,7 +3,7 @@ Router para manejo de pruebas.
 """
 
 from fastapi import APIRouter, HTTPException, status, Query
-from typing import List, Optional
+from typing import List, Optional, Dict
 from ..dependencies import get_supabase_client
 from ..models.prueba_models import (
     PruebaCreate,
@@ -15,6 +15,89 @@ import logging
 
 router = APIRouter(prefix="/pruebas", tags=["pruebas"])
 
+HEMATOLOGIA_SERIE_NOMBRES = {
+    'roja': 'Serie Roja',
+    'blanca': 'Serie Blanca',
+    'plaquetaria': 'Serie Plaquetaria',
+}
+
+
+def get_serie_group_name(serie: str) -> str:
+    return HEMATOLOGIA_SERIE_NOMBRES.get(serie.strip().lower(), '')
+
+
+async def get_or_create_serie_group_id(supabase, serie: str) -> str:
+    serie_normalizada = serie.strip().lower()
+    nombre_serie = get_serie_group_name(serie_normalizada)
+    if not nombre_serie:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La serie hematológica debe ser 'roja', 'blanca' o 'plaquetaria'"
+        )
+
+    try:
+        resp = (
+            supabase.table('grupos')
+            .select('*')
+            .ilike('nombre', nombre_serie)
+            .limit(1)
+            .execute()
+        )
+    except Exception as e:
+        logging.error(f"Error buscando grupo de serie hematológica: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al identificar el grupo de hematología"
+        )
+
+    grupo = (resp.data or [None])[0]
+    if grupo:
+        return grupo['id']
+
+    try:
+        nuevo_resp = supabase.table('grupos').insert({
+            'nombre': nombre_serie,
+            'descripcion': 'Grupo interno para pruebas de hematología',
+            'activo': True
+        }).execute()
+    except Exception as e:
+        logging.error(f"Error creando grupo de serie hematológica: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al crear el grupo de hematología"
+        )
+
+    if not nuevo_resp.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No se pudo crear el grupo de hematología"
+        )
+
+    return nuevo_resp.data[0]['id']
+
+
+def get_serie_from_group_name(nombre_grupo: Optional[str]) -> Optional[str]:
+    if not nombre_grupo:
+        return None
+    valor = nombre_grupo.strip().lower()
+    if valor == 'serie roja':
+        return 'roja'
+    if valor == 'serie blanca':
+        return 'blanca'
+    if valor == 'serie plaquetaria':
+        return 'plaquetaria'
+    return None
+
+
+def annotate_pruebas_with_serie(pruebas: List[Dict], grupos_map: Dict[str, str]) -> List[Dict]:
+    for prueba in pruebas:
+        serie = None
+        grupo_id = prueba.get('grupo_id')
+        if grupo_id and grupos_map.get(grupo_id):
+            serie = get_serie_from_group_name(grupos_map[grupo_id])
+        prueba['serie'] = serie
+    return pruebas
+
 
 @router.post("", response_model=PruebaOut, status_code=status.HTTP_201_CREATED)
 async def create_prueba(prueba: PruebaCreate):
@@ -24,11 +107,18 @@ async def create_prueba(prueba: PruebaCreate):
     supabase = get_supabase_client()
 
     try:
-        payload = prueba.dict()
+        payload = prueba.dict(exclude={"serie"})
+
+        if prueba.serie:
+            payload["grupo_id"] = await get_or_create_serie_group_id(supabase, prueba.serie)
+            payload["area"] = "Hematología"
+
         tasa = get_tasa_actual()
         payload["precio_usd"] = round(payload["precio_bs"] / tasa, 2) if payload.get("precio_bs") is not None else None
 
         resp = supabase.table("pruebas").insert(payload).execute()
+    except HTTPException:
+        raise
     except Exception as e:
         logging.error(f"Error creando prueba: {e}")
         raise HTTPException(
@@ -42,7 +132,8 @@ async def create_prueba(prueba: PruebaCreate):
             detail="No se creó la prueba"
         )
 
-    return PruebaOut(**resp.data[0])
+    created = resp.data[0]
+    return PruebaOut(**created)
 
 @router.get("", response_model=List[PruebaOut])
 async def list_pruebas(search: Optional[str] = Query(None, description="Texto para buscar por nombre")):
@@ -69,7 +160,25 @@ async def list_pruebas(search: Optional[str] = Query(None, description="Texto pa
             detail="Error al listar pruebas"
         )
 
-    return [PruebaOut(**p) for p in (resp.data or [])]
+    pruebas = resp.data or []
+    grupo_ids = list({p.get('grupo_id') for p in pruebas if p.get('grupo_id')})
+    grupos_map = {}
+
+    if grupo_ids:
+        try:
+            grupos_resp = (
+                supabase.table('grupos')
+                .select('id, nombre')
+                .in_('id', grupo_ids)
+                .execute()
+            )
+            grupos_map = {g['id']: g['nombre'] for g in (grupos_resp.data or [])}
+        except Exception as e:
+            logging.error(f"Error obteniendo grupos para series: {e}")
+            grupos_map = {}
+
+    pruebas_annotated = annotate_pruebas_with_serie(pruebas, grupos_map)
+    return [PruebaOut(**p) for p in pruebas_annotated]
 
 
 @router.get("/count/total", response_model=dict)
@@ -281,7 +390,14 @@ async def update_prueba(prueba_id: str, prueba: PruebaUpdate):
     """
     supabase = get_supabase_client()
 
-    payload = prueba.dict(exclude_unset=True)
+    payload = prueba.dict(exclude_unset=True, exclude={"serie"})
+
+    if prueba.serie is not None:
+        if prueba.serie == '':
+            payload["grupo_id"] = None
+        else:
+            payload["grupo_id"] = await get_or_create_serie_group_id(supabase, prueba.serie)
+            payload["area"] = "Hematología"
 
     if not payload:
         raise HTTPException(
@@ -300,6 +416,8 @@ async def update_prueba(prueba_id: str, prueba: PruebaUpdate):
             .eq("id", prueba_id)
             .execute()
         )
+    except HTTPException:
+        raise
     except Exception as e:
         logging.error(f"Error actualizando prueba: {e}")
         raise HTTPException(

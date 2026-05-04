@@ -37,6 +37,7 @@ function Pruebas() {
   const [formData, setFormData] = useState({
     nombre_prueba: '',
     tipo_prueba: 'numerica',
+    serie: '',
     area: '',
     unidad_medida: '',
     tipo_muestra: '',
@@ -59,9 +60,11 @@ function Pruebas() {
   const [grupoFormData, setGrupoFormData] = useState({
     nombre: '',
     descripcion: '',
-    activo: true
+    activo: true,
+    serieGrupo: ''
   })
   const [selectedPruebasGrupo, setSelectedPruebasGrupo] = useState([])
+  const [serieGroupIds, setSerieGroupIds] = useState({ roja: null, blanca: null, plaquetaria: null })
   const [grupoErrors, setGrupoErrors] = useState({})
   const [grupoSubmitting, setGrupoSubmitting] = useState(false)
 
@@ -96,6 +99,83 @@ function Pruebas() {
     loadAreas()
     loadTasaCambio()
   }, [])
+
+  useEffect(() => {
+    const serieIds = {
+      roja: null,
+      blanca: null,
+      plaquetaria: null
+    }
+
+    grupos.forEach((grupo) => {
+      const nombre = (grupo.nombre || '').trim().toLowerCase()
+      if (nombre === 'serie roja') serieIds.roja = grupo.id
+      if (nombre === 'serie blanca') serieIds.blanca = grupo.id
+      if (nombre === 'serie plaquetaria') serieIds.plaquetaria = grupo.id
+    })
+
+    setSerieGroupIds(serieIds)
+  }, [grupos])
+
+  const HEMATOLOGIA_SERIES = [
+    { value: '', label: 'Sin serie' },
+    { value: 'roja', label: 'Serie Roja' },
+    { value: 'blanca', label: 'Serie Blanca' },
+    { value: 'plaquetaria', label: 'Serie Plaquetaria' }
+  ]
+
+  const getSerieLabel = (serie) => {
+    if (!serie) return ''
+    return HEMATOLOGIA_SERIES.find((item) => item.value === serie)?.label || ''
+  }
+
+  const getSerieByGrupoId = (grupoId) => {
+    if (!grupoId) return ''
+    const entry = Object.entries(serieGroupIds).find(([, id]) => id === grupoId)
+    return entry ? entry[0] : ''
+  }
+
+  const getSerieGroupName = (serie) => {
+    if (!serie) return ''
+    const serieLabel = HEMATOLOGIA_SERIES.find((item) => item.value === serie)?.label
+    return serieLabel || ''
+  }
+
+  const getSerieDisplayFromGroupName = (nombre) => {
+    if (!nombre) return ''
+    const lower = nombre.trim().toLowerCase()
+    if (lower === 'serie roja') return 'roja'
+    if (lower === 'serie blanca') return 'blanca'
+    if (lower === 'serie plaquetaria') return 'plaquetaria'
+    return ''
+  }
+
+  const findSerieGroupIdByValue = async (serieValue) => {
+    const existingId = serieGroupIds[serieValue]
+    if (existingId) return existingId
+
+    // Create the series group if it does not exist yet.
+    const groupName = getSerieGroupName(serieValue)
+    if (!groupName) return null
+
+    try {
+      const nuevoGrupo = await api.createGrupo({
+        nombre: groupName,
+        descripcion: `Grupo interno para ${groupName}`,
+        activo: true
+      })
+      await loadGrupos()
+      return nuevoGrupo.id
+    } catch (error) {
+      console.error('Error creando grupo de serie hematológica:', error)
+      return null
+    }
+  }
+
+  const getSeriesValueFromGroupName = (nombre) => {
+    if (!nombre) return ''
+    return getSerieDisplayFromGroupName(nombre)
+  }
 
   // ============ FUNCIONES PRINCIPALES ============
   const loadPruebas = async () => {
@@ -192,6 +272,7 @@ function Pruebas() {
     setFormData({
       nombre_prueba: '',
       tipo_prueba: 'numerica',
+      serie: '',
       area: '',
       unidad_medida: '',
       tipo_muestra: '',
@@ -220,7 +301,8 @@ function Pruebas() {
     setFormData({
       nombre_prueba: prueba.nombre_prueba || '',
       tipo_prueba: prueba.tipo_prueba || 'numerica',
-      area: prueba.area || '',
+      serie: getSerieByGrupoId(prueba.grupo_id) || '',
+      area: getSerieByGrupoId(prueba.grupo_id) ? 'Hematología' : (prueba.area || ''),
       unidad_medida: prueba.unidad_medida || '',
       tipo_muestra: prueba.tipo_muestra || '',
       valor_referencia_min: prueba.valor_referencia_min ?? '',
@@ -301,6 +383,7 @@ function Pruebas() {
     const dataToSend = {
       nombre_prueba: formData.nombre_prueba.trim(),
       tipo_prueba: formData.tipo_prueba,
+      serie: formData.serie || undefined,
       area: formData.area.trim(),
       tipo_muestra: formData.tipo_muestra.trim(),
       precio_bs: parseFloat(formData.precio_bs),
@@ -374,7 +457,8 @@ function Pruebas() {
     setGrupoFormData({
       nombre: '',
       descripcion: '',
-      activo: true
+      activo: true,
+      serieGrupo: ''
     })
     setSelectedPruebasGrupo([])
     setGrupoErrors({})
@@ -391,10 +475,19 @@ function Pruebas() {
 
   const handleGrupoFormChange = (e) => {
     const { name, value, type, checked } = e.target
-    setGrupoFormData((prev) => ({
-      ...prev,
+    let updatedData = {
+      ...grupoFormData,
       [name]: type === 'checkbox' ? checked : value
-    }))
+    }
+
+    if (name === 'serieGrupo') {
+      const serieLabel = value ? getSerieGroupName(value) : ''
+      if (serieLabel) {
+        updatedData.nombre = serieLabel
+      }
+    }
+
+    setGrupoFormData(updatedData)
     
     // Limpiar error
     if (grupoErrors[name]) {
@@ -440,8 +533,12 @@ function Pruebas() {
     
     try {
       // 1. Crear el grupo
+      const nombreGrupo = grupoFormData.serieGrupo
+        ? getSerieGroupName(grupoFormData.serieGrupo)
+        : grupoFormData.nombre.trim()
+
       const nuevoGrupo = await api.createGrupo({
-        nombre: grupoFormData.nombre.trim(),
+        nombre: nombreGrupo,
         descripcion: grupoFormData.descripcion.trim() || undefined,
         activo: grupoFormData.activo
       })
@@ -471,7 +568,8 @@ function Pruebas() {
     setGrupoFormData({
       nombre: grupo.nombre,
       descripcion: grupo.descripcion || '',
-      activo: grupo.activo ?? true
+      activo: grupo.activo ?? true,
+      serieGrupo: getSeriesValueFromGroupName(grupo.nombre)
     })
     
     // Cargar pruebas del grupo
@@ -504,8 +602,12 @@ function Pruebas() {
     
     try {
       // 1. Actualizar datos del grupo
+      const nombreGrupo = grupoFormData.serieGrupo
+        ? getSerieGroupName(grupoFormData.serieGrupo)
+        : grupoFormData.nombre.trim()
+
       await api.updateGrupo(grupoEnEdicion.id, {
-        nombre: grupoFormData.nombre.trim(),
+        nombre: nombreGrupo,
         descripcion: grupoFormData.descripcion.trim() || undefined,
         activo: grupoFormData.activo
       })
@@ -566,6 +668,20 @@ function Pruebas() {
   // ============ MANEJADORES DE FORMULARIO ============
   const handleFormChange = async (e) => {
     const { name, value } = e.target
+
+    if (name === 'serie') {
+      const updatedSerie = value
+      const updatedArea = updatedSerie ? 'Hematología' : formData.area
+      setFormData((prev) => ({ ...prev, serie: updatedSerie, area: updatedArea }))
+      if (errors[name]) {
+        setErrors((prev) => {
+          const newErrors = { ...prev }
+          delete newErrors[name]
+          return newErrors
+        })
+      }
+      return
+    }
 
     if (name === 'unidad_medida' && value === '__add_new_unidad__') {
       const nueva = prompt('Ingrese la nueva unidad de medida (ej: mg/mL, U/L, etc.):')
@@ -714,6 +830,7 @@ function Pruebas() {
                   <tr>
                     <th>Nombre de la prueba</th>
                     <th>Área</th>
+                    <th>Serie</th>
                     <th>Unidad</th>
                     <th>Tipo de muestra</th>
                   </tr>
@@ -730,6 +847,7 @@ function Pruebas() {
                     >
                       <td className="prueba-nombre">{prueba.nombre_prueba}</td>
                       <td className="prueba-area">{prueba.area || '—'}</td>
+                      <td className="prueba-serie">{getSerieLabel(prueba.serie) || '—'}</td>
                       <td className="prueba-unidad">{prueba.unidad_medida || '—'}</td>
                       <td className="prueba-tipo">{prueba.tipo_muestra}</td>
                     </tr>
@@ -774,7 +892,12 @@ function Pruebas() {
                       >
                         <div className="grupo-header-content">
                           <span className="grupo-expand-icon">{isExpanded ? '▼' : '▶'}</span>
-                          <h4>{grupo.nombre}</h4>
+                          <div>
+                            <h4>{grupo.nombre}</h4>
+                            {getSeriesValueFromGroupName(grupo.nombre) && (
+                              <span className="grupo-serie-label">Hematología</span>
+                            )}
+                          </div>
                         </div>
                         <span className="grupo-badge">{pruebasDelGrupo.length} pruebas</span>
                       </div>
@@ -905,6 +1028,27 @@ function Pruebas() {
                 {errors.area && (
                   <span className="error-message">{errors.area}</span>
                 )}
+              </div>
+
+              {/* Hematología */}
+              <div className="form-group hematologia-section">
+                <label className="form-label">Hematología</label>
+                <p className="form-hint">Selecciona una serie para que esta prueba se guarde con el grupo de hematología correspondiente.</p>
+                <div className="serie-radio-group">
+                  {HEMATOLOGIA_SERIES.filter((item) => item.value).map((item) => (
+                    <label key={item.value} className="serie-radio-item">
+                      <input
+                        type="radio"
+                        name="serie"
+                        value={item.value}
+                        checked={formData.serie === item.value}
+                        onChange={handleFormChange}
+                        className="checkbox-input"
+                      />
+                      <span>{item.label}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
               {/* Unidad de medida - Solo para pruebas numéricas */}
@@ -1125,9 +1269,32 @@ function Pruebas() {
                   value={grupoFormData.nombre}
                   onChange={handleGrupoFormChange}
                   className={`form-input ${grupoErrors.nombre ? 'error' : ''}`}
+                  disabled={!!grupoFormData.serieGrupo}
                 />
                 {grupoErrors.nombre && (
                   <span className="error-message">{grupoErrors.nombre}</span>
+                )}
+              </div>
+
+              {/* Serie de Hematología (opcional) */}
+              <div className="form-group">
+                <label htmlFor="serieGrupo" className="form-label">
+                  Serie de Hematología
+                </label>
+                <select
+                  id="serieGrupo"
+                  name="serieGrupo"
+                  value={grupoFormData.serieGrupo}
+                  onChange={handleGrupoFormChange}
+                  className="form-input"
+                >
+                  <option value="">Ninguna</option>
+                  <option value="roja">Serie Roja</option>
+                  <option value="blanca">Serie Blanca</option>
+                  <option value="plaquetaria">Serie Plaquetaria</option>
+                </select>
+                {grupoFormData.serieGrupo && (
+                  <small className="form-hint">El nombre del grupo será fijo para esta serie de hematología.</small>
                 )}
               </div>
 
@@ -1244,9 +1411,32 @@ function Pruebas() {
                   value={grupoFormData.nombre}
                   onChange={handleGrupoFormChange}
                   className={`form-input ${grupoErrors.nombre ? 'error' : ''}`}
+                  disabled={!!grupoFormData.serieGrupo}
                 />
                 {grupoErrors.nombre && (
                   <span className="error-message">{grupoErrors.nombre}</span>
+                )}
+              </div>
+
+              {/* Serie de Hematología (opcional) */}
+              <div className="form-group">
+                <label htmlFor="serieGrupo" className="form-label">
+                  Serie de Hematología
+                </label>
+                <select
+                  id="serieGrupo"
+                  name="serieGrupo"
+                  value={grupoFormData.serieGrupo}
+                  onChange={handleGrupoFormChange}
+                  className="form-input"
+                >
+                  <option value="">Ninguna</option>
+                  <option value="roja">Serie Roja</option>
+                  <option value="blanca">Serie Blanca</option>
+                  <option value="plaquetaria">Serie Plaquetaria</option>
+                </select>
+                {grupoFormData.serieGrupo && (
+                  <small className="form-hint">El nombre del grupo será fijo para esta serie de hematología.</small>
                 )}
               </div>
 

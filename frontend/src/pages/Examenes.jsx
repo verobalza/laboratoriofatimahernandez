@@ -556,11 +556,45 @@ function Examenes() {
         pruebasPorGrupo[grupoId].push(p)
       })
 
+      const HEMATOLOGIA_ORDER = ['Serie Roja', 'Serie Blanca', 'Serie Plaquetaria']
+
+      const sortedGrupoIds = Object.keys(pruebasPorGrupo).sort((a, b) => {
+        const grupoA = allGrupos.find(g => g.id === a)
+        const grupoB = allGrupos.find(g => g.id === b)
+        const orderA = grupoA ? HEMATOLOGIA_ORDER.indexOf(grupoA.nombre) : -1
+        const orderB = grupoB ? HEMATOLOGIA_ORDER.indexOf(grupoB.nombre) : -1
+
+        if (orderA !== -1 || orderB !== -1) {
+          if (orderA === -1) return 1
+          if (orderB === -1) return -1
+          return orderA - orderB
+        }
+
+        if (a === 'sin_grupo') return 1
+        if (b === 'sin_grupo') return -1
+        return String(grupoA?.nombre || a).localeCompare(String(grupoB?.nombre || b))
+      })
+
+      const hasHematologia = sortedGrupoIds.some((grupoId) => {
+        const grupo = allGrupos.find(g => g.id === grupoId)
+        return grupo ? HEMATOLOGIA_ORDER.includes(grupo.nombre) : false
+      })
+
+      if (hasHematologia) {
+        doc.setFont("Helvetica", "bold")
+        doc.setFontSize(12)
+        doc.text("HEMATOLOGÍA COMPLETA", 20, ypos)
+        ypos += 8
+        doc.setLineWidth(0.4)
+        doc.line(20, ypos, 190, ypos)
+        ypos += 10
+      }
+
       // Renderizar pruebas organizadas por grupo
-      Object.keys(pruebasPorGrupo).forEach((grupoId) => {
-        // Mostrar nombre del grupo solo si fue seleccionado explícitamente como grupo
-        if (grupoId !== 'sin_grupo' && selectedGrupos.includes(grupoId)) {
-          const grupo = allGrupos.find(g => g.id === grupoId)
+      sortedGrupoIds.forEach((grupoId) => {
+        const grupo = allGrupos.find(g => g.id === grupoId)
+
+        if (grupoId !== 'sin_grupo' && (selectedGrupos.includes(grupoId) || (grupo && HEMATOLOGIA_ORDER.includes(grupo.nombre)))) {
           if (grupo) {
             if (ypos > 270) {
               doc.addPage()
@@ -651,6 +685,8 @@ function Examenes() {
             doc.setFont("Helvetica", "italic")
             doc.setFontSize(8)
             doc.setTextColor(0, 0, 0)
+            doc.text("Observaciones:", 20, ypos)
+            ypos += 4
             const obsLines = doc.splitTextToSize(observaciones[String(p.id)], 160)
             obsLines.forEach(line => {
               if (ypos > 270) {
