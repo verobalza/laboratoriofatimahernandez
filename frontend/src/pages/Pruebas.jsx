@@ -1001,7 +1001,7 @@ function Pruebas() {
                   className="form-input"
                 >
                   <option value="numerica">Prueba numérica</option>
-                  <option value="serologia">Serología (Positivo/Negativo/Reactivo/No reactivo)</option>
+                  <option value="serologia">Cualitativa</option>
                 </select>
               </div>
 
