@@ -49,6 +49,7 @@ function Examenes() {
   const [showPruebasSelection, setShowPruebasSelection] = useState(false)
   const [pruebasLoading, setpruebasLoading] = useState(false)
   const [allGrupos, setAllGrupos] = useState([])
+  const [hematologiaCompleta, setHematologiaCompleta] = useState(false)
 
   // ============ FORMULARIO DE RESULTADOS ============
   const [resultados, setResultados] = useState({})
@@ -260,6 +261,32 @@ function Examenes() {
         return [...prev, grupoId]
       }
     })
+  }
+
+  // ============ FUNCIONES PARA HEMATOLOGÍA ============
+  const getHematologiaPruebas = () => {
+    return allPruebas.filter((p) => {
+      const area = (p.area || '').toLowerCase().trim()
+      return ['roja', 'blanca', 'plaquetaria'].includes(area)
+    })
+  }
+
+  const getPruebasByArea = (area) => {
+    return allPruebas.filter((p) => (p.area || '').toLowerCase().trim() === area.toLowerCase().trim())
+  }
+
+  const toggleHematologiaCompleta = () => {
+    if (hematologiaCompleta) {
+      // Desactivar: deseleccionar solo pruebas de hematología
+      const hematoPruebas = getHematologiaPruebas().map(p => p.id)
+      setSelectedPruebas((prev) => prev.filter(id => !hematoPruebas.includes(id)))
+      setHematologiaCompleta(false)
+    } else {
+      // Activar: seleccionar todas las pruebas de hematología
+      const hematoPruebas = getHematologiaPruebas().map(p => p.id)
+      setSelectedPruebas((prev) => [...new Set([...prev, ...hematoPruebas])])
+      setHematologiaCompleta(true)
+    }
   }
 
   const clearForm = () => {
@@ -1261,9 +1288,26 @@ function Examenes() {
 
                 {showPruebasSelection && (
                   <>
+                    {/* Hematología Completa - Botón especial */}
+                    <div className="hematologia-completa-section">
+                      <h3 className="section-title">🧬 Hematología</h3>
+                      <label className="hematologia-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={hematologiaCompleta}
+                          onChange={toggleHematologiaCompleta}
+                        />
+                        <span className="checkmark"></span>
+                        <span className="label-text">
+                          <strong>Hematología Completa</strong>
+                          <small>(Selecciona automáticamente todas las series)</small>
+                        </span>
+                      </label>
+                    </div>
+
                     {/* Exámenes Especiales - Checkboxes Globales */}
                     <div className="examenes-especiales-section">
-                      <h3 className="section-title">Exámenes Especiales</h3>
+                      <h3 className="section-title">Uronálisis Y Copronálisis</h3>
                       <div className="examenes-especiales-checkboxes">
                         <label className="examen-especial-checkbox">
                           <input
@@ -1891,7 +1935,137 @@ function Examenes() {
             <section className="seccion seccion-resultados">
               <h2>3. Ingresar Resultados</h2>
               <div className="resultados-form">
-                {pruebasSeleccionadas.map((prueba) => (
+                {/* Bloque especial de Hematología si está activada */}
+                {hematologiaCompleta && (
+                  <div className="hematologia-resultados-section">
+                    <h3 className="hematologia-titulo">🧬 Hematología Completa</h3>
+
+                    {/* Serie Roja */}
+                    <div className="hematologia-serie">
+                      <h4 className="serie-titulo">Serie Roja</h4>
+                      {getPruebasByArea('roja')
+                        .filter((p) => selectedPruebas.includes(p.id))
+                        .map((prueba) => (
+                          <div key={prueba.id} className="resultado-item hematologia-item">
+                            <div className="resultado-header">
+                              <h5>{prueba.nombre_prueba}</h5>
+                              {prueba.unidad_medida && <span className="unidad">{prueba.unidad_medida}</span>}
+                            </div>
+                            {prueba.valor_referencia_min !== null && prueba.valor_referencia_max !== null && (
+                              <div className="rango-referencia">
+                                Rango: {prueba.valor_referencia_min} - {prueba.valor_referencia_max}
+                              </div>
+                            )}
+                            <div className="resultado-inputs">
+                              <input
+                                type="text"
+                                placeholder="Resultado"
+                                value={resultados[prueba.id] || ''}
+                                onChange={(e) => handleResultadoChange(prueba.id, e.target.value)}
+                                className="input-resultado"
+                              />
+                            </div>
+                            <div className="resultado-inputs">
+                              <textarea
+                                placeholder="Observaciones"
+                                value={observaciones[prueba.id] || ''}
+                                onChange={(e) => handleObservacionesChange(prueba.id, e.target.value)}
+                                className="input-observaciones"
+                                rows="2"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    {/* Serie Blanca */}
+                    <div className="hematologia-serie">
+                      <h4 className="serie-titulo">Serie Blanca</h4>
+                      {getPruebasByArea('blanca')
+                        .filter((p) => selectedPruebas.includes(p.id))
+                        .map((prueba) => (
+                          <div key={prueba.id} className="resultado-item hematologia-item">
+                            <div className="resultado-header">
+                              <h5>{prueba.nombre_prueba}</h5>
+                              {prueba.unidad_medida && <span className="unidad">{prueba.unidad_medida}</span>}
+                            </div>
+                            {prueba.valor_referencia_min !== null && prueba.valor_referencia_max !== null && (
+                              <div className="rango-referencia">
+                                Rango: {prueba.valor_referencia_min} - {prueba.valor_referencia_max}
+                              </div>
+                            )}
+                            <div className="resultado-inputs">
+                              <input
+                                type="text"
+                                placeholder="Resultado"
+                                value={resultados[prueba.id] || ''}
+                                onChange={(e) => handleResultadoChange(prueba.id, e.target.value)}
+                                className="input-resultado"
+                              />
+                            </div>
+                            <div className="resultado-inputs">
+                              <textarea
+                                placeholder="Observaciones"
+                                value={observaciones[prueba.id] || ''}
+                                onChange={(e) => handleObservacionesChange(prueba.id, e.target.value)}
+                                className="input-observaciones"
+                                rows="2"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    {/* Serie Plaquetaria */}
+                    <div className="hematologia-serie">
+                      <h4 className="serie-titulo">Serie Plaquetaria</h4>
+                      {getPruebasByArea('plaquetaria')
+                        .filter((p) => selectedPruebas.includes(p.id))
+                        .map((prueba) => (
+                          <div key={prueba.id} className="resultado-item hematologia-item">
+                            <div className="resultado-header">
+                              <h5>{prueba.nombre_prueba}</h5>
+                              {prueba.unidad_medida && <span className="unidad">{prueba.unidad_medida}</span>}
+                            </div>
+                            {prueba.valor_referencia_min !== null && prueba.valor_referencia_max !== null && (
+                              <div className="rango-referencia">
+                                Rango: {prueba.valor_referencia_min} - {prueba.valor_referencia_max}
+                              </div>
+                            )}
+                            <div className="resultado-inputs">
+                              <input
+                                type="text"
+                                placeholder="Resultado"
+                                value={resultados[prueba.id] || ''}
+                                onChange={(e) => handleResultadoChange(prueba.id, e.target.value)}
+                                className="input-resultado"
+                              />
+                            </div>
+                            <div className="resultado-inputs">
+                              <textarea
+                                placeholder="Observaciones"
+                                value={observaciones[prueba.id] || ''}
+                                onChange={(e) => handleObservacionesChange(prueba.id, e.target.value)}
+                                className="input-observaciones"
+                                rows="2"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {pruebasSeleccionadas
+                  .filter((prueba) => {
+                    // Excluir pruebas de hematología si Hematología Completa está activada
+                    if (hematologiaCompleta) {
+                      const area = (prueba.area || '').toLowerCase().trim()
+                      return !['roja', 'blanca', 'plaquetaria'].includes(area)
+                    }
+                    return true
+                  })
+                  .map((prueba) => (
                   <div key={prueba.id} className="resultado-item">
                     <div className="resultado-header">
                       <h4>{prueba.nombre_prueba}</h4>

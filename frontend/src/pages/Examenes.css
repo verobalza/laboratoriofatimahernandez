@@ -1402,3 +1402,162 @@
   }
 }
 
+/* ============ HEMATOLOGÍA COMPLETA ============ */
+.hematologia-completa-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+}
+.hematologia-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+.hematologia-checkbox:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.03);
+}
+.hematologia-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hematologia-checkbox input[type="checkbox"]:checked {
+  background: var(--primary-blue);
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-blue);
+}
+.hematologia-checkbox .label-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.hematologia-checkbox .label-text strong {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+.hematologia-checkbox .label-text small {
+  color: var(--text-light);
+  font-size: 0.85rem;
+}
+.hematologia-resultados-section {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-radius: 14px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+.hematologia-titulo {
+  color: var(--primary-blue);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+  padding-bottom: 1rem;
+}
+.hematologia-serie {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-blue);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+.hematologia-serie:last-child {
+  margin-bottom: 0;
+}
+.serie-titulo {
+  color: var(--primary-blue);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.hematologia-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  transition: all 0.2s ease;
+}
+.hematologia-item:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.02);
+}
+.hematologia-item .resultado-header h5 {
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+.hematologia-item .resultado-header .unidad {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+.hematologia-item .rango-referencia {
+  color: var(--text-light);
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 6px;
+  border-left: 3px solid rgba(59, 130, 246, 0.3);
+}
+.hematologia-item .resultado-inputs {
+  margin-bottom: 0.75rem;
+}
+.hematologia-item .resultado-inputs:last-child {
+  margin-bottom: 0;
+}
+.hematologia-item .input-resultado,
+.hematologia-item .input-observaciones {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+.hematologia-item .input-resultado:focus,
+.hematologia-item .input-observaciones:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: white;
+}
+.hematologia-item .input-observaciones {
+  font-size: 0.9rem;
+  min-height: 60px;
+  resize: vertical;
+  color: var(--text-dark);
+}
+.hematologia-item .input-observaciones::placeholder {
+  color: var(--text-lighter);
+}
