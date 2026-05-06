@@ -20,6 +20,31 @@ function GrupoSelector({ grupos, allPruebas, selectedPruebas, onTogglePrueba, on
   const [pruebasByGrupo, setPruebasByGrupo] = useState({})
   const [loadingGrupo, setLoadingGrupo] = useState(null)
 
+  const normalize = (value = '') => value.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const HEMATOLOGIA_NOMBRE = 'hematologia completa'
+
+  const grupoIncluyeHematologiaCompleta = (grupo) => {
+    return !!grupo && normalize(grupo.nombre || '') === HEMATOLOGIA_NOMBRE
+  }
+
+  const getHematologiaPruebas = () => {
+    const seriesGroupIds = grupos
+      .filter((grupo) => ['serie roja', 'serie blanca', 'serie plaquetaria'].includes(normalize(grupo.nombre || '')))
+      .map((grupo) => grupo.id)
+
+    return allPruebas.filter((p) => seriesGroupIds.includes(p.grupo_id))
+  }
+
+  const getGrupoPruebas = (grupo) => {
+    const pruebas = pruebasByGrupo[grupo.id] || []
+    if (grupoIncluyeHematologiaCompleta(grupo)) {
+      const hemato = getHematologiaPruebas()
+      const merged = [...pruebas, ...hemato]
+      return Array.from(new Map(merged.map((p) => [p.id, p])).values())
+    }
+    return pruebas
+  }
+
   // Cargar pruebas de cada grupo cuando se reciben los grupos
   useEffect(() => {
     loadPruebasByGrupo()
@@ -45,27 +70,6 @@ function GrupoSelector({ grupos, allPruebas, selectedPruebas, onTogglePrueba, on
     if (onToggleGrupo) {
       onToggleGrupo(grupoId)
     }
-
-    // Obtener pruebas del grupo
-    if (pruebasByGrupo[grupoId]) {
-      const grupoProuebas = pruebasByGrupo[grupoId]
-      const allSelected = grupoProuebas.every(p => selectedPruebas.includes(p.id))
-
-      // Si todas están seleccionadas, deseleccionar todas. Si no, seleccionar todas.
-      if (allSelected) {
-        grupoProuebas.forEach(p => {
-          if (selectedPruebas.includes(p.id)) {
-            onTogglePrueba(p.id)
-          }
-        })
-      } else {
-        grupoProuebas.forEach(p => {
-          if (!selectedPruebas.includes(p.id)) {
-            onTogglePrueba(p.id)
-          }
-        })
-      }
-    }
   }
 
   if (!grupos || grupos.length === 0) {
@@ -82,9 +86,9 @@ function GrupoSelector({ grupos, allPruebas, selectedPruebas, onTogglePrueba, on
 
       <div className="grupo-buttons-container">
         {grupos.map(grupo => {
-          const grupoProuebas = pruebasByGrupo[grupo.id] || []
-          const allSelectedInGrupo = grupoProuebas.length > 0 && grupoProuebas.every(p => selectedPruebas.includes(p.id))
-          const someSelectedInGrupo = grupoProuebas.some(p => selectedPruebas.includes(p.id))
+          const grupoPruebas = getGrupoPruebas(grupo)
+          const allSelectedInGrupo = grupoPruebas.length > 0 && grupoPruebas.every((p) => selectedPruebas.includes(p.id))
+          const someSelectedInGrupo = grupoPruebas.some((p) => selectedPruebas.includes(p.id))
 
           return (
             <button
@@ -93,9 +97,14 @@ function GrupoSelector({ grupos, allPruebas, selectedPruebas, onTogglePrueba, on
               onClick={() => handleSelectGrupo(grupo.id)}
               title={grupo.descripcion}
             >
-              <div className="grupo-button-name">{grupo.nombre}</div>
+              <div className="grupo-button-name">
+                {grupo.nombre}
+                {grupoIncluyeHematologiaCompleta(grupo) && (
+                  <span className="grupo-hematologia-badge">Hematología Completa</span>
+                )}
+              </div>
               <div className="grupo-button-count">
-                {grupoProuebas.filter(p => selectedPruebas.includes(p.id)).length}/{grupoProuebas.length}
+                {grupoPruebas.filter((p) => selectedPruebas.includes(p.id)).length}/{grupoPruebas.length}
               </div>
             </button>
           )
@@ -110,12 +119,8 @@ function GrupoSelector({ grupos, allPruebas, selectedPruebas, onTogglePrueba, on
         ) : (
           <div className="grupo-pruebas-items">
             {allPruebas
-              .filter(p => selectedPruebas.includes(p.id))
-              .sort((a, b) => {
-                const grupoA = grupos.find(g => g.id === a.grupo_id)?.nombre || 'Sin grupo'
-                const grupoB = grupos.find(g => g.id === b.grupo_id)?.nombre || 'Sin grupo'
-                return grupoA.localeCompare(grupoB) || a.nombre_prueba.localeCompare(b.nombre_prueba)
-              })
+              .filter((p) => selectedPruebas.includes(p.id))
+              .sort((a, b) => selectedPruebas.indexOf(a.id) - selectedPruebas.indexOf(b.id))
               .map(prueba => {
                 const grupo = grupos.find(g => g.id === prueba.grupo_id)
                 return (

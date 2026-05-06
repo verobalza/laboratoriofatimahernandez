@@ -1561,3 +1561,9 @@
 .hematologia-item .input-observaciones::placeholder {
   color: var(--text-lighter);
 }
+
+.hematologia-observacion-general {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed rgba(59, 130, 246, 0.35);
+}

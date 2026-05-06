@@ -497,13 +497,6 @@ html {
   display: block;
 }
 
-.hematologia-section {
-  padding: 1rem 1rem 0.5rem 1rem;
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  border-radius: 14px;
-  background: #f8fbff;
-}
-
 .serie-radio-group {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

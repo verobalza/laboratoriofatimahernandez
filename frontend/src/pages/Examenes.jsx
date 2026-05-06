@@ -49,11 +49,11 @@ function Examenes() {
   const [showPruebasSelection, setShowPruebasSelection] = useState(false)
   const [pruebasLoading, setpruebasLoading] = useState(false)
   const [allGrupos, setAllGrupos] = useState([])
-  const [hematologiaCompleta, setHematologiaCompleta] = useState(false)
 
   // ============ FORMULARIO DE RESULTADOS ============
   const [resultados, setResultados] = useState({})
   const [observaciones, setObservaciones] = useState({})
+  const [hematologiaObservacionGeneral, setHematologiaObservacionGeneral] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   // ============ EXÁMENES ESPECIALES ============
@@ -244,16 +244,68 @@ function Examenes() {
     })
   }
 
+  const HEMATOLOGIA_GRUPO_PRINCIPAL = 'hematología completa'
+  const HEMATOLOGIA_SERIES = ['roja', 'blanca', 'plaquetaria']
+
+  const normalizeHematologiaSerie = (value = '') => value.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+  const getGrupoByNombre = (nombre) => {
+    const target = normalizeHematologiaSerie(nombre)
+    return allGrupos.find((g) => normalizeHematologiaSerie(g.nombre || '') === target)
+  }
+
+  const gruposSeriesHematologia = HEMATOLOGIA_SERIES.reduce((acc, serie) => {
+    const grupoSerie = getGrupoByNombre(`serie ${serie}`)
+    if (grupoSerie) acc[serie] = grupoSerie
+    return acc
+  }, {})
+
+  const getHematologiaPruebas = () => {
+    const seriesIds = Object.values(gruposSeriesHematologia).map((g) => g.id)
+    return allPruebas.filter((p) => seriesIds.includes(p.grupo_id))
+  }
+
+  const getPruebasBySerie = (serie) => {
+    const grupoSerie = gruposSeriesHematologia[serie]
+    if (!grupoSerie) return []
+    return allPruebas.filter((p) => p.grupo_id === grupoSerie.id)
+  }
+
+  const getSerieByPrueba = (prueba) => {
+    if (!prueba) return ''
+    return HEMATOLOGIA_SERIES.find((serie) => gruposSeriesHematologia[serie]?.id === prueba.grupo_id) || ''
+  }
+
+  const isHematologiaPrueba = (prueba) => !!getSerieByPrueba(prueba)
+
+  const grupoIncluyeHematologiaCompleta = (grupo) => {
+    if (!grupo) return false
+    return normalizeHematologiaSerie(grupo.nombre || '') === normalizeHematologiaSerie(HEMATOLOGIA_GRUPO_PRINCIPAL)
+  }
+
+  const getPruebasIdsForGrupo = (grupoId) => {
+    const pruebasDelGrupo = allPruebas.filter((p) => p.grupo_id === grupoId).map((p) => p.id)
+    const grupo = allGrupos.find((g) => g.id === grupoId)
+    if (grupo && grupoIncluyeHematologiaCompleta(grupo)) {
+      const hematoIds = getHematologiaPruebas().map((p) => p.id)
+      return [...new Set([...pruebasDelGrupo, ...hematoIds])]
+    }
+    return pruebasDelGrupo
+  }
+
+  const hematoPruebaIds = getHematologiaPruebas().map((p) => p.id)
+  const hematologiaCompleta = hematoPruebaIds.length > 0 && hematoPruebaIds.every((id) => selectedPruebas.includes(id))
+
   const toggleGrupo = (grupoId) => {
-    const grupo = allGrupos.find(g => g.id === grupoId)
+    const grupo = allGrupos.find((g) => g.id === grupoId)
     if (!grupo) return
 
-    const pruebasDelGrupo = allPruebas.filter(p => p.grupo_id === grupoId).map(p => p.id)
-    
+    const pruebasDelGrupo = getPruebasIdsForGrupo(grupoId)
+
     setSelectedGrupos((prev) => {
       if (prev.includes(grupoId)) {
         // Deseleccionar grupo
-        setSelectedPruebas((prevPruebas) => prevPruebas.filter(id => !pruebasDelGrupo.includes(id)))
+        setSelectedPruebas((prevPruebas) => prevPruebas.filter((id) => !pruebasDelGrupo.includes(id)))
         return prev.filter((id) => id !== grupoId)
       } else {
         // Seleccionar grupo
@@ -264,28 +316,14 @@ function Examenes() {
   }
 
   // ============ FUNCIONES PARA HEMATOLOGÍA ============
-  const getHematologiaPruebas = () => {
-    return allPruebas.filter((p) => {
-      const area = (p.area || '').toLowerCase().trim()
-      return ['roja', 'blanca', 'plaquetaria'].includes(area)
-    })
-  }
-
-  const getPruebasByArea = (area) => {
-    return allPruebas.filter((p) => (p.area || '').toLowerCase().trim() === area.toLowerCase().trim())
-  }
-
   const toggleHematologiaCompleta = () => {
+    const hematologiaIds = getHematologiaPruebas().map((p) => p.id)
+    if (hematologiaIds.length === 0) return
+
     if (hematologiaCompleta) {
-      // Desactivar: deseleccionar solo pruebas de hematología
-      const hematoPruebas = getHematologiaPruebas().map(p => p.id)
-      setSelectedPruebas((prev) => prev.filter(id => !hematoPruebas.includes(id)))
-      setHematologiaCompleta(false)
+      setSelectedPruebas((prev) => prev.filter((id) => !hematologiaIds.includes(id)))
     } else {
-      // Activar: seleccionar todas las pruebas de hematología
-      const hematoPruebas = getHematologiaPruebas().map(p => p.id)
-      setSelectedPruebas((prev) => [...new Set([...prev, ...hematoPruebas])])
-      setHematologiaCompleta(true)
+      setSelectedPruebas((prev) => [...new Set([...prev, ...hematologiaIds])])
     }
   }
 
@@ -296,6 +334,7 @@ function Examenes() {
     setSelectedGrupos([])
     setResultados({})
     setObservaciones({})
+    setHematologiaObservacionGeneral('')
     setExamenesEspeciales({
       orina: { enabled: false, data: {} },
       heces: { enabled: false, data: {} }
@@ -321,6 +360,9 @@ function Examenes() {
     })
     setResultados(newResultados)
     setObservaciones(newObservaciones)
+    if (!hematologiaCompleta) {
+      setHematologiaObservacionGeneral('')
+    }
   }
 
   // ============ MANEJO DE RESULTADOS ============
@@ -379,11 +421,20 @@ function Examenes() {
       // Guardar exámenes normales si hay pruebas seleccionadas
       if (selectedPruebas.length > 0) {
         const examenesData = selectedPruebas.map((pruebaId) => ({
+          ...(() => {
+            const prueba = allPruebas.find((p) => p.id === pruebaId)
+            const isHematologia = !!prueba && getHematologiaPruebas().some((hp) => hp.id === pruebaId)
+            const observacionPrueba = observaciones[pruebaId] || ''
+            const observacionGeneral = (hematologiaObservacionGeneral || '').trim()
+            const mergedObservacion = isHematologia && observacionGeneral
+              ? [observacionPrueba, `Observación general hematología: ${observacionGeneral}`].filter(Boolean).join(' | ')
+              : observacionPrueba
+            return { observaciones: mergedObservacion }
+          })(),
           paciente_id: selectedPaciente.id,
           prueba_id: pruebaId,
           fecha: selectedDate,
-          resultado: resultados[pruebaId] || '',
-          observaciones: observaciones[pruebaId] || ''
+          resultado: resultados[pruebaId] || ''
         }))
 
         examenesCreados = await api.createExamenesBatch(examenesData)
@@ -573,64 +624,172 @@ function Examenes() {
       doc.setFontSize(10)
       doc.setFont("Helvetica", "normal")
 
-      // Separar pruebas hematológicas de las demás
-      const hematologiaPruebas = pruebasSeleccionadas.filter(p => ['roja', 'blanca', 'plaquetaria'].includes(p.area))
-      const otrasPruebas = pruebasSeleccionadas.filter(p => !['roja', 'blanca', 'plaquetaria'].includes(p.area))
+      const printPrueba = (p) => {
+        const res = resultados[String(p.id)] || '—'
+        const unidad = p.unidad_medida || ''
 
-      // Agrupar hematología por serie
+        let rango = ''
+        if (p.tipo_prueba !== 'serologia' && p.valor_referencia_min !== null && p.valor_referencia_max !== null) {
+          rango = `(${p.valor_referencia_min} - ${p.valor_referencia_max})`
+        }
+
+        if (ypos > 270) {
+          doc.addPage()
+          ypos = 20
+        }
+
+        doc.setFont('Helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.setTextColor(0, 0, 0)
+        doc.text(p.nombre_prueba, 20, ypos)
+
+        const resultadoUnidad = p.tipo_prueba === 'serologia'
+          ? res
+          : [res, unidad].filter(Boolean).join(' ').trim() || '—'
+
+        const valorNumerico = parseFloat(res)
+        const fueraDeRango = (
+          p.tipo_prueba === 'numerica' &&
+          p.valor_referencia_min !== null &&
+          p.valor_referencia_max !== null &&
+          !Number.isNaN(valorNumerico) &&
+          (valorNumerico < p.valor_referencia_min || valorNumerico > p.valor_referencia_max)
+        )
+
+        doc.setFont('Helvetica', 'normal')
+        doc.setTextColor(fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80)
+        doc.text(resultadoUnidad, 140, ypos, { align: 'right' })
+
+        doc.setFont('Helvetica', 'normal')
+        doc.setFontSize(9)
+        doc.setTextColor(80, 80, 80)
+        if (rango) {
+          doc.text(rango, 190, ypos, { align: 'right' })
+        }
+        ypos += 7
+
+        if (p.descripcion) {
+          if (ypos > 270) {
+            doc.addPage()
+            ypos = 20
+          }
+          doc.setFont('Helvetica', fueraDeRango ? 'bold' : 'normal')
+          doc.setFontSize(8)
+          doc.setTextColor(0, 0, 0)
+          const descripcionLines = doc.splitTextToSize(p.descripcion, 60)
+          descripcionLines.forEach((line) => {
+            if (ypos > 270) {
+              doc.addPage()
+              ypos = 20
+            }
+            doc.text(line, 170, ypos, { align: 'right' })
+            ypos += 5
+          })
+          ypos += 2
+        }
+
+        if (observaciones[String(p.id)]) {
+          if (ypos > 270) {
+            doc.addPage()
+            ypos = 20
+          }
+          doc.setFont('Helvetica', 'italic')
+          doc.setFontSize(8)
+          doc.setTextColor(0, 0, 0)
+          doc.text('Observaciones:', 20, ypos)
+          ypos += 4
+          const obsLines = doc.splitTextToSize(observaciones[String(p.id)], 160)
+          obsLines.forEach((line) => {
+            if (ypos > 270) {
+              doc.addPage()
+              ypos = 20
+            }
+            doc.text(line, 20, ypos)
+            ypos += 4
+          })
+          doc.setFont('Helvetica', 'normal')
+          doc.setFontSize(9)
+          ypos += 4
+        }
+      }
+
+      const printGrupoEncabezado = (grupo) => {
+        if (!grupo) return
+        if (ypos > 270) {
+          doc.addPage()
+          ypos = 20
+        }
+        doc.setFont('Helvetica', 'bold')
+        doc.setFontSize(11)
+        doc.setTextColor(0, 0, 0)
+        doc.text(grupo.nombre.toUpperCase(), 20, ypos)
+        ypos += 6
+        doc.setLineWidth(0.3)
+        doc.line(20, ypos, 190, ypos)
+        ypos += 8
+      }
+
+      const hematologiaPruebas = pruebasSeleccionadas.filter(isHematologiaPrueba)
       const hematologiaPorSerie = {}
-      hematologiaPruebas.forEach(p => {
-        const serie = p.area
+      hematologiaPruebas.forEach((p) => {
+        const serie = getSerieByPrueba(p)
+        if (!serie) return
         if (!hematologiaPorSerie[serie]) {
           hematologiaPorSerie[serie] = []
         }
         hematologiaPorSerie[serie].push(p)
       })
 
-      // Agrupar otras pruebas por grupo
-      const otrasPorGrupo = {}
-      otrasPruebas.forEach(p => {
-        const grupoId = p.grupo_id || 'sin_grupo'
-        if (!otrasPorGrupo[grupoId]) {
-          otrasPorGrupo[grupoId] = []
-        }
-        otrasPorGrupo[grupoId].push(p)
-      })
+      const orderedNoHematologia = pruebasSeleccionadas.filter((p) => !isHematologiaPrueba(p))
+      const firstHematologiaIndex = pruebasSeleccionadas.findIndex(isHematologiaPrueba)
+      const beforeCount = firstHematologiaIndex === -1
+        ? orderedNoHematologia.length
+        : pruebasSeleccionadas.slice(0, firstHematologiaIndex).filter((p) => !isHematologiaPrueba(p)).length
+      const beforePruebas = orderedNoHematologia.slice(0, beforeCount)
+      const afterPruebas = orderedNoHematologia.slice(beforeCount)
+
+      const printedGrupoIds = new Set()
+      const renderPruebasLista = (listaPruebas) => {
+        listaPruebas.forEach((p) => {
+          const grupoId = p.grupo_id
+          if (grupoId && !printedGrupoIds.has(grupoId)) {
+            const grupo = allGrupos.find((g) => g.id === grupoId)
+            printGrupoEncabezado(grupo)
+            printedGrupoIds.add(grupoId)
+          }
+          printPrueba(p)
+        })
+      }
+
+      renderPruebasLista(beforePruebas)
 
       const HEMATOLOGIA_ORDER = ['roja', 'blanca', 'plaquetaria']
       const HEMATOLOGIA_LABELS = {
-        'roja': 'SERIE ROJA',
-        'blanca': 'SERIE BLANCA',
-        'plaquetaria': 'SERIE PLAQUETARIA'
+        roja: 'SERIE ROJA',
+        blanca: 'SERIE BLANCA',
+        plaquetaria: 'SERIE PLAQUETARIA'
       }
 
-      const sortedGrupoIds = Object.keys(otrasPorGrupo).sort((a, b) => {
-        const grupoA = allGrupos.find(g => g.id === a)
-        const grupoB = allGrupos.find(g => g.id === b)
-
-        if (a === 'sin_grupo') return 1
-        if (b === 'sin_grupo') return -1
-        return String(grupoA?.nombre || a).localeCompare(String(grupoB?.nombre || b))
-      })
-
-      // Imprimir HEMATOLOGÍA COMPLETA si hay pruebas hematológicas
       if (hematologiaPruebas.length > 0) {
-        doc.setFont("Helvetica", "bold")
+        if (ypos > 270) {
+          doc.addPage()
+          ypos = 20
+        }
+        doc.setFont('Helvetica', 'bold')
         doc.setFontSize(12)
-        doc.text("HEMATOLOGÍA COMPLETA", 20, ypos)
+        doc.text('HEMATOLOGÍA COMPLETA', 20, ypos)
         ypos += 8
         doc.setLineWidth(0.4)
         doc.line(20, ypos, 190, ypos)
         ypos += 10
 
-        // Renderizar series hematológicas en orden
-        HEMATOLOGIA_ORDER.forEach(serie => {
+        HEMATOLOGIA_ORDER.forEach((serie) => {
           if (hematologiaPorSerie[serie] && hematologiaPorSerie[serie].length > 0) {
             if (ypos > 270) {
               doc.addPage()
               ypos = 20
             }
-            doc.setFont("Helvetica", "bold")
+            doc.setFont('Helvetica', 'bold')
             doc.setFontSize(11)
             doc.setTextColor(0, 0, 0)
             doc.text(HEMATOLOGIA_LABELS[serie], 20, ypos)
@@ -639,217 +798,37 @@ function Examenes() {
             doc.line(20, ypos, 190, ypos)
             ypos += 8
 
-            // Pruebas de la serie
-            hematologiaPorSerie[serie].forEach(p => {
-              const res = resultados[String(p.id)] || '—'
-              const unidad = p.unidad_medida || ''
+            hematologiaPorSerie[serie].forEach((p) => {
+              printPrueba(p)
+            })
 
-              // Para serología, no mostrar rango
-              let rango = ''
-              if (p.tipo_prueba !== 'serologia' && p.valor_referencia_min !== null && p.valor_referencia_max !== null) {
-                rango = `(${p.valor_referencia_min} - ${p.valor_referencia_max})`
-              }
-
+            if (serie === 'plaquetaria' && hematologiaObservacionGeneral.trim()) {
               if (ypos > 270) {
                 doc.addPage()
                 ypos = 20
               }
-
-              doc.setFont("Helvetica", "normal")
-              doc.setFontSize(10)
-              doc.setTextColor(0, 0, 0)
-              doc.text(p.nombre_prueba, 20, ypos)
-
-              const resultadoUnidad = p.tipo_prueba === 'serologia' 
-                ? res 
-                : [res, unidad].filter(Boolean).join(' ').trim() || '—'
-              
-              // Lógica de fuera de rango solo para pruebas numéricas
-              const valorNumerico = parseFloat(res)
-              const fueraDeRango = (
-                p.tipo_prueba === 'numerica' &&
-                p.valor_referencia_min !== null &&
-                p.valor_referencia_max !== null &&
-                !Number.isNaN(valorNumerico) &&
-                (valorNumerico < p.valor_referencia_min || valorNumerico > p.valor_referencia_max)
-              )
-              doc.setFont("Helvetica", "normal")
-              doc.setTextColor(fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80)
-              doc.text(resultadoUnidad, 140, ypos, { align: 'right' })
-
-              doc.setFont("Helvetica", "normal")
+              doc.setFont('Helvetica', 'italic')
               doc.setFontSize(9)
-              doc.setTextColor(80, 80, 80)
-              if (rango) {
-                doc.text(rango, 190, ypos, { align: 'right' })
-              }
-              ypos += 7
-
-              if (p.descripcion) {
+              doc.setTextColor(0, 0, 0)
+              doc.text('Observaciones generales de hematología:', 20, ypos)
+              ypos += 5
+              const hematoObsLines = doc.splitTextToSize(hematologiaObservacionGeneral.trim(), 160)
+              hematoObsLines.forEach((line) => {
                 if (ypos > 270) {
                   doc.addPage()
                   ypos = 20
                 }
-                doc.setFont("Helvetica", fueraDeRango ? "bold":"normal")
-                doc.setFontSize(8)
-                doc.setTextColor(0, 0, 0)
-                const descripcionLines = doc.splitTextToSize(p.descripcion, 60)
-                descripcionLines.forEach(line => {
-                  if (ypos > 270) {
-                    doc.addPage()
-                    ypos = 20
-                  }
-                  doc.text(line, 170, ypos, { align: 'right' })
-                  ypos += 5
-                })
-                ypos += 2
-              }
-
-              // Observaciones al final de cada prueba hematológica
-              if (observaciones[String(p.id)]) {
-                if (ypos > 270) {
-                  doc.addPage()
-                  ypos = 20
-                }
-                doc.setFont("Helvetica", "italic")
-                doc.setFontSize(8)
-                doc.setTextColor(0, 0, 0)
-                doc.text("Observaciones:", 20, ypos)
+                doc.text(line, 20, ypos)
                 ypos += 4
-                const obsLines = doc.splitTextToSize(observaciones[String(p.id)], 160)
-                obsLines.forEach(line => {
-                  if (ypos > 270) {
-                    doc.addPage()
-                    ypos = 20
-                  }
-                  doc.text(line, 20, ypos)
-                  ypos += 4
-                })
-                doc.setFont("Helvetica", "normal")
-                doc.setFontSize(9)
-                ypos += 4
-              }
-            })
-
+              })
+              ypos += 6
+            }
             ypos += 4
           }
         })
       }
 
-      // Renderizar otras pruebas organizadas por grupo
-      sortedGrupoIds.forEach((grupoId) => {
-        const grupo = allGrupos.find(g => g.id === grupoId)
-
-        if (grupoId !== 'sin_grupo' && selectedGrupos.includes(grupoId)) {
-          if (grupo) {
-            if (ypos > 270) {
-              doc.addPage()
-              ypos = 20
-            }
-            doc.setFont("Helvetica", "bold")
-            doc.setFontSize(11)
-            doc.setTextColor(0, 0, 0)
-            doc.text(grupo.nombre.toUpperCase(), 20, ypos)
-            ypos += 6
-            doc.setLineWidth(0.3)
-            doc.line(20, ypos, 190, ypos)
-            ypos += 8
-          }
-        }
-
-        // Pruebas del grupo
-        otrasPorGrupo[grupoId].forEach(p => {
-          const res = resultados[String(p.id)] || '—'
-          const unidad = p.unidad_medida || ''
-
-          // Para serología, no mostrar rango
-          let rango = ''
-          if (p.tipo_prueba !== 'serologia' && p.valor_referencia_min !== null && p.valor_referencia_max !== null) {
-            rango = `(${p.valor_referencia_min} - ${p.valor_referencia_max})`
-          }
-
-          if (ypos > 270) {
-            doc.addPage()
-            ypos = 20
-          }
-
-          doc.setFont("Helvetica", "normal")
-          doc.setFontSize(10)
-          doc.setTextColor(0, 0, 0)
-          doc.text(p.nombre_prueba, 20, ypos)
-
-          const resultadoUnidad = p.tipo_prueba === 'serologia' 
-            ? res 
-            : [res, unidad].filter(Boolean).join(' ').trim() || '—'
-          
-          // Lógica de fuera de rango solo para pruebas numéricas
-          const valorNumerico = parseFloat(res)
-          const fueraDeRango = (
-            p.tipo_prueba === 'numerica' &&
-            p.valor_referencia_min !== null &&
-            p.valor_referencia_max !== null &&
-            !Number.isNaN(valorNumerico) &&
-            (valorNumerico < p.valor_referencia_min || valorNumerico > p.valor_referencia_max)
-          )
-          doc.setFont("Helvetica", "normal")
-          doc.setTextColor(fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80)
-          doc.text(resultadoUnidad, 140, ypos, { align: 'right' })
-
-          doc.setFont("Helvetica", "normal")
-          doc.setFontSize(9)
-          doc.setTextColor(80, 80, 80)
-          if (rango) {
-            doc.text(rango, 190, ypos, { align: 'right' })
-          }
-          ypos += 7
-
-          if (p.descripcion) {
-            if (ypos > 270) {
-              doc.addPage()
-              ypos = 20
-            }
-            doc.setFont("Helvetica", fueraDeRango ? "bold":"normal")
-            doc.setFontSize(8)
-            doc.setTextColor(0, 0, 0)
-            const descripcionLines = doc.splitTextToSize(p.descripcion, 60)
-            descripcionLines.forEach(line => {
-              if (ypos > 270) {
-                doc.addPage()
-                ypos = 20
-              }
-              doc.text(line, 170, ypos, { align: 'right' })
-              ypos += 5
-            })
-            ypos += 2
-          }
-
-          if (observaciones[String(p.id)]) {
-            if (ypos > 270) {
-              doc.addPage()
-              ypos = 20
-            }
-            doc.setFont("Helvetica", "italic")
-            doc.setFontSize(8)
-            doc.setTextColor(0, 0, 0)
-            doc.text("Observaciones:", 20, ypos)
-            ypos += 4
-            const obsLines = doc.splitTextToSize(observaciones[String(p.id)], 160)
-            obsLines.forEach(line => {
-              if (ypos > 270) {
-                doc.addPage()
-                ypos = 20
-              }
-              doc.text(line, 20, ypos)
-              ypos += 4
-            })
-            doc.setFont("Helvetica", "normal")
-            doc.setFontSize(9)
-            ypos += 4
-          }
-        })
-
-        ypos += 4
-      })
+      renderPruebasLista(afterPruebas)
 
       // Agregar exámenes especiales si están habilitados
       if (examenesEspeciales.orina.enabled) {
@@ -1419,7 +1398,7 @@ function Examenes() {
                         <span className="checkmark"></span>
                         <span className="label-text">
                           <strong>Hematología Completa</strong>
-                          <small>(Selecciona automáticamente todas las series)</small>
+                          <small>(Selecciona automáticamente Serie Roja, Blanca y Plaquetaria)</small>
                         </span>
                       </label>
                     </div>
@@ -2062,7 +2041,7 @@ function Examenes() {
                     {/* Serie Roja */}
                     <div className="hematologia-serie">
                       <h4 className="serie-titulo">Serie Roja</h4>
-                      {getPruebasByArea('roja')
+                      {getPruebasBySerie('roja')
                         .filter((p) => selectedPruebas.includes(p.id))
                         .map((prueba) => (
                           <div key={prueba.id} className="resultado-item hematologia-item">
@@ -2100,7 +2079,7 @@ function Examenes() {
                     {/* Serie Blanca */}
                     <div className="hematologia-serie">
                       <h4 className="serie-titulo">Serie Blanca</h4>
-                      {getPruebasByArea('blanca')
+                      {getPruebasBySerie('blanca')
                         .filter((p) => selectedPruebas.includes(p.id))
                         .map((prueba) => (
                           <div key={prueba.id} className="resultado-item hematologia-item">
@@ -2138,7 +2117,7 @@ function Examenes() {
                     {/* Serie Plaquetaria */}
                     <div className="hematologia-serie">
                       <h4 className="serie-titulo">Serie Plaquetaria</h4>
-                      {getPruebasByArea('plaquetaria')
+                      {getPruebasBySerie('plaquetaria')
                         .filter((p) => selectedPruebas.includes(p.id))
                         .map((prueba) => (
                           <div key={prueba.id} className="resultado-item hematologia-item">
@@ -2172,6 +2151,17 @@ function Examenes() {
                           </div>
                         ))}
                     </div>
+
+                    <div className="hematologia-observacion-general">
+                      <h4 className="serie-titulo">Observaciones del bioanalista</h4>
+                      <textarea
+                        placeholder="Escribe aquí tu apreciación general de la hematología completa..."
+                        value={hematologiaObservacionGeneral}
+                        onChange={(e) => setHematologiaObservacionGeneral(e.target.value)}
+                        className="input-observaciones"
+                        rows="3"
+                      />
+                    </div>
                   </div>
                 )}
 
@@ -2179,8 +2169,8 @@ function Examenes() {
                   .filter((prueba) => {
                     // Excluir pruebas de hematología si Hematología Completa está activada
                     if (hematologiaCompleta) {
-                      const area = (prueba.area || '').toLowerCase().trim()
-                      return !['roja', 'blanca', 'plaquetaria'].includes(area)
+                      const serie = getSerieByPrueba(prueba)
+                      return !['roja', 'blanca', 'plaquetaria'].includes(serie)
                     }
                     return true
                   })

@@ -61,7 +61,8 @@ function Pruebas() {
     nombre: '',
     descripcion: '',
     activo: true,
-    serieGrupo: ''
+    serieGrupo: '',
+    incluyeHematologiaCompleta: false
   })
   const [selectedPruebasGrupo, setSelectedPruebasGrupo] = useState([])
   const [serieGroupIds, setSerieGroupIds] = useState({ roja: null, blanca: null, plaquetaria: null })
@@ -123,6 +124,22 @@ function Pruebas() {
     { value: 'blanca', label: 'Serie Blanca' },
     { value: 'plaquetaria', label: 'Serie Plaquetaria' }
   ]
+
+  const HEMATOLOGIA_COMPLETA_MARKER = '[hematología completa]'
+
+  const descriptionIncludesHematologiaCompleta = (descripcion) => {
+    return !!descripcion && descripcion.toLowerCase().includes(HEMATOLOGIA_COMPLETA_MARKER)
+  }
+
+  const stripHematologiaCompletaMarker = (descripcion) => {
+    if (!descripcion) return ''
+    return descripcion.replace(new RegExp(HEMATOLOGIA_COMPLETA_MARKER, 'i'), '').trim()
+  }
+
+  const buildGrupoDescripcion = (descripcion, incluyeHematologia) => {
+    const clean = stripHematologiaCompletaMarker(descripcion || '')
+    return incluyeHematologia ? `${clean} ${HEMATOLOGIA_COMPLETA_MARKER}`.trim() : clean
+  }
 
   const getSerieLabel = (serie) => {
     if (!serie) return ''
@@ -539,7 +556,7 @@ function Pruebas() {
 
       const nuevoGrupo = await api.createGrupo({
         nombre: nombreGrupo,
-        descripcion: grupoFormData.descripcion.trim() || undefined,
+        descripcion: buildGrupoDescripcion(grupoFormData.descripcion, grupoFormData.incluyeHematologiaCompleta) || undefined,
         activo: grupoFormData.activo
       })
       
@@ -567,9 +584,10 @@ function Pruebas() {
     setGrupoEnEdicion(grupo)
     setGrupoFormData({
       nombre: grupo.nombre,
-      descripcion: grupo.descripcion || '',
+      descripcion: stripHematologiaCompletaMarker(grupo.descripcion || ''),
       activo: grupo.activo ?? true,
-      serieGrupo: getSeriesValueFromGroupName(grupo.nombre)
+      serieGrupo: getSeriesValueFromGroupName(grupo.nombre),
+      incluyeHematologiaCompleta: descriptionIncludesHematologiaCompleta(grupo.descripcion || '')
     })
     
     // Cargar pruebas del grupo
@@ -608,7 +626,7 @@ function Pruebas() {
 
       await api.updateGrupo(grupoEnEdicion.id, {
         nombre: nombreGrupo,
-        descripcion: grupoFormData.descripcion.trim() || undefined,
+        descripcion: buildGrupoDescripcion(grupoFormData.descripcion, grupoFormData.incluyeHematologiaCompleta) || undefined,
         activo: grupoFormData.activo
       })
       
@@ -897,6 +915,9 @@ function Pruebas() {
                             {getSeriesValueFromGroupName(grupo.nombre) && (
                               <span className="grupo-serie-label">Hematología</span>
                             )}
+                            {descriptionIncludesHematologiaCompleta(grupo.descripcion) && (
+                              <span className="grupo-serie-label">Hematología Completa</span>
+                            )}
                           </div>
                         </div>
                         <span className="grupo-badge">{pruebasDelGrupo.length} pruebas</span>
@@ -1031,7 +1052,7 @@ function Pruebas() {
               </div>
 
               {/* Hematología */}
-              <div className="form-group hematologia-section">
+              <div className="form-group">
                 <label className="form-label">Hematología</label>
                 <p className="form-hint">Selecciona una serie para que esta prueba se guarde con el grupo de hematología correspondiente.</p>
                 <div className="serie-radio-group">
@@ -1278,11 +1299,11 @@ function Pruebas() {
 
               {/* Serie de Hematología (opcional) */}
               <div className="form-group">
-                <label htmlFor="serieGrupo" className="form-label">
+                <label htmlFor="grupo_serie" className="form-label">
                   Serie de Hematología
                 </label>
                 <select
-                  id="serieGrupo"
+                  id="grupo_serie"
                   name="serieGrupo"
                   value={grupoFormData.serieGrupo}
                   onChange={handleGrupoFormChange}
@@ -1312,6 +1333,21 @@ function Pruebas() {
                   className="form-input form-textarea"
                   rows={2}
                 />
+              </div>
+
+              {/* Incluye Hematología Completa */}
+              <div className="form-group form-checkbox">
+                <input
+                  id="grupo_incluye_hematologia"
+                  type="checkbox"
+                  name="incluyeHematologiaCompleta"
+                  checked={grupoFormData.incluyeHematologiaCompleta}
+                  onChange={handleGrupoFormChange}
+                  className="form-checkbox-input"
+                />
+                <label htmlFor="grupo_incluye_hematologia" className="form-checkbox-label">
+                  Incluye Hematología Completa
+                </label>
               </div>
 
               {/* Activo */}
@@ -1420,11 +1456,11 @@ function Pruebas() {
 
               {/* Serie de Hematología (opcional) */}
               <div className="form-group">
-                <label htmlFor="serieGrupo" className="form-label">
+                <label htmlFor="edit_grupo_serie" className="form-label">
                   Serie de Hematología
                 </label>
                 <select
-                  id="serieGrupo"
+                  id="edit_grupo_serie"
                   name="serieGrupo"
                   value={grupoFormData.serieGrupo}
                   onChange={handleGrupoFormChange}
@@ -1453,6 +1489,21 @@ function Pruebas() {
                   className="form-input form-textarea"
                   rows={2}
                 />
+              </div>
+
+              {/* Incluye Hematología Completa */}
+              <div className="form-group form-checkbox">
+                <input
+                  id="edit_grupo_incluye_hematologia"
+                  type="checkbox"
+                  name="incluyeHematologiaCompleta"
+                  checked={grupoFormData.incluyeHematologiaCompleta}
+                  onChange={handleGrupoFormChange}
+                  className="form-checkbox-input"
+                />
+                <label htmlFor="edit_grupo_incluye_hematologia" className="form-checkbox-label">
+                  Incluye Hematología Completa
+                </label>
               </div>
 
               {/* Activo */}
