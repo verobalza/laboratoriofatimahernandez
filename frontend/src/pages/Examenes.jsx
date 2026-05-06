@@ -807,10 +807,10 @@ function Examenes() {
                 doc.addPage()
                 ypos = 20
               }
-              doc.setFont('Helvetica', 'italic')
+              doc.setFont('Helvetica', 'italic', 'bold')
               doc.setFontSize(9)
               doc.setTextColor(0, 0, 0)
-              doc.text('Observaciones generales de hematología:', 20, ypos)
+              doc.text('Observaciones:', 20, ypos)
               ypos += 5
               const hematoObsLines = doc.splitTextToSize(hematologiaObservacionGeneral.trim(), 160)
               hematoObsLines.forEach((line) => {

@@ -312,6 +312,212 @@ async def list_tipos_muestra():
     return resp.data or []
 
 
+@router.delete("/unidades/{unidad_id}", response_model=dict)
+async def delete_unidad_medida(unidad_id: str):
+    """
+    Elimina una unidad de medida por ID.
+    """
+    supabase = get_supabase_client()
+
+    try:
+        unidad_resp = (
+            supabase.table("unidades_medida")
+            .select("id, nombre")
+            .eq("id", unidad_id)
+            .limit(1)
+            .execute()
+        )
+        unidad = (unidad_resp.data or [None])[0]
+        if not unidad:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Unidad no encontrada"
+            )
+
+        delete_resp = (
+            supabase.table("unidades_medida")
+            .delete()
+            .eq("id", unidad_id)
+            .execute()
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error eliminando unidad: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al eliminar la unidad"
+        )
+
+    if not delete_resp.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Unidad no encontrada"
+        )
+
+    return {"message": "Unidad eliminada correctamente", "id": unidad_id, "nombre": unidad["nombre"]}
+
+
+@router.delete("/tipos/{tipo_id}", response_model=dict)
+async def delete_tipo_muestra(tipo_id: str):
+    """
+    Elimina un tipo de muestra por ID.
+    """
+    supabase = get_supabase_client()
+
+    try:
+        tipo_resp = (
+            supabase.table("tipos_muestra")
+            .select("id, nombre")
+            .eq("id", tipo_id)
+            .limit(1)
+            .execute()
+        )
+        tipo = (tipo_resp.data or [None])[0]
+        if not tipo:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Tipo de muestra no encontrado"
+            )
+
+        delete_resp = (
+            supabase.table("tipos_muestra")
+            .delete()
+            .eq("id", tipo_id)
+            .execute()
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error eliminando tipo de muestra: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al eliminar el tipo de muestra"
+        )
+
+    if not delete_resp.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tipo de muestra no encontrado"
+        )
+
+    return {"message": "Tipo de muestra eliminado correctamente", "id": tipo_id, "nombre": tipo["nombre"]}
+
+
+@router.get("/tipos-prueba", response_model=List[dict])
+async def list_tipos_prueba():
+    """
+    Lista todos los tipos de prueba disponibles para UI.
+    """
+    supabase = get_supabase_client()
+
+    try:
+        resp = supabase.table("tipos_prueba").select("*").order("nombre").execute()
+    except Exception as e:
+        logging.error(f"Error listando tipos de prueba: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al listar tipos de prueba"
+        )
+
+    return resp.data or []
+
+
+@router.post("/tipos-prueba", response_model=dict, status_code=status.HTTP_201_CREATED)
+async def create_tipo_prueba(data: dict):
+    """
+    Crea un nuevo tipo de prueba para UI.
+    """
+    supabase = get_supabase_client()
+
+    nombre = (data.get("nombre") or "").strip().lower()
+    if not nombre:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El nombre del tipo de prueba es obligatorio"
+        )
+    if nombre not in ["numerica", "serologia"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Los tipos permitidos son: numerica o serologia"
+        )
+
+    try:
+        resp = supabase.table("tipos_prueba").insert({"nombre": nombre}).execute()
+    except Exception as e:
+        logging.error(f"Error creando tipo de prueba: {e}")
+        if "duplicate" in str(e).lower():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Este tipo de prueba ya existe"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al crear el tipo de prueba"
+        )
+
+    if not resp.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No se creó el tipo de prueba"
+        )
+
+    return resp.data[0]
+
+
+@router.delete("/tipos-prueba/{tipo_prueba_id}", response_model=dict)
+async def delete_tipo_prueba(tipo_prueba_id: str):
+    """
+    Elimina un tipo de prueba de catálogo por ID.
+    """
+    supabase = get_supabase_client()
+
+    try:
+        tipos_resp = supabase.table("tipos_prueba").select("id").execute()
+        if len(tipos_resp.data or []) <= 1:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Debe existir al menos un tipo de prueba en el catálogo"
+            )
+
+        tipo_resp = (
+            supabase.table("tipos_prueba")
+            .select("id, nombre")
+            .eq("id", tipo_prueba_id)
+            .limit(1)
+            .execute()
+        )
+        tipo = (tipo_resp.data or [None])[0]
+        if not tipo:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Tipo de prueba no encontrado"
+            )
+
+        delete_resp = (
+            supabase.table("tipos_prueba")
+            .delete()
+            .eq("id", tipo_prueba_id)
+            .execute()
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error eliminando tipo de prueba: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al eliminar el tipo de prueba"
+        )
+
+    if not delete_resp.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tipo de prueba no encontrado"
+        )
+
+    return {"message": "Tipo de prueba eliminado correctamente", "id": tipo_prueba_id, "nombre": tipo["nombre"]}
+
+
 @router.get("/areas", response_model=List[str])
 async def list_areas():
     """
@@ -350,6 +556,54 @@ async def create_area(data: dict):
             detail="El nombre del área es obligatorio"
         )
     return {"area": area}
+
+
+@router.delete("/areas/{area_nombre}", response_model=dict)
+async def delete_area(area_nombre: str):
+    """
+    Elimina un área del catálogo lógico (quitándola de pruebas existentes).
+    """
+    supabase = get_supabase_client()
+    area = (area_nombre or "").strip()
+    if not area:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Área inválida"
+        )
+
+    try:
+        existentes = (
+            supabase.table("pruebas")
+            .select("id")
+            .eq("area", area)
+            .execute()
+        )
+        if not existentes.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Área no encontrada"
+            )
+
+        updated = (
+            supabase.table("pruebas")
+            .update({"area": None})
+            .eq("area", area)
+            .execute()
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error eliminando área: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al eliminar el área"
+        )
+
+    return {
+        "message": "Área eliminada correctamente",
+        "area": area,
+        "pruebas_actualizadas": len(updated.data or [])
+    }
 
 
 @router.get("/{prueba_id}", response_model=PruebaOut)

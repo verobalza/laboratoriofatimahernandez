@@ -291,6 +291,10 @@ export const api = {
     return request(`${API_URL}/pruebas/unidades`, { method: 'GET' })
   },
 
+  async deleteUnidadMedida(id) {
+    return request(`${API_URL}/pruebas/unidades/${id}`, { method: 'DELETE' })
+  },
+
   async createTipoMuestra(nombre) {
     return request(`${API_URL}/pruebas/tipos`, {
       method: 'POST',
@@ -302,6 +306,25 @@ export const api = {
     return request(`${API_URL}/pruebas/tipos`, { method: 'GET' })
   },
 
+  async deleteTipoMuestra(id) {
+    return request(`${API_URL}/pruebas/tipos/${id}`, { method: 'DELETE' })
+  },
+
+  async createTipoPrueba(nombre) {
+    return request(`${API_URL}/pruebas/tipos-prueba`, {
+      method: 'POST',
+      body: JSON.stringify({ nombre })
+    })
+  },
+
+  async getTiposPrueba() {
+    return request(`${API_URL}/pruebas/tipos-prueba`, { method: 'GET' })
+  },
+
+  async deleteTipoPrueba(id) {
+    return request(`${API_URL}/pruebas/tipos-prueba/${id}`, { method: 'DELETE' })
+  },
+
   async createArea(area) {
     return request(`${API_URL}/pruebas/areas`, {
       method: 'POST',
@@ -311,6 +334,10 @@ export const api = {
 
   async getAreas() {
     return request(`${API_URL}/pruebas/areas`, { method: 'GET' })
+  },
+
+  async deleteArea(area) {
+    return request(`${API_URL}/pruebas/areas/${encodeURIComponent(area)}`, { method: 'DELETE' })
   },
 
   /* Grupos de Pruebas */

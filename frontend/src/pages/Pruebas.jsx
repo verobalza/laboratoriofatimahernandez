@@ -77,6 +77,10 @@ function Pruebas() {
   const [gruposExpandidos, setGruposExpandidos] = useState({}) // Rastrear qué grupos están expandidos
 
   // ============ UNIDADES Y TIPOS ============
+  const [tiposPrueba, setTiposPrueba] = useState([
+    { id: 'numerica', nombre: 'numerica' },
+    { id: 'serologia', nombre: 'serologia' }
+  ])
   const [unidadesMedida, setUnidadesMedida] = useState([])
   const [tiposMuestra, setTiposMuestra] = useState([])
   const [areas, setAreas] = useState([])
@@ -95,6 +99,7 @@ function Pruebas() {
   useEffect(() => {
     loadPruebas()
     loadGrupos()
+    loadTiposPrueba()
     loadUnidadesMedida()
     loadTiposMuestra()
     loadAreas()
@@ -237,6 +242,26 @@ function Pruebas() {
     }
   }
 
+  const loadTiposPrueba = async () => {
+    try {
+      const tipos = await api.getTiposPrueba()
+      if (Array.isArray(tipos) && tipos.length > 0) {
+        setTiposPrueba(tipos)
+      } else {
+        setTiposPrueba([
+          { id: 'numerica', nombre: 'numerica' },
+          { id: 'serologia', nombre: 'serologia' }
+        ])
+      }
+    } catch (error) {
+      console.error('Error cargando tipos de prueba:', error)
+      setTiposPrueba([
+        { id: 'numerica', nombre: 'numerica' },
+        { id: 'serologia', nombre: 'serologia' }
+      ])
+    }
+  }
+
   const loadTiposMuestra = async () => {
     try {
       const tipos = await api.getTiposMuestra()
@@ -284,11 +309,12 @@ function Pruebas() {
 
   // ============ MODAL CONTROL ============
   const openModal = () => {
+    const defaultTipoPrueba = tiposPrueba[0]?.nombre || 'numerica'
     setSelectedPruebaId(null)
     setIsEditMode(false)
     setFormData({
       nombre_prueba: '',
-      tipo_prueba: 'numerica',
+      tipo_prueba: defaultTipoPrueba,
       serie: '',
       area: '',
       unidad_medida: '',
@@ -687,6 +713,28 @@ function Pruebas() {
   const handleFormChange = async (e) => {
     const { name, value } = e.target
 
+    if (name === 'tipo_prueba' && value === '__add_new_tipo_prueba__') {
+      const nuevo = prompt("Ingrese el nuevo tipo de prueba (permitidos por backend: 'numerica' o 'serologia'):")
+      if (nuevo && nuevo.trim()) {
+        try {
+          await api.createTipoPrueba(nuevo.trim().toLowerCase())
+          await loadTiposPrueba()
+          setFormData((prev) => ({
+            ...prev,
+            tipo_prueba: nuevo.trim().toLowerCase()
+          }))
+          setMensaje({ type: 'success', text: 'Tipo de prueba agregado correctamente' })
+        } catch (error) {
+          console.error('Error guardando tipo de prueba:', error)
+          setMensaje({ type: 'error', text: error.message || 'Error al guardar el tipo de prueba' })
+          setFormData((prev) => ({ ...prev, tipo_prueba: tiposPrueba[0]?.nombre || 'numerica' }))
+        }
+      } else {
+        setFormData((prev) => ({ ...prev, tipo_prueba: prev.tipo_prueba || tiposPrueba[0]?.nombre || 'numerica' }))
+      }
+      return
+    }
+
     if (name === 'serie') {
       const updatedSerie = value
       const updatedArea = updatedSerie ? 'Hematología' : formData.area
@@ -800,6 +848,76 @@ function Pruebas() {
         delete newErrors[name]
         return newErrors
       })
+    }
+  }
+
+  const handleDeleteUnidad = async (unidad) => {
+    if (!unidad?.id) return
+    const confirmar = window.confirm(`¿Quieres eliminar la unidad "${unidad.nombre}"?`)
+    if (!confirmar) return
+    try {
+      await api.deleteUnidadMedida(unidad.id)
+      await loadUnidadesMedida()
+      if (formData.unidad_medida === unidad.nombre) {
+        setFormData((prev) => ({ ...prev, unidad_medida: '' }))
+      }
+      setMensaje({ type: 'success', text: `Unidad "${unidad.nombre}" eliminada` })
+    } catch (error) {
+      console.error('Error eliminando unidad:', error)
+      setMensaje({ type: 'error', text: error.message || 'Error al eliminar la unidad' })
+    }
+  }
+
+  const handleDeleteTipoMuestra = async (tipo) => {
+    if (!tipo?.id) return
+    const confirmar = window.confirm(`¿Quieres eliminar el tipo de muestra "${tipo.nombre}"?`)
+    if (!confirmar) return
+    try {
+      await api.deleteTipoMuestra(tipo.id)
+      await loadTiposMuestra()
+      if (formData.tipo_muestra === tipo.nombre) {
+        setFormData((prev) => ({ ...prev, tipo_muestra: '' }))
+      }
+      setMensaje({ type: 'success', text: `Tipo de muestra "${tipo.nombre}" eliminado` })
+    } catch (error) {
+      console.error('Error eliminando tipo de muestra:', error)
+      setMensaje({ type: 'error', text: error.message || 'Error al eliminar el tipo de muestra' })
+    }
+  }
+
+  const handleDeleteArea = async (area) => {
+    const areaNombre = (area || '').trim()
+    if (!areaNombre) return
+    const confirmar = window.confirm(`¿Quieres eliminar el área "${areaNombre}"? Se quitará de las pruebas que la usen.`)
+    if (!confirmar) return
+    try {
+      await api.deleteArea(areaNombre)
+      await loadAreas()
+      await loadPruebas()
+      if (formData.area === areaNombre) {
+        setFormData((prev) => ({ ...prev, area: '' }))
+      }
+      setMensaje({ type: 'success', text: `Área "${areaNombre}" eliminada` })
+    } catch (error) {
+      console.error('Error eliminando área:', error)
+      setMensaje({ type: 'error', text: error.message || 'Error al eliminar el área' })
+    }
+  }
+
+  const handleDeleteTipoPrueba = async (tipo) => {
+    if (!tipo?.id) return
+    const confirmar = window.confirm(`¿Quieres eliminar el tipo de prueba "${tipo.nombre}"?`)
+    if (!confirmar) return
+    try {
+      await api.deleteTipoPrueba(tipo.id)
+      await loadTiposPrueba()
+      if (formData.tipo_prueba === tipo.nombre) {
+        setFormData((prev) => ({ ...prev, tipo_prueba: 'numerica' }))
+      }
+      setMensaje({ type: 'success', text: `Tipo de prueba "${tipo.nombre}" eliminado` })
+    } catch (error) {
+      console.error('Error eliminando tipo de prueba:', error)
+      setMensaje({ type: 'error', text: error.message || 'Error al eliminar el tipo de prueba' })
     }
   }
 
@@ -1021,9 +1139,28 @@ function Pruebas() {
                   onChange={handleFormChange}
                   className="form-input"
                 >
-                  <option value="numerica">Prueba numérica</option>
-                  <option value="serologia">Cualitativa</option>
+                  <option value="">Seleccionar tipo...</option>
+                  <option value="__add_new_tipo_prueba__">+ Agregar tipo de prueba</option>
+                  {tiposPrueba.map((tipo) => (
+                    <option key={tipo.id} value={tipo.nombre}>
+                      {tipo.nombre}
+                    </option>
+                  ))}
                 </select>
+                <div className="catalog-items">
+                  {tiposPrueba.map((tipo) => (
+                    <button
+                      type="button"
+                      key={`del-tipo-prueba-${tipo.id}`}
+                      className="catalog-pill"
+                      onClick={() => handleDeleteTipoPrueba(tipo)}
+                      title={`Eliminar tipo de prueba ${tipo.nombre}`}
+                    >
+                      <span>{tipo.nombre}</span>
+                      <span className="catalog-pill-delete">✕</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Área */}
@@ -1049,6 +1186,20 @@ function Pruebas() {
                 {errors.area && (
                   <span className="error-message">{errors.area}</span>
                 )}
+                <div className="catalog-items">
+                  {areas.map((area) => (
+                    <button
+                      type="button"
+                      key={`del-area-${area}`}
+                      className="catalog-pill"
+                      onClick={() => handleDeleteArea(area)}
+                      title={`Eliminar área ${area}`}
+                    >
+                      <span>{area}</span>
+                      <span className="catalog-pill-delete">✕</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Hematología */}
@@ -1122,6 +1273,20 @@ function Pruebas() {
                 {errors.tipo_muestra && (
                   <span className="error-message">{errors.tipo_muestra}</span>
                 )}
+                <div className="catalog-items">
+                  {tiposMuestra.map((tipo) => (
+                    <button
+                      type="button"
+                      key={`del-tipo-muestra-${tipo.id}`}
+                      className="catalog-pill"
+                      onClick={() => handleDeleteTipoMuestra(tipo)}
+                      title={`Eliminar tipo de muestra ${tipo.nombre}`}
+                    >
+                      <span>{tipo.nombre}</span>
+                      <span className="catalog-pill-delete">✕</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Valores de referencia - Solo para pruebas numéricas */}
