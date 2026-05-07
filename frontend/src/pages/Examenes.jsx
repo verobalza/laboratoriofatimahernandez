@@ -930,6 +930,7 @@ function Examenes() {
         doc.setFont("Helvetica", "normal")
         const microscopicoData = [
           `Células epiteliales: ${examenesEspeciales.orina.data.celulas_epiteliales || 'No especificado'}`,
+          `Mucina: ${examenesEspeciales.orina.data.mucina || 'No especificado'}`,
           `Leucocitos: ${examenesEspeciales.orina.data.leucocitos || 'No especificado'}`,
           `Piocitos: ${examenesEspeciales.orina.data.piocitos || 'No especificado'}`,
           `Cristales: ${examenesEspeciales.orina.data.cristales || 'No especificado'}`,
@@ -1783,6 +1784,17 @@ function Examenes() {
                                       value={examenesEspeciales.orina.data.celulas_epiteliales || ''}
                                       onChange={(e) => handleExamenEspecialChange('orina', 'celulas_epiteliales', e.target.value)}
                                       placeholder="Cantidad"
+                                    />
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Mucina</label>
+                                    <input
+                                      type="text"
+                                      className="field-input"
+                                      value={examenesEspeciales.orina.data.mucina || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'mucina', e.target.value)}
+                                      placeholder="Texto libre"
                                     />
                                   </div>
 
