@@ -24,7 +24,9 @@ from ..dependencies import get_supabase_client
 from ..models.orina_heces_models import (
 
     OrinaCreate, OrinaOut, OrinaUpdate,
-    HecesCreate, HecesOut, HecesUpdate
+    HecesCreate, HecesOut, HecesUpdate,
+    MiscelaneosCreate, MiscelaneosOut,
+    CoagulacionCreate, CoagulacionOut
 )
 
 router = APIRouter(prefix="/api", tags=["Exámenes Especializados"])
@@ -297,4 +299,56 @@ async def get_heces_by_paciente(paciente_id: str):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al obtener exámenes de heces"
+        )
+
+
+# ============================
+#   EXÁMENES MISCELÁNEOS
+# ============================
+
+@router.post("miscelaneos", response_model=MiscelaneosOut, status_code=status.HTTP_201_CREATED)
+async def create_miscelaneos(miscelaneos: MiscelaneosCreate):
+    supabase = get_supabase_client()
+    try:
+        payload = miscelaneos.dict(exclude_none=False)
+        if isinstance(payload.get("paciente_id"), str):
+            payload["paciente_id"] = payload["paciente_id"].strip()
+        resp = supabase.table("examenes_miscelaneos").insert(payload).execute()
+        if not resp.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="No se creó el examen de misceláneos"
+            )
+        return MiscelaneosOut(**resp.data[0])
+    except Exception as e:
+        logger.error(f"Error creando examen de misceláneos: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al crear examen de misceláneos: {str(e)}"
+        )
+
+
+# ============================
+#   EXÁMENES DE COAGULACIÓN
+# ============================
+
+@router.post("coagulacion", response_model=CoagulacionOut, status_code=status.HTTP_201_CREATED)
+async def create_coagulacion(coagulacion: CoagulacionCreate):
+    supabase = get_supabase_client()
+    try:
+        payload = coagulacion.dict(exclude_none=False)
+        if isinstance(payload.get("paciente_id"), str):
+            payload["paciente_id"] = payload["paciente_id"].strip()
+        resp = supabase.table("examenes_coagulacion").insert(payload).execute()
+        if not resp.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="No se creó el examen de coagulación"
+            )
+        return CoagulacionOut(**resp.data[0])
+    except Exception as e:
+        logger.error(f"Error creando examen de coagulación: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al crear examen de coagulación: {str(e)}"
         )

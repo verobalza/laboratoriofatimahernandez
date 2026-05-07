@@ -59,11 +59,15 @@ function Examenes() {
   // ============ EXÁMENES ESPECIALES ============
   const [examenesEspeciales, setExamenesEspeciales] = useState({
     orina: { enabled: false, data: {} },
-    heces: { enabled: false, data: {} }
+    heces: { enabled: false, data: {} },
+    miscelaneos: { enabled: false, data: {} },
+    coagulacion: { enabled: false, data: {} }
   })
   const [showCamposEspeciales, setShowCamposEspeciales] = useState({
     orina: false,
-    heces: false
+    heces: false,
+    miscelaneos: false,
+    coagulacion: false
   })
 
  
@@ -337,11 +341,15 @@ function Examenes() {
     setHematologiaObservacionGeneral('')
     setExamenesEspeciales({
       orina: { enabled: false, data: {} },
-      heces: { enabled: false, data: {} }
+      heces: { enabled: false, data: {} },
+      miscelaneos: { enabled: false, data: {} },
+      coagulacion: { enabled: false, data: {} }
     })
     setShowCamposEspeciales({
       orina: false,
-      heces: false
+      heces: false,
+      miscelaneos: false,
+      coagulacion: false
     })
   }
 
@@ -409,7 +417,7 @@ function Examenes() {
       return
     }
 
-    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled) {
+    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled) {
       setMensaje({ type: 'error', text: 'Selecciona al menos una prueba o examen especial' })
       return
     }
@@ -493,6 +501,38 @@ function Examenes() {
         await api.createHeces(hecesData)
       }
 
+      if (examenesEspeciales.miscelaneos.enabled) {
+        const miscelaneosData = {
+          paciente_id: selectedPaciente.id,
+          fecha: selectedDate,
+          vsg_1hora: examenesEspeciales.miscelaneos.data.vsg_1hora,
+          vsg_2hora: examenesEspeciales.miscelaneos.data.vsg_2hora,
+          k: examenesEspeciales.miscelaneos.data.k,
+          metodo: examenesEspeciales.miscelaneos.data.metodo,
+          observaciones: examenesEspeciales.miscelaneos.data.observaciones
+        }
+        await api.createMiscelaneos(miscelaneosData)
+      }
+
+      if (examenesEspeciales.coagulacion.enabled) {
+        const coagulacionData = {
+          paciente_id: selectedPaciente.id,
+          fecha: selectedDate,
+          pt_paciente: examenesEspeciales.coagulacion.data.pt_paciente,
+          seg_control_pt: examenesEspeciales.coagulacion.data.seg_control_pt,
+          razon_pc: examenesEspeciales.coagulacion.data.razon_pc,
+          v_r: examenesEspeciales.coagulacion.data.v_r,
+          isi: examenesEspeciales.coagulacion.data.isi,
+          inr: examenesEspeciales.coagulacion.data.inr,
+          ptt_paciente: examenesEspeciales.coagulacion.data.ptt_paciente,
+          seg_control_ptt: examenesEspeciales.coagulacion.data.seg_control_ptt,
+          dif_pc: examenesEspeciales.coagulacion.data.dif_pc,
+          vr_diferencia: examenesEspeciales.coagulacion.data.vr_diferencia,
+          observaciones: examenesEspeciales.coagulacion.data.observaciones
+        }
+        await api.createCoagulacion(coagulacionData)
+      }
+
       setMensaje({ type: 'success', text: '✅ Exámenes guardados correctamente' })
 
       // Notificar a otras páginas que se agregó un nuevo examen
@@ -515,7 +555,7 @@ function Examenes() {
 
   // ============ GENERAR PDF ============
   const handleGenerarPDF = async () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina && !examenesEspeciales.heces)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de generar PDF' })
       return
     }
@@ -993,7 +1033,9 @@ function Examenes() {
       formData.append('pruebas', JSON.stringify(pruebasSeleccionadas.map(p => p.nombre_prueba)))
       formData.append('examenes_especiales', JSON.stringify({
         orina: examenesEspeciales.orina.enabled ? examenesEspeciales.orina.data : null,
-        heces: examenesEspeciales.heces.enabled ? examenesEspeciales.heces.data : null
+        heces: examenesEspeciales.heces.enabled ? examenesEspeciales.heces.data : null,
+        miscelaneos: examenesEspeciales.miscelaneos.enabled ? examenesEspeciales.miscelaneos.data : null,
+        coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null
       }))
 
       // uploadPDF ya sube y registra en examenes_pdf; no duplicar con saveExamenPDF
@@ -1022,12 +1064,17 @@ function Examenes() {
     // Verificar que exámenes especiales están completados si están habilitados
     const orinaComplete = !examenesEspeciales.orina.enabled || Object.values(examenesEspeciales.orina.data).some(val => val !== null && val !== '')
     const hecesComplete = !examenesEspeciales.heces.enabled || Object.values(examenesEspeciales.heces.data).some(val => val !== null && val !== '')
+    const miscelaneosComplete = !examenesEspeciales.miscelaneos.enabled || Object.values(examenesEspeciales.miscelaneos.data).some(val => val !== null && val !== '')
+    const coagulacionComplete = !examenesEspeciales.coagulacion.enabled || Object.values(examenesEspeciales.coagulacion.data).some(val => val !== null && val !== '')
 
-    return hasResults || (orinaComplete && hecesComplete && (examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled))
+    return hasResults || (
+      orinaComplete && hecesComplete && miscelaneosComplete && coagulacionComplete &&
+      (examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled)
+    )
   }
 
   const handleEnviarWhatsApp = () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina && !examenesEspeciales.heces)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de enviar por WhatsApp' })
       return
     }
@@ -1424,6 +1471,24 @@ function Examenes() {
                           />
                           <span className="checkmark"></span>
                           Examen de Heces
+                        </label>
+                        <label className="examen-especial-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={examenesEspeciales.miscelaneos.enabled}
+                            onChange={() => toggleExamenEspecial('miscelaneos')}
+                          />
+                          <span className="checkmark"></span>
+                          Misceláneos
+                        </label>
+                        <label className="examen-especial-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={examenesEspeciales.coagulacion.enabled}
+                            onChange={() => toggleExamenEspecial('coagulacion')}
+                          />
+                          <span className="checkmark"></span>
+                          Coagulación
                         </label>
                       </div>
 
@@ -1946,6 +2011,231 @@ function Examenes() {
                           </div>
                         </div>
                       )}
+
+                    {examenesEspeciales.miscelaneos.enabled && (
+                      <div className="examen-especial-form-container">
+                        <div className="examen-especial-card">
+                          <div className="examen-header">
+                            <div className="examen-icon">🧾</div>
+                            <div className="examen-title">
+                              <h3>Misceláneos</h3>
+                              <p>Examen de VSG, K y método</p>
+                            </div>
+                          </div>
+
+                          <div className="examen-content">
+                            <div className="examen-section">
+                              <h4 className="section-title">Resultados</h4>
+                              <div className="fields-grid">
+                                <div className="field-group">
+                                  <label className="field-label">VSG 1 hora</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.miscelaneos.data.vsg_1hora || ''}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'vsg_1hora', parseFloat(e.target.value) || null)}
+                                    placeholder="mm/h"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">VSG 2 horas</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.miscelaneos.data.vsg_2hora || ''}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'vsg_2hora', parseFloat(e.target.value) || null)}
+                                    placeholder="mm/h"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">K</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.miscelaneos.data.k || ''}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'k', parseFloat(e.target.value) || null)}
+                                    placeholder="K"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">Método</label>
+                                  <input
+                                    type="text"
+                                    className="field-input"
+                                    value={examenesEspeciales.miscelaneos.data.metodo || ''}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'metodo', e.target.value)}
+                                    placeholder="Método"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="examen-section">
+                              <h4 className="section-title">Observaciones</h4>
+                              <div className="field-group">
+                                <label className="field-label">Observaciones</label>
+                                <textarea
+                                  className="field-textarea"
+                                  value={examenesEspeciales.miscelaneos.data.observaciones || ''}
+                                  onChange={(e) => handleExamenEspecialChange('miscelaneos', 'observaciones', e.target.value)}
+                                  rows="3"
+                                  placeholder="Observaciones adicionales"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {examenesEspeciales.coagulacion.enabled && (
+                      <div className="examen-especial-form-container">
+                        <div className="examen-especial-card">
+                          <div className="examen-header">
+                            <div className="examen-icon">🩸</div>
+                            <div className="examen-title">
+                              <h3>Coagulación</h3>
+                              <p>PT, PTT, INR y parámetros de coagulación</p>
+                            </div>
+                          </div>
+
+                          <div className="examen-content">
+                            <div className="examen-section">
+                              <h4 className="section-title">Resultados</h4>
+                              <div className="fields-grid">
+                                <div className="field-group">
+                                  <label className="field-label">PT paciente</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.pt_paciente || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'pt_paciente', parseFloat(e.target.value) || null)}
+                                    placeholder="Segundos"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">Seg control PT</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.seg_control_pt || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'seg_control_pt', parseFloat(e.target.value) || null)}
+                                    placeholder="Segundos"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">Razón PC</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.razon_pc || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'razon_pc', parseFloat(e.target.value) || null)}
+                                    placeholder="Razón"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">V/R</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.v_r || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'v_r', parseFloat(e.target.value) || null)}
+                                    placeholder="Valor"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">ISI</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.isi || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'isi', parseFloat(e.target.value) || null)}
+                                    placeholder="Valor"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">INR</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.inr || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'inr', parseFloat(e.target.value) || null)}
+                                    placeholder="Valor"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">PTT paciente</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.ptt_paciente || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'ptt_paciente', parseFloat(e.target.value) || null)}
+                                    placeholder="Segundos"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">Seg control PTT</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.seg_control_ptt || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'seg_control_ptt', parseFloat(e.target.value) || null)}
+                                    placeholder="Segundos"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">Dif PC</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.dif_pc || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'dif_pc', parseFloat(e.target.value) || null)}
+                                    placeholder="Valor"
+                                  />
+                                </div>
+                                <div className="field-group">
+                                  <label className="field-label">VR diferencia</label>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    className="field-input"
+                                    value={examenesEspeciales.coagulacion.data.vr_diferencia || ''}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'vr_diferencia', parseFloat(e.target.value) || null)}
+                                    placeholder="Valor"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="examen-section">
+                              <h4 className="section-title">Observaciones</h4>
+                              <div className="field-group">
+                                <label className="field-label">Observaciones</label>
+                                <textarea
+                                  className="field-textarea"
+                                  value={examenesEspeciales.coagulacion.data.observaciones || ''}
+                                  onChange={(e) => handleExamenEspecialChange('coagulacion', 'observaciones', e.target.value)}
+                                  rows="3"
+                                  placeholder="Observaciones adicionales"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     </div>
 
                     {/* Selector de Grupos */}

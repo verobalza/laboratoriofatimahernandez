@@ -601,6 +601,20 @@ export const api = {
     return request(`${API_URL}/api/heces/paciente/${pacienteId}`, { method: 'GET' })
   },
 
+  async createMiscelaneos(data) {
+    return request(`${API_URL}/api/miscelaneos`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  async createCoagulacion(data) {
+    return request(`${API_URL}/api/coagulacion`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
   /* PDF */
   async generarPDF(facturaId) {
     return request(`${API_URL}/facturacion/pdf/${facturaId}`, { method: 'POST' })

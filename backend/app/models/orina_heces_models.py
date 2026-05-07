@@ -211,3 +211,91 @@ class HecesOut(HecesBase):
 
     class Config:
         from_attributes = True
+
+
+# ============================
+#   MODELOS PARA MISCELÁNEOS
+# ============================
+
+class MiscelaneosBase(BaseModel):
+    paciente_id: str
+    prueba_id: Optional[int] = None
+    fecha: date
+
+    vsg_1hora: Optional[float] = None
+    vsg_2hora: Optional[float] = None
+    k: Optional[float] = None
+    metodo: Optional[str] = None
+    observaciones: Optional[str] = None
+
+    @field_validator("paciente_id")
+    @classmethod
+    def validate_uuid(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("ID del paciente es obligatorio")
+        return v.strip()
+
+    @field_serializer("fecha")
+    def serialize_fecha(self, value: date, _info):
+        return value.isoformat() if isinstance(value, date) else value
+
+
+class MiscelaneosCreate(MiscelaneosBase):
+    pass
+
+
+class MiscelaneosOut(MiscelaneosBase):
+    id: str
+    creado_en: Optional[datetime] = None
+    actualizado_en: Optional[datetime] = None
+    creado_por: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+# ============================
+#   MODELOS PARA COAGULACIÓN
+# ============================
+
+class CoagulacionBase(BaseModel):
+    paciente_id: str
+    prueba_id: Optional[int] = None
+    fecha: date
+
+    pt_paciente: Optional[float] = None
+    seg_control_pt: Optional[float] = None
+    razon_pc: Optional[float] = None
+    v_r: Optional[float] = None
+    isi: Optional[float] = None
+    inr: Optional[float] = None
+    ptt_paciente: Optional[float] = None
+    seg_control_ptt: Optional[float] = None
+    dif_pc: Optional[float] = None
+    vr_diferencia: Optional[float] = None
+    observaciones: Optional[str] = None
+
+    @field_validator("paciente_id")
+    @classmethod
+    def validate_uuid(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("ID del paciente es obligatorio")
+        return v.strip()
+
+    @field_serializer("fecha")
+    def serialize_fecha(self, value: date, _info):
+        return value.isoformat() if isinstance(value, date) else value
+
+
+class CoagulacionCreate(CoagulacionBase):
+    pass
+
+
+class CoagulacionOut(CoagulacionBase):
+    id: str
+    creado_en: Optional[datetime] = None
+    actualizado_en: Optional[datetime] = None
+    creado_por: Optional[str] = None
+
+    class Config:
+        from_attributes = True
