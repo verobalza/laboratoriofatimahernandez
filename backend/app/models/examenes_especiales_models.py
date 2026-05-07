@@ -56,8 +56,8 @@ class OrinaUpdate(BaseModel):
     aspecto: Optional[str] = None
     color: Optional[str] = None
     olor: Optional[str] = None
-    densidad: Optional[float] = None
-    ph: Optional[float] = None
+    densidad: Optional[str] = None
+    ph: Optional[str] = None
     reaccion: Optional[str] = None
 
     # Examen químico
@@ -67,19 +67,20 @@ class OrinaUpdate(BaseModel):
     nitritos: Optional[str] = None
     pigmentos_biliares: Optional[str] = None
     bilirrubina: Optional[str] = None
-    urobilinogeno: Optional[str] = None
+    urobilinogenos: Optional[str] = None
+    hemoglobina: Optional[str] = None
 
     # Examen microscópico
-    celulas_epiteliales: Optional[int] = None
-    leucocitos: Optional[int] = None
-    piocitos: Optional[int] = None
+    celulas_epiteliales: Optional[str] = None
+    leucocitos: Optional[str] = None
+    piocitos: Optional[str] = None
     cristales: Optional[str] = None
     cilindros: Optional[str] = None
     levaduras: Optional[str] = None
     protozoarios: Optional[str] = None
     mucina: Optional[str] = None
     bacterias: Optional[str] = None
-    hematies: Optional[int] = None
+    hematies: Optional[str] = None
 
     # Observaciones
     observaciones: Optional[str] = None
@@ -125,19 +126,18 @@ class HecesCreate(HecesBase):
 
 
 class HecesUpdate(BaseModel):
-    color: Optional[str] = None
+    # Examen Macroscópico
+    aspecto: Optional[str] = None
     consistencia: Optional[str] = None
+    color: Optional[str] = None
+    olor: Optional[str] = None
     moco: Optional[str] = None
     sangre_oculta: Optional[str] = None
     restos_alimenticios: Optional[str] = None
-    ph: Optional[float] = None
-    leucocitos: Optional[int] = None
-    hematies: Optional[int] = None
-    parasitos: Optional[str] = None
-    huevos: Optional[str] = None
-    quistes: Optional[str] = None
-    bacterias: Optional[str] = None
-    observaciones: Optional[str] = None
+
+    # Examen Microscópico
+    observacion_microscopica: Optional[str] = None
+    no_se_observaron_parasitos: Optional[bool] = None
 
 
 class HecesOut(HecesBase):

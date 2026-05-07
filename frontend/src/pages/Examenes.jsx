@@ -885,7 +885,7 @@ function Examenes() {
 
         // Examen Físico
         doc.setFont("Helvetica", "bold")
-        doc.text("Examen Físico:", 20, ypos)
+        doc.text("EXAMEN FÍSICO", 20, ypos)
         ypos += 5
         doc.setFont("Helvetica", "normal")
         const fisicoData = [
@@ -904,15 +904,18 @@ function Examenes() {
         // Examen Químico
         ypos += 3
         doc.setFont("Helvetica", "bold")
-        doc.text("Examen Químico:", 20, ypos)
+        doc.text("EXAMEN QUÍMICO", 20, ypos)
         ypos += 5
         doc.setFont("Helvetica", "normal")
         const quimicoData = [
           `Albúmina: ${examenesEspeciales.orina.data.albumina || 'No especificado'}`,
           `Glucosa: ${examenesEspeciales.orina.data.glucosa || 'No especificado'}`,
+          `Cuerpos cetónicos: ${examenesEspeciales.orina.data.cuerpos_cetonicos || 'No especificado'}`,
           `Nitritos: ${examenesEspeciales.orina.data.nitritos || 'No especificado'}`,
+          `Pigmentos biliares: ${examenesEspeciales.orina.data.pigmentos_biliares || 'No especificado'}`,
           `Bilirrubina: ${examenesEspeciales.orina.data.bilirrubina || 'No especificado'}`,
-          `Urobilinógenos: ${examenesEspeciales.orina.data.urobilinogenos || 'No especificado'}`
+          `Urobilinógeno: ${examenesEspeciales.orina.data.urobilinogenos || 'No especificado'}`,
+          `Hemoglobina: ${examenesEspeciales.orina.data.hemoglobina || 'No especificado'}`
         ]
         quimicoData.forEach(item => {
           doc.text(item, 25, ypos)
@@ -922,15 +925,17 @@ function Examenes() {
         // Examen Microscópico
         ypos += 3
         doc.setFont("Helvetica", "bold")
-        doc.text("Examen Microscópico:", 20, ypos)
+        doc.text("EXAMEN MICROSCÓPICO", 20, ypos)
         ypos += 5
         doc.setFont("Helvetica", "normal")
         const microscopicoData = [
           `Células epiteliales: ${examenesEspeciales.orina.data.celulas_epiteliales || 'No especificado'}`,
           `Leucocitos: ${examenesEspeciales.orina.data.leucocitos || 'No especificado'}`,
-          `Hematíes: ${examenesEspeciales.orina.data.hematies || 'No especificado'}`,
+          `Piocitos: ${examenesEspeciales.orina.data.piocitos || 'No especificado'}`,
           `Cristales: ${examenesEspeciales.orina.data.cristales || 'No especificado'}`,
-          `Bacterias: ${examenesEspeciales.orina.data.bacterias || 'No especificado'}`
+          `Cilindros: ${examenesEspeciales.orina.data.cilindros || 'No especificado'}`,
+          `Levaduras: ${examenesEspeciales.orina.data.levaduras || 'No especificado'}`,
+          `Protozoarios: ${examenesEspeciales.orina.data.protozoarios || 'No especificado'}`
         ]
         microscopicoData.forEach(item => {
           doc.text(item, 25, ypos)
@@ -977,7 +982,7 @@ function Examenes() {
         ypos += 10
         doc.setFont("Helvetica", "bold")
         doc.setFontSize(11)
-        doc.text("EXAMEN COMPLETO DE HECES", 20, ypos)
+        doc.text("EXAMEN DE HECES", 20, ypos)
         ypos += 8
         doc.setLineWidth(0.3)
         doc.line(20, ypos, 190, ypos)
@@ -985,71 +990,40 @@ function Examenes() {
         doc.setFont("Helvetica", "normal")
         doc.setFontSize(9)
 
-        // Propiedades Macroscópicas
+        // Examen Macroscópico
         doc.setFont("Helvetica", "bold")
-        doc.text("Propiedades Macroscópicas:", 20, ypos)
+        doc.text("EXAMEN MACROSCÓPICO", 20, ypos)
         ypos += 5
         doc.setFont("Helvetica", "normal")
         const macroData = [
-          `Color: ${examenesEspeciales.heces.data.color || 'No especificado'}`,
+          `Aspecto: ${examenesEspeciales.heces.data.aspecto || 'No especificado'}`,
           `Consistencia: ${examenesEspeciales.heces.data.consistencia || 'No especificado'}`,
+          `Color: ${examenesEspeciales.heces.data.color || 'No especificado'}`,
+          `Olor: ${examenesEspeciales.heces.data.olor || 'No especificado'}`,
           `Moco: ${examenesEspeciales.heces.data.moco || 'No especificado'}`,
-          `Sangre visible: ${examenesEspeciales.heces.data.sangre_visible || 'No especificado'}`,
-          `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`,
-          `pH: ${examenesEspeciales.heces.data.ph || 'No especificado'}`
+          `Sangre oculta: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
+          `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`
         ]
         macroData.forEach(item => {
           doc.text(item, 25, ypos)
           ypos += 4
         })
 
-        // Examen Microscópico - Parasitológico
+        // Examen Microscópico
         ypos += 3
         doc.setFont("Helvetica", "bold")
-        doc.text("Examen Microscópico - Parasitológico:", 20, ypos)
+        doc.text("EXAMEN MICROSCÓPICO", 20, ypos)
         ypos += 5
         doc.setFont("Helvetica", "normal")
-        const parasitoData = [
-          `Quistes de protozoarios: ${examenesEspeciales.heces.data.quistes_protozoarios || 'No especificado'}`,
-          `Trofozoítos: ${examenesEspeciales.heces.data.trofozoitos || 'No especificado'}`,
-          `Huevos de helmintos: ${examenesEspeciales.heces.data.huevos_helmintos || 'No especificado'}`,
-          `Larvas de helmintos: ${examenesEspeciales.heces.data.larvas_helmintos || 'No especificado'}`,
-          `Leucocitos: ${examenesEspeciales.heces.data.leucocitos || 'No especificado'}`,
-          `Hematíes: ${examenesEspeciales.heces.data.hematies || 'No especificado'}`
-        ]
-        parasitoData.forEach(item => {
-          doc.text(item, 25, ypos)
+        doc.text("En la muestra se observó:", 25, ypos)
+        ypos += 4
+        
+        const observacionTexto = examenesEspeciales.heces.data.observacion_microscopica || 'No especificado'
+        const splitText = doc.splitTextToSize(observacionTexto, 165)
+        splitText.forEach(line => {
+          doc.text(line, 25, ypos)
           ypos += 4
         })
-
-        // Examen Microscópico - Coprológico
-        ypos += 3
-        doc.setFont("Helvetica", "bold")
-        doc.text("Examen Microscópico - Coprológico:", 20, ypos)
-        ypos += 5
-        doc.setFont("Helvetica", "normal")
-        const coproData = [
-          `Almidón: ${examenesEspeciales.heces.data.almidon || 'No especificado'}`,
-          `Fibras musculares: ${examenesEspeciales.heces.data.fibras_musculares || 'No especificado'}`,
-          `Grasas neutras: ${examenesEspeciales.heces.data.grasas_neutras || 'No especificado'}`,
-          `Jabón: ${examenesEspeciales.heces.data.jabon || 'No especificado'}`,
-          `Ácidos grasos: ${examenesEspeciales.heces.data.acidos_grasos || 'No especificado'}`
-        ]
-        coproData.forEach(item => {
-          doc.text(item, 25, ypos)
-          ypos += 4
-        })
-
-        // Observaciones
-        if (examenesEspeciales.heces.data.observaciones) {
-          ypos += 3
-          doc.setFont("Helvetica", "bold")
-          doc.text("Observaciones:", 20, ypos)
-          ypos += 5
-          doc.setFont("Helvetica", "normal")
-          doc.text(examenesEspeciales.heces.data.observaciones, 25, ypos)
-          ypos += 4
-        }
       }
 
       if (examenesEspeciales.coagulacion.enabled) {
@@ -1539,7 +1513,7 @@ function Examenes() {
                             onChange={() => toggleExamenEspecial('orina')}
                           />
                           <span className="checkmark"></span>
-                          Examen de Orina
+                          EXAMEN DE ORINA
                         </label>
                         <label className="examen-especial-checkbox">
                           <input
@@ -1596,7 +1570,6 @@ function Examenes() {
                                     >
                                       <option value="">Seleccionar</option>
                                       <option value="claro">Claro</option>
-                                      <option value="ligeramente_turbio">Ligeramente turbio</option>
                                       <option value="turbio">Turbio</option>
                                       <option value="lechoso">Lechoso</option>
                                     </select>
@@ -1610,13 +1583,9 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('orina', 'color', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="amarillo_pajizo">Amarillo pajizo</option>
                                       <option value="amarillo">Amarillo</option>
-                                      <option value="amarillo_oscuro">Amarillo oscuro</option>
                                       <option value="incoloro">Incoloro</option>
                                       <option value="rojo">Rojo</option>
-                                      <option value="naranja">Naranja</option>
-                                      <option value="verde">Verde</option>
                                     </select>
                                   </div>
 
@@ -1628,11 +1597,9 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('orina', 'olor', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="normal">Normal (aromático)</option>
-                                      <option value="amoniacal">Amoniacal</option>
-                                      <option value="frutal">Frutal (acetona)</option>
-                                      <option value="fecal">Fecal</option>
-                                      <option value="otro">Otro</option>
+                                      <option value="normal">Normal</option>
+                                      <option value="fragrante">Fragrante</option>
+                                      <option value="fuerte">Fuerte</option>
                                     </select>
                                   </div>
 
@@ -1645,7 +1612,7 @@ function Examenes() {
                                       max="1.050"
                                       className="field-input"
                                       value={examenesEspeciales.orina.data.densidad || ''}
-                                      onChange={(e) => handleExamenEspecialChange('orina', 'densidad', parseFloat(e.target.value) || null)}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'densidad', e.target.value)}
                                       placeholder="1.015"
                                     />
                                   </div>
@@ -1659,7 +1626,7 @@ function Examenes() {
                                       max="9.0"
                                       className="field-input"
                                       value={examenesEspeciales.orina.data.ph || ''}
-                                      onChange={(e) => handleExamenEspecialChange('orina', 'ph', parseFloat(e.target.value) || null)}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'ph', e.target.value)}
                                       placeholder="6.0"
                                     />
                                   </div>
@@ -1672,7 +1639,7 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('orina', 'reaccion', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="acida">Ácida</option>
+                                      <option value="ácida">Ácida</option>
                                       <option value="alcalina">Alcalina</option>
                                       <option value="neutra">Neutra</option>
                                     </select>
@@ -1712,7 +1679,51 @@ function Examenes() {
                                       <option value="+">+</option>
                                       <option value="++">++</option>
                                       <option value="+++">+++</option>
-                                      <option value="++++">++++</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Cuerpos cetónicos</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.orina.data.cuerpos_cetonicos || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'cuerpos_cetonicos', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="negativo">Negativo</option>
+                                      <option value="+">+</option>
+                                      <option value="++">++</option>
+                                      <option value="+++">+++</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Pigmentos biliares</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.orina.data.pigmentos_biliares || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'pigmentos_biliares', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="negativo">Negativo</option>
+                                      <option value="+">+</option>
+                                      <option value="++">++</option>
+                                      <option value="+++">+++</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Hemoglobina</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.orina.data.hemoglobina || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'hemoglobina', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="negativo">Negativo</option>
+                                      <option value="+">+</option>
+                                      <option value="++">++</option>
+                                      <option value="+++">+++</option>
                                     </select>
                                   </div>
 
@@ -1767,48 +1778,84 @@ function Examenes() {
                                   <div className="field-group">
                                     <label className="field-label">Células epiteliales</label>
                                     <input
-                                      type="number"
-                                      min="0"
+                                      type="text"
                                       className="field-input"
                                       value={examenesEspeciales.orina.data.celulas_epiteliales || ''}
-                                      onChange={(e) => handleExamenEspecialChange('orina', 'celulas_epiteliales', parseInt(e.target.value) || null)}
-                                      placeholder="0"
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'celulas_epiteliales', e.target.value)}
+                                      placeholder="Cantidad"
                                     />
                                   </div>
 
                                   <div className="field-group">
                                     <label className="field-label">Leucocitos</label>
                                     <input
-                                      type="number"
-                                      min="0"
+                                      type="text"
                                       className="field-input"
                                       value={examenesEspeciales.orina.data.leucocitos || ''}
-                                      onChange={(e) => handleExamenEspecialChange('orina', 'leucocitos', parseInt(e.target.value) || null)}
-                                      placeholder="0"
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'leucocitos', e.target.value)}
+                                      placeholder="Cantidad"
                                     />
                                   </div>
 
                                   <div className="field-group">
-                                    <label className="field-label">Hematíes</label>
+                                    <label className="field-label">Piocitos</label>
                                     <input
-                                      type="number"
-                                      min="0"
+                                      type="text"
                                       className="field-input"
-                                      value={examenesEspeciales.orina.data.hematies || ''}
-                                      onChange={(e) => handleExamenEspecialChange('orina', 'hematies', parseInt(e.target.value) || null)}
-                                      placeholder="0"
+                                      value={examenesEspeciales.orina.data.piocitos || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'piocitos', e.target.value)}
+                                      placeholder="Cantidad"
                                     />
                                   </div>
 
                                   <div className="field-group">
                                     <label className="field-label">Cristales</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.orina.data.cristales || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'cristales', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="oxalatos">Oxalatos</option>
+                                      <option value="ácido úrico">Ácido úrico</option>
+                                      <option value="uratos">Uratos</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Cilindros</label>
                                     <input
                                       type="text"
                                       className="field-input"
-                                      value={examenesEspeciales.orina.data.cristales || ''}
-                                      onChange={(e) => handleExamenEspecialChange('orina', 'cristales', e.target.value)}
-                                      placeholder="Tipo de cristales"
+                                      value={examenesEspeciales.orina.data.cilindros || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'cilindros', e.target.value)}
+                                      placeholder="Tipo/cantidad"
                                     />
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Levaduras</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.orina.data.levaduras || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'levaduras', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="pseudohifas">Pseudohifas</option>
+                                      <option value="blastosporas">Blastosporas</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Protozoarios</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.orina.data.protozoarios || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'protozoarios', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="trichomonas vaginalis">Trichomonas vaginalis</option>
+                                    </select>
                                   </div>
 
                                   <div className="field-group">
@@ -1819,6 +1866,17 @@ function Examenes() {
                                       value={examenesEspeciales.orina.data.bacterias || ''}
                                       onChange={(e) => handleExamenEspecialChange('orina', 'bacterias', e.target.value)}
                                       placeholder="Presencia/ausencia"
+                                    />
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Hematíes</label>
+                                    <input
+                                      type="text"
+                                      className="field-input"
+                                      value={examenesEspeciales.orina.data.hematies || ''}
+                                      onChange={(e) => handleExamenEspecialChange('orina', 'hematies', e.target.value)}
+                                      placeholder="Cantidad"
                                     />
                                   </div>
                                 </div>
@@ -1835,32 +1893,28 @@ function Examenes() {
                             <div className="examen-header">
                               <div className="examen-icon">🧫</div>
                               <div className="examen-title">
-                                <h3>Examen Completo de Heces</h3>
-                                <p>Análisis macroscópico, parasitológico y coprológico</p>
+                                <h3>EXAMEN DE HECES</h3>
+                                <p>Análisis macroscópico y microscópico</p>
                               </div>
                             </div>
 
                             <div className="examen-content">
-                              {/* Propiedades Macroscópicas */}
+                              {/* Examen Macroscópico */}
                               <div className="examen-section">
-                                <h4 className="section-title">👁️ Propiedades Macroscópicas</h4>
+                                <h4 className="section-title">👁️ Examen Macroscópico</h4>
                                 <div className="fields-grid">
                                   <div className="field-group">
-                                    <label className="field-label">Color</label>
+                                    <label className="field-label">Aspecto</label>
                                     <select
                                       className="field-select"
-                                      value={examenesEspeciales.heces.data.color || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'color', e.target.value)}
+                                      value={examenesEspeciales.heces.data.aspecto || ''}
+                                      onChange={(e) => handleExamenEspecialChange('heces', 'aspecto', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="cafe_claro">Café claro</option>
-                                      <option value="cafe">Café</option>
-                                      <option value="cafe_oscuro">Café oscuro</option>
-                                      <option value="amarillo">Amarillo</option>
-                                      <option value="verde">Verde</option>
-                                      <option value="negro">Negro</option>
-                                      <option value="rojo">Rojo</option>
-                                      <option value="blanco">Blanco</option>
+                                      <option value="dura">Dura</option>
+                                      <option value="normal">Normal</option>
+                                      <option value="blanda">Blanda</option>
+                                      <option value="liquida">Líquida</option>
                                     </select>
                                   </div>
 
@@ -1882,6 +1936,41 @@ function Examenes() {
                                   </div>
 
                                   <div className="field-group">
+                                    <label className="field-label">Color</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.heces.data.color || ''}
+                                      onChange={(e) => handleExamenEspecialChange('heces', 'color', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="cafe_claro">Café claro</option>
+                                      <option value="cafe">Café</option>
+                                      <option value="cafe_oscuro">Café oscuro</option>
+                                      <option value="amarillo">Amarillo</option>
+                                      <option value="verde">Verde</option>
+                                      <option value="negro">Negro</option>
+                                      <option value="rojo">Rojo</option>
+                                      <option value="blanco">Blanco</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="field-group">
+                                    <label className="field-label">Olor</label>
+                                    <select
+                                      className="field-select"
+                                      value={examenesEspeciales.heces.data.olor || ''}
+                                      onChange={(e) => handleExamenEspecialChange('heces', 'olor', e.target.value)}
+                                    >
+                                      <option value="">Seleccionar</option>
+                                      <option value="normal">Normal</option>
+                                      <option value="fecal">Fecal</option>
+                                      <option value="agrio">Agrio</option>
+                                      <option value="rancio">Rancio</option>
+                                      <option value="putrefacto">Putrefacto</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="field-group">
                                     <label className="field-label">Moco</label>
                                     <select
                                       className="field-select"
@@ -1897,17 +1986,16 @@ function Examenes() {
                                   </div>
 
                                   <div className="field-group">
-                                    <label className="field-label">Sangre visible</label>
+                                    <label className="field-label">Sangre oculta</label>
                                     <select
                                       className="field-select"
-                                      value={examenesEspeciales.heces.data.sangre_visible || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'sangre_visible', e.target.value)}
+                                      value={examenesEspeciales.heces.data.sangre_oculta || ''}
+                                      onChange={(e) => handleExamenEspecialChange('heces', 'sangre_oculta', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="ausente">Ausente</option>
-                                      <option value="escasa">Escasa</option>
-                                      <option value="presente">Presente</option>
-                                      <option value="abundante">Abundante</option>
+                                      <option value="negativa">Negativa</option>
+                                      <option value="positiva">Positiva</option>
+                                      <option value="trazas">Trazas</option>
                                     </select>
                                   </div>
 
@@ -1925,167 +2013,46 @@ function Examenes() {
                                       <option value="abundantes">Abundantes</option>
                                     </select>
                                   </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">pH</label>
-                                    <input
-                                      type="number"
-                                      step="0.1"
-                                      min="4.0"
-                                      max="9.0"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.ph || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'ph', parseFloat(e.target.value) || null)}
-                                      placeholder="6.5"
-                                    />
-                                  </div>
                                 </div>
                               </div>
 
-                              {/* Examen Microscópico - Parasitológico */}
+                              {/* Examen Microscópico */}
                               <div className="examen-section">
-                                <h4 className="section-title">🦠 Examen Microscópico - Parasitológico</h4>
+                                <h4 className="section-title">🔍 Examen Microscópico</h4>
                                 <div className="fields-grid">
-                                  <div className="field-group">
-                                    <label className="field-label">Quistes de protozoarios</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.quistes_protozoarios || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'quistes_protozoarios', e.target.value)}
-                                      placeholder="Tipo y cantidad"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Trofozoítos</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.trofozoitos || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'trofozoitos', e.target.value)}
-                                      placeholder="Tipo y cantidad"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Huevos de helmintos</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.huevos_helmintos || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'huevos_helmintos', e.target.value)}
-                                      placeholder="Tipo y cantidad"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Larvas de helmintos</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.larvas_helmintos || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'larvas_helmintos', e.target.value)}
-                                      placeholder="Tipo y cantidad"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Leucocitos</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.leucocitos || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'leucocitos', e.target.value)}
-                                      placeholder="Presencia/ausencia"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Hematíes</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.hematies || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'hematies', e.target.value)}
-                                      placeholder="Presencia/ausencia"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Examen Microscópico - Coprológico */}
-                              <div className="examen-section">
-                                <h4 className="section-title">🍽️ Examen Microscópico - Coprológico</h4>
-                                <div className="fields-grid">
-                                  <div className="field-group">
-                                    <label className="field-label">Almidón</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.almidon || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'almidon', e.target.value)}
-                                      placeholder="Presencia/ausencia"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Fibras musculares</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.fibras_musculares || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'fibras_musculares', e.target.value)}
-                                      placeholder="Presencia/ausencia"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Grasas neutras</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.grasas_neutras || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'grasas_neutras', e.target.value)}
-                                      placeholder="Presencia/ausencia"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Jabón</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.jabon || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'jabon', e.target.value)}
-                                      placeholder="Presencia/ausencia"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Ácidos grasos</label>
-                                    <input
-                                      type="text"
-                                      className="field-input"
-                                      value={examenesEspeciales.heces.data.acidos_grasos || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'acidos_grasos', e.target.value)}
-                                      placeholder="Presencia/ausencia"
-                                    />
-                                  </div>
-
-                                  <div className="field-group">
-                                    <label className="field-label">Observaciones</label>
+                                  <div className="field-group" style={{ gridColumn: '1 / -1' }}>
+                                    <label className="field-label">En la muestra se observó:</label>
                                     <textarea
                                       className="field-textarea"
-                                      value={examenesEspeciales.heces.data.observaciones || ''}
-                                      onChange={(e) => handleExamenEspecialChange('heces', 'observaciones', e.target.value)}
-                                      rows="3"
-                                      placeholder="Observaciones adicionales del examen"
+                                      value={examenesEspeciales.heces.data.observacion_microscopica || ''}
+                                      onChange={(e) => handleExamenEspecialChange('heces', 'observacion_microscopica', e.target.value)}
+                                      rows="4"
+                                      placeholder="Descripción de hallazgos microscópicos"
                                     />
                                   </div>
+
+                                  <div className="field-group" style={{ gridColumn: '1 / -1' }}>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                                      <input
+                                        type="checkbox"
+                                        checked={examenesEspeciales.heces.data.no_se_observaron_parasitos || false}
+                                        onChange={(e) => {
+                                          const isChecked = e.target.checked
+                                          if (isChecked) {
+                                            handleExamenEspecialChange('heces', 'observacion_microscopica', 'No se observaron formas parasitarias en la muestra examinada.')
+                                            handleExamenEspecialChange('heces', 'no_se_observaron_parasitos', true)
+                                          } else {
+                                            handleExamenEspecialChange('heces', 'observacion_microscopica', '')
+                                            handleExamenEspecialChange('heces', 'no_se_observaron_parasitos', false)
+                                          }
+                                        }}
+                                      />
+                                      <span>No se observaron formas parasitarias en la muestra examinada</span>
+                                    </label>
+                                  </div>
                                 </div>
-                              </div>
                             </div>
+                          </div>
                           </div>
                         </div>
                       )}
