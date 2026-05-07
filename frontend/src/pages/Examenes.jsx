@@ -2028,7 +2028,7 @@ function Examenes() {
                               <h4 className="section-title">Resultados</h4>
                               <div className="fields-grid">
                                 <div className="field-group">
-                                  <label className="field-label">VSG 1 hora</label>
+                                  <label className="field-label">VSG 1er hora</label>
                                   <input
                                     type="number"
                                     step="0.1"
@@ -2039,7 +2039,7 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">VSG 2 horas</label>
+                                  <label className="field-label">VSG 2da hora</label>
                                   <input
                                     type="number"
                                     step="0.1"
@@ -2050,7 +2050,7 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">K</label>
+                                  <label className="field-label">l.K.</label>
                                   <input
                                     type="number"
                                     step="0.1"
@@ -2107,7 +2107,7 @@ function Examenes() {
                               <h4 className="section-title">Resultados</h4>
                               <div className="fields-grid">
                                 <div className="field-group">
-                                  <label className="field-label">PT paciente</label>
+                                  <label className="field-label">P.T. paciente</label>
                                   <input
                                     type="number"
                                     step="0.1"
@@ -2118,10 +2118,10 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">Seg control PT</label>
+                                  <label className="field-label">Control</label>
                                   <input
                                     type="number"
-                                    step="0.1"
+                                    step="0.00"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.seg_control_pt || ''}
                                     onChange={(e) => handleExamenEspecialChange('coagulacion', 'seg_control_pt', parseFloat(e.target.value) || null)}
@@ -2129,43 +2129,31 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">Razón PC</label>
+                                  <label className="field-label">Razón P/C</label>
                                   <input
                                     type="number"
-                                    step="0.01"
+                                    step="0.00"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.razon_pc || ''}
                                     onChange={(e) => handleExamenEspecialChange('coagulacion', 'razon_pc', parseFloat(e.target.value) || null)}
-                                    placeholder="Razón"
+                                    placeholder="Razón P/C"
                                   />
-                                </div>
-                                <div className="field-group">
-                                  <label className="field-label">V/R</label>
-                                  <input
-                                    type="number"
-                                    step="0.01"
-                                    className="field-input"
-                                    value={examenesEspeciales.coagulacion.data.v_r || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'v_r', parseFloat(e.target.value) || null)}
-                                    placeholder="Valor"
-                                  />
+                                  <div className="rango-referencia">Referencia V.R.: 0,8 - 1,20</div>
                                 </div>
                                 <div className="field-group">
                                   <label className="field-label">ISI</label>
                                   <input
-                                    type="number"
-                                    step="0.01"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.isi || ''}
                                     onChange={(e) => handleExamenEspecialChange('coagulacion', 'isi', parseFloat(e.target.value) || null)}
-                                    placeholder="Valor"
+                                   
                                   />
                                 </div>
                                 <div className="field-group">
                                   <label className="field-label">INR</label>
                                   <input
-                                    type="number"
-                                    step="0.01"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.inr || ''}
                                     onChange={(e) => handleExamenEspecialChange('coagulacion', 'inr', parseFloat(e.target.value) || null)}
@@ -2173,10 +2161,10 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">PTT paciente</label>
+                                  <label className="field-label">P.T.T. Paciente</label>
                                   <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
+                                  
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.ptt_paciente || ''}
                                     onChange={(e) => handleExamenEspecialChange('coagulacion', 'ptt_paciente', parseFloat(e.target.value) || null)}
@@ -2184,7 +2172,7 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">Seg control PTT</label>
+                                  <label className="field-label">Control</label>
                                   <input
                                     type="number"
                                     step="0.1"
@@ -2195,7 +2183,7 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">Dif PC</label>
+                                  <label className="field-label">Dif. P-C</label>
                                   <input
                                     type="number"
                                     step="0.1"
@@ -2206,7 +2194,7 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">VR diferencia</label>
+                                  <label className="field-label">V.R. (+/-6seg. diferencia P-C)</label>
                                   <input
                                     type="number"
                                     step="0.1"
