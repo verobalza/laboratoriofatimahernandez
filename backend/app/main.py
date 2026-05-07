@@ -47,7 +47,7 @@ app.include_router(orina_heces.router)
 app.include_router(roles.router)
 app.include_router(entidades.router)
 
-
+#hola
 @app.get("/health")
 def health_check():
     """Endpoint para verificar que el servidor está funcionando."""
