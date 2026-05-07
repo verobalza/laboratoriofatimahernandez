@@ -508,7 +508,7 @@ function Examenes() {
           vsg_1hora: examenesEspeciales.miscelaneos.data.vsg_1hora,
           vsg_2hora: examenesEspeciales.miscelaneos.data.vsg_2hora,
           k: examenesEspeciales.miscelaneos.data.k,
-          metodo: examenesEspeciales.miscelaneos.data.metodo,
+          metodo: 'Wistergreen',
           observaciones: examenesEspeciales.miscelaneos.data.observaciones
         }
         await api.createMiscelaneos(miscelaneosData)
@@ -938,6 +938,41 @@ function Examenes() {
         })
       }
 
+      if (examenesEspeciales.miscelaneos.enabled) {
+        ypos += 10
+        doc.setFont("Helvetica", "bold")
+        doc.setFontSize(11)
+        doc.text("EXAMEN MISCELÁNEOS", 20, ypos)
+        ypos += 8
+        doc.setLineWidth(0.3)
+        doc.line(20, ypos, 190, ypos)
+        ypos += 6
+        doc.setFont("Helvetica", "normal")
+        doc.setFontSize(9)
+        const miscelaneosData = [
+          `VSG 1er hora: ${examenesEspeciales.miscelaneos.data.vsg_1hora || 'No especificado'}`,
+          `VSG 2da hora: ${examenesEspeciales.miscelaneos.data.vsg_2hora || 'No especificado'}`,
+          `K: ${examenesEspeciales.miscelaneos.data.k || 'No especificado'}`,
+          `Método: Wistergreen`
+        ]
+        miscelaneosData.forEach(item => {
+          doc.text(item, 25, ypos)
+          ypos += 4
+        })
+        if (examenesEspeciales.miscelaneos.data.observaciones) {
+          ypos += 3
+          doc.setFont("Helvetica", "bold")
+          doc.text("Observaciones:", 20, ypos)
+          ypos += 5
+          doc.setFont("Helvetica", "normal")
+          const miscelaneosObsLines = doc.splitTextToSize(examenesEspeciales.miscelaneos.data.observaciones, 160)
+          miscelaneosObsLines.forEach(line => {
+            doc.text(line, 25, ypos)
+            ypos += 4
+          })
+        }
+      }
+
       if (examenesEspeciales.heces.enabled) {
         ypos += 10
         doc.setFont("Helvetica", "bold")
@@ -1017,6 +1052,46 @@ function Examenes() {
         }
       }
 
+      if (examenesEspeciales.coagulacion.enabled) {
+        ypos += 10
+        doc.setFont("Helvetica", "bold")
+        doc.setFontSize(11)
+        doc.text("EXAMEN DE COAGULACIÓN", 20, ypos)
+        ypos += 8
+        doc.setLineWidth(0.3)
+        doc.line(20, ypos, 190, ypos)
+        ypos += 6
+        doc.setFont("Helvetica", "normal")
+        doc.setFontSize(9)
+        const coagulacionData = [
+          `P.T. paciente: ${examenesEspeciales.coagulacion.data.pt_paciente || 'No especificado'}`,
+          `Control PT: ${examenesEspeciales.coagulacion.data.seg_control_pt || 'No especificado'}`,
+          `Razón P/C: ${examenesEspeciales.coagulacion.data.razon_pc || 'No especificado'}`,
+          `ISI: ${examenesEspeciales.coagulacion.data.isi || 'No especificado'}`,
+          `INR: ${examenesEspeciales.coagulacion.data.inr || 'No especificado'}`,
+          `P.T.T. Paciente: ${examenesEspeciales.coagulacion.data.ptt_paciente || 'No especificado'}`,
+          `Control PTT: ${examenesEspeciales.coagulacion.data.seg_control_ptt || 'No especificado'}`,
+          `Dif. P-C: ${examenesEspeciales.coagulacion.data.dif_pc || 'No especificado'}`,
+          `Referencia: V.R. (+/-6seg. diferencia P-C)`
+        ]
+        coagulacionData.forEach(item => {
+          doc.text(item, 25, ypos)
+          ypos += 4
+        })
+        if (examenesEspeciales.coagulacion.data.observaciones) {
+          ypos += 3
+          doc.setFont("Helvetica", "bold")
+          doc.text("Observaciones:", 20, ypos)
+          ypos += 5
+          doc.setFont("Helvetica", "normal")
+          const coagulacionObsLines = doc.splitTextToSize(examenesEspeciales.coagulacion.data.observaciones, 160)
+          coagulacionObsLines.forEach(line => {
+            doc.text(line, 25, ypos)
+            ypos += 4
+          })
+        }
+      }
+
       // Validar si el contenido cabe en la página
       const maxYpos = 270 // Altura aproximada de la página en jsPDF
       if (ypos > maxYpos) {
@@ -1034,7 +1109,10 @@ function Examenes() {
       formData.append('examenes_especiales', JSON.stringify({
         orina: examenesEspeciales.orina.enabled ? examenesEspeciales.orina.data : null,
         heces: examenesEspeciales.heces.enabled ? examenesEspeciales.heces.data : null,
-        miscelaneos: examenesEspeciales.miscelaneos.enabled ? examenesEspeciales.miscelaneos.data : null,
+        miscelaneos: examenesEspeciales.miscelaneos.enabled ? {
+          ...examenesEspeciales.miscelaneos.data,
+          metodo: 'Wistergreen'
+        } : null,
         coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null
       }))
 
@@ -2030,44 +2108,31 @@ function Examenes() {
                                 <div className="field-group">
                                   <label className="field-label">VSG 1er hora</label>
                                   <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.miscelaneos.data.vsg_1hora || ''}
-                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'vsg_1hora', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'vsg_1hora', e.target.value)}
                                     placeholder="mm/h"
                                   />
                                 </div>
                                 <div className="field-group">
                                   <label className="field-label">VSG 2da hora</label>
                                   <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.miscelaneos.data.vsg_2hora || ''}
-                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'vsg_2hora', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'vsg_2hora', e.target.value)}
                                     placeholder="mm/h"
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">l.K.</label>
-                                  <input
-                                    type="number"
-                                    step="0.1"
-                                    className="field-input"
-                                    value={examenesEspeciales.miscelaneos.data.k || ''}
-                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'k', parseFloat(e.target.value) || null)}
-                                    placeholder="K"
-                                  />
-                                </div>
-                                <div className="field-group">
-                                  <label className="field-label">Método</label>
+                                  <label className="field-label">I.K.</label>
                                   <input
                                     type="text"
                                     className="field-input"
-                                    value={examenesEspeciales.miscelaneos.data.metodo || ''}
-                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'metodo', e.target.value)}
-                                    placeholder="Método"
+                                    value={examenesEspeciales.miscelaneos.data.k || ''}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneos', 'k', e.target.value)}
+                                    placeholder="I.K."
                                   />
                                 </div>
                               </div>
@@ -2085,6 +2150,11 @@ function Examenes() {
                                   placeholder="Observaciones adicionales"
                                 />
                               </div>
+                            </div>
+
+                            <div className="examen-section">
+                              <h4 className="section-title">Método</h4>
+                              <p className="field-value">Wistergreen</p>
                             </div>
                           </div>
                         </div>
@@ -2109,33 +2179,30 @@ function Examenes() {
                                 <div className="field-group">
                                   <label className="field-label">P.T. paciente</label>
                                   <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.pt_paciente || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'pt_paciente', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'pt_paciente', e.target.value)}
                                     placeholder="Segundos"
                                   />
                                 </div>
                                 <div className="field-group">
                                   <label className="field-label">Control</label>
                                   <input
-                                    type="number"
-                                    step="0.00"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.seg_control_pt || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'seg_control_pt', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'seg_control_pt', e.target.value)}
                                     placeholder="Segundos"
                                   />
                                 </div>
                                 <div className="field-group">
                                   <label className="field-label">Razón P/C</label>
                                   <input
-                                    type="number"
-                                    step="0.00"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.razon_pc || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'razon_pc', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'razon_pc', e.target.value)}
                                     placeholder="Razón P/C"
                                   />
                                   <div className="rango-referencia">Referencia V.R.: 0,8 - 1,20</div>
@@ -2146,8 +2213,8 @@ function Examenes() {
                                     type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.isi || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'isi', parseFloat(e.target.value) || null)}
-                                   
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'isi', e.target.value)}
+                                   placeholder='ISI'
                                   />
                                 </div>
                                 <div className="field-group">
@@ -2156,7 +2223,7 @@ function Examenes() {
                                     type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.inr || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'inr', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'inr', e.target.value)}
                                     placeholder="Valor"
                                   />
                                 </div>
@@ -2164,45 +2231,32 @@ function Examenes() {
                                   <label className="field-label">P.T.T. Paciente</label>
                                   <input
                                     type="text"
-                                  
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.ptt_paciente || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'ptt_paciente', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'ptt_paciente', e.target.value)}
                                     placeholder="Segundos"
                                   />
                                 </div>
                                 <div className="field-group">
                                   <label className="field-label">Control</label>
                                   <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.seg_control_ptt || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'seg_control_ptt', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'seg_control_ptt', e.target.value)}
                                     placeholder="Segundos"
                                   />
                                 </div>
                                 <div className="field-group">
                                   <label className="field-label">Dif. P-C</label>
                                   <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     className="field-input"
                                     value={examenesEspeciales.coagulacion.data.dif_pc || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'dif_pc', parseFloat(e.target.value) || null)}
+                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'dif_pc', e.target.value)}
                                     placeholder="Valor"
                                   />
-                                </div>
-                                <div className="field-group">
-                                  <label className="field-label">V.R. (+/-6seg. diferencia P-C)</label>
-                                  <input
-                                    type="number"
-                                    step="0.1"
-                                    className="field-input"
-                                    value={examenesEspeciales.coagulacion.data.vr_diferencia || ''}
-                                    onChange={(e) => handleExamenEspecialChange('coagulacion', 'vr_diferencia', parseFloat(e.target.value) || null)}
-                                    placeholder="Valor"
-                                  />
+                                  <div className="rango-referencia">V.R. (+/-6seg. diferencia P-C)</div>
                                 </div>
                               </div>
                             </div>

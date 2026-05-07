@@ -222,9 +222,9 @@ class MiscelaneosBase(BaseModel):
     prueba_id: Optional[int] = None
     fecha: date
 
-    vsg_1hora: Optional[float] = None
-    vsg_2hora: Optional[float] = None
-    k: Optional[float] = None
+    vsg_1hora: Optional[str] = None
+    vsg_2hora: Optional[str] = None
+    k: Optional[str] = None
     metodo: Optional[str] = None
     observaciones: Optional[str] = None
 
@@ -263,16 +263,16 @@ class CoagulacionBase(BaseModel):
     prueba_id: Optional[int] = None
     fecha: date
 
-    pt_paciente: Optional[float] = None
-    seg_control_pt: Optional[float] = None
-    razon_pc: Optional[float] = None
-    v_r: Optional[float] = None
-    isi: Optional[float] = None
-    inr: Optional[float] = None
-    ptt_paciente: Optional[float] = None
-    seg_control_ptt: Optional[float] = None
-    dif_pc: Optional[float] = None
-    vr_diferencia: Optional[float] = None
+    pt_paciente: Optional[str] = None
+    seg_control_pt: Optional[str] = None
+    razon_pc: Optional[str] = None
+    v_r: Optional[str] = None
+    isi: Optional[str] = None
+    inr: Optional[str] = None
+    ptt_paciente: Optional[str] = None
+    seg_control_ptt: Optional[str] = None
+    dif_pc: Optional[str] = None
+    vr_diferencia: Optional[str] = None
     observaciones: Optional[str] = None
 
     @field_validator("paciente_id")
