@@ -675,7 +675,7 @@ function Examenes() {
       doc.setLineWidth(0.3)
       doc.setDrawColor(30, 67, 183);
       doc.line(20, ypos, 190, ypos)
-      ypos += 7
+      ypos += 15
       
 
 
