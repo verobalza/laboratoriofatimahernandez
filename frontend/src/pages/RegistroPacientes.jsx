@@ -24,6 +24,7 @@ function RegistroPacientes() {
     telefono: '',
     direccion: '',
     sexo: '',
+    convenio: '',
     procedencia: ''
   }
   const entidadInitialData = {
@@ -121,6 +122,7 @@ function RegistroPacientes() {
       telefono: paciente.telefono || '',
       direccion: paciente.direccion || '',
       sexo: paciente.sexo || '',
+      convenio: paciente.convenio || '',
       procedencia: paciente.procedencia || ''
     })
     setMessage({ type: '', text: '' })
@@ -627,6 +629,21 @@ function RegistroPacientes() {
                         <option value="F">Femenino</option>
                         <option value="O">Otro</option>
                       </select>
+                    </div>
+                  </div>
+
+                  {/* Convenio */}
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Convenio</label>
+                      <input
+                        type="text"
+                        name="convenio"
+                        value={formData.convenio}
+                        onChange={handleFormChange}
+                        placeholder="Ej: Seguro de salud / Laboratorio XYZ"
+                        className="form-input"
+                      />
                     </div>
                   </div>
 

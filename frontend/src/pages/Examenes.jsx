@@ -617,46 +617,74 @@ function Examenes() {
       // Posicionar contenido debajo del membrete
       doc.setFontSize(8)
 
-      // FECHA (justo debajo del membrete)
+      // Línea decorativa
+      doc.setLineWidth(0.5)
+      doc.line(20, ypos, 190, ypos)
+      ypos += 7
+
+      // NOMBRE + CÉDULA + SEXO (misma línea)
       doc.setFont("Helvetica", "bold")
-      doc.text("Fecha:", 20, ypos)
+      doc.text("Paciente:", 17, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedDate}`, 40, ypos)
+      doc.text(`${selectedPaciente.nombre} ${selectedPaciente.apellido}`, 30, ypos)
+
+      doc.setFont("Helvetica", "bold")
+      doc.text("Cédula:", 97, ypos)
+      doc.setFont("Helvetica", "normal")
+      doc.text(`${selectedPaciente.cedula || ''}`, 110, ypos)
+
+      doc.setFont("Helvetica", "bold")
+      doc.text("Sexo:", 150, ypos)
+      doc.setFont("Helvetica", "normal")
+      doc.text(`${selectedPaciente.sexo || ''}`, 165, ypos)
+      ypos += 6
+
+      // DIRECCIÓN + EDAD + TELÉFONO
+      doc.setFont("Helvetica", "bold")
+      doc.text("Dirección:", 17, ypos)
+      doc.setFont("Helvetica", "normal")
+      doc.text(`${selectedPaciente.direccion || ''}`, 37, ypos)
+
+      doc.setFont("Helvetica", "bold")
+      doc.text("Edad:", 120, ypos)
+      doc.setFont("Helvetica", "normal")
+      doc.text(`${selectedPaciente.edad || ''}`, 130, ypos)
+
+      doc.setFont("Helvetica", "bold")
+      doc.text("Teléfono:", 150, ypos)
+      doc.setFont("Helvetica", "normal")
+      doc.text(`${selectedPaciente.telefono || ''}`, 170, ypos)
+      ypos += 6
+
+      // CONVENIO + FECHA
+      doc.setFont("Helvetica", "bold")
+      doc.text("Convenio:", 17, ypos)
+      doc.setFont("Helvetica", "normal")
+      doc.text(`${selectedPaciente.convenio || ''}`, 40, ypos)
+
+      doc.setFont("Helvetica", "bold")
+      doc.text("Fecha:", 120, ypos)
+      doc.setFont("Helvetica", "normal")
+      doc.text(`${selectedDate}`, 135, ypos)
       ypos += 10
 
-      // NOMBRE + CÉDULA (misma línea)
-      doc.setFont("Helvetica", "bold")
-      doc.text("Paciente:", 20, ypos)
-      doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.nombre} ${selectedPaciente.apellido}`, 40, ypos)
 
-      doc.setFont("Helvetica", "bold")
-      doc.text("Cédula:", 100, ypos)
-      doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.cedula || ''}`, 118, ypos)
-      ypos += 10
 
-      // EDAD + DIRECCIÓN (misma línea)
-      doc.setFont("Helvetica", "bold")
-      doc.text("Edad:", 20, ypos)
-      doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.edad || ''}`, 40, ypos)
-
-      doc.setFont("Helvetica", "bold")
-      doc.text("Dirección:", 70, ypos)
-      doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.direccion || ''}`, 100, ypos)
-      ypos += 15
+      // Línea decorativa
+      doc.setLineWidth(0.5)
+      doc.line(20, ypos, 190, ypos)
+      ypos += 7
+      
 
 
       // TÍTULO CENTRADO Y MÁS GRANDE
       doc.setFontSize(14)
       doc.setFont("Helvetica", "bold")
-      doc.text("Pruebas realizadas y resultados", 90, ypos, { align: "center" })
+      doc.text("Pruebas realizadas y resultados", 100, ypos, { align: "center" })
       ypos += 6
 
       // Línea decorativa
-      doc.setLineWidth(0.5)
+      doc.setLineWidth(0.9)
       doc.line(20, ypos, 190, ypos)
       ypos += 12
 
