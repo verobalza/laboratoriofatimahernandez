@@ -618,7 +618,8 @@ function Examenes() {
       doc.setFontSize(10)
 
       // Línea decorativa
-      doc.setLineWidth(0.5)
+      doc.setLineWidth(0.3)
+      doc.setDrawColor(30, 67, 183);
       doc.line(20, ypos, 195, ypos)
       ypos += 7
 
@@ -626,34 +627,34 @@ function Examenes() {
       doc.setFont("Helvetica", "bold")
       doc.text("Paciente:", 20, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.nombre} ${selectedPaciente.apellido}`, 30, ypos)
+      doc.text(`${selectedPaciente.nombre} ${selectedPaciente.apellido}`, 40, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Cédula:", 70, ypos)
+      doc.text("Cédula:", 85, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.cedula || ''}`, 85, ypos)
+      doc.text(`${selectedPaciente.cedula || ''}`, 105, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Sexo:", 110, ypos)
+      doc.text("Sexo:", 130, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.sexo || ''}`, 125, ypos)
+      doc.text(`${selectedPaciente.sexo || ''}`, 145, ypos)
       ypos += 6
 
       // DIRECCIÓN + EDAD + TELÉFONO
       doc.setFont("Helvetica", "bold")
       doc.text("Dirección:", 20, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.direccion || ''}`, 37, ypos)
+      doc.text(`${selectedPaciente.direccion || ''}`, 40, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Edad:", 70, ypos)
+      doc.text("Edad:", 85, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.edad || ''}`, 85, ypos)
+      doc.text(`${selectedPaciente.edad || ''}`, 105, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Teléfono:", 110, ypos)
+      doc.text("Teléfono:", 130, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.telefono || ''}`, 125, ypos)
+      doc.text(`${selectedPaciente.telefono || ''}`, 145, ypos)
       ypos += 6
 
       // CONVENIO + FECHA
@@ -663,15 +664,16 @@ function Examenes() {
       doc.text(`${selectedPaciente.convenio || ''}`, 40, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Fecha:", 70, ypos)
+      doc.text("Fecha:", 85, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedDate}`, 85, ypos)
+      doc.text(`${selectedDate}`, 105, ypos)
       ypos += 10
 
 
 
       // Línea decorativa
-      doc.setLineWidth(0.5)
+      doc.setLineWidth(0.3)
+      doc.setDrawColor(30, 67, 183);
       doc.line(20, ypos, 190, ypos)
       ypos += 7
       
