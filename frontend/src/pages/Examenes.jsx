@@ -664,6 +664,21 @@ function Examenes() {
       doc.setFontSize(10)
       doc.setFont("Helvetica", "normal")
 
+      const MAX_PDF_PAGES = 10
+      const maxYpos = 270
+      const ensurePageSpace = (requiredHeight = 4) => {
+        if (ypos + requiredHeight > maxYpos) {
+          if (doc.internal.getNumberOfPages() < MAX_PDF_PAGES) {
+            doc.addPage()
+            ypos = 20
+            return true
+          }
+          console.warn('Límite de 10 páginas alcanzado. El contenido adicional no será agregado.')
+          return false
+        }
+        return true
+      }
+
       const printPrueba = (p) => {
         const res = resultados[String(p.id)] || '—'
         const unidad = p.unidad_medida || ''
@@ -945,132 +960,143 @@ function Examenes() {
       }
 
       if (examenesEspeciales.miscelaneos.enabled) {
-        ypos += 10
-        doc.setFont("Helvetica", "bold")
-        doc.setFontSize(11)
-        doc.text("EXAMEN MISCELÁNEOS", 20, ypos)
-        ypos += 8
-        doc.setLineWidth(0.3)
-        doc.line(20, ypos, 190, ypos)
-        ypos += 6
-        doc.setFont("Helvetica", "normal")
-        doc.setFontSize(9)
-        const miscelaneosData = [
-          `VSG 1er hora: ${examenesEspeciales.miscelaneos.data.vsg_1hora || 'No especificado'}`,
-          `VSG 2da hora: ${examenesEspeciales.miscelaneos.data.vsg_2hora || 'No especificado'}`,
-          `K: ${examenesEspeciales.miscelaneos.data.k || 'No especificado'}`,
-          `Método: Wistergreen`
-        ]
-        miscelaneosData.forEach(item => {
-          doc.text(item, 25, ypos)
-          ypos += 4
-        })
-        if (examenesEspeciales.miscelaneos.data.observaciones) {
-          ypos += 3
+        if (ensurePageSpace(20)) {
+          ypos += 10
           doc.setFont("Helvetica", "bold")
-          doc.text("Observaciones:", 20, ypos)
-          ypos += 5
+          doc.setFontSize(11)
+          doc.text("EXAMEN MISCELÁNEOS", 20, ypos)
+          ypos += 8
+          doc.setLineWidth(0.3)
+          doc.line(20, ypos, 190, ypos)
+          ypos += 6
           doc.setFont("Helvetica", "normal")
-          const miscelaneosObsLines = doc.splitTextToSize(examenesEspeciales.miscelaneos.data.observaciones, 160)
-          miscelaneosObsLines.forEach(line => {
-            doc.text(line, 25, ypos)
+          doc.setFontSize(9)
+          const miscelaneosData = [
+            `VSG 1er hora: ${examenesEspeciales.miscelaneos.data.vsg_1hora || 'No especificado'}`,
+            `VSG 2da hora: ${examenesEspeciales.miscelaneos.data.vsg_2hora || 'No especificado'}`,
+            `K: ${examenesEspeciales.miscelaneos.data.k || 'No especificado'}`,
+            `Método: Wistergreen`
+          ]
+          miscelaneosData.forEach(item => {
+            if (!ensurePageSpace(4)) return
+            doc.text(item, 25, ypos)
             ypos += 4
           })
+          if (examenesEspeciales.miscelaneos.data.observaciones && ensurePageSpace(20)) {
+            ypos += 3
+            doc.setFont("Helvetica", "bold")
+            doc.text("Observaciones:", 20, ypos)
+            ypos += 5
+            doc.setFont("Helvetica", "normal")
+            const miscelaneosObsLines = doc.splitTextToSize(examenesEspeciales.miscelaneos.data.observaciones, 160)
+            miscelaneosObsLines.forEach(line => {
+              if (!ensurePageSpace(4)) return
+              doc.text(line, 25, ypos)
+              ypos += 4
+            })
+          }
         }
       }
 
       if (examenesEspeciales.heces.enabled) {
-        ypos += 10
-        doc.setFont("Helvetica", "bold")
-        doc.setFontSize(11)
-        doc.text("EXAMEN DE HECES", 20, ypos)
-        ypos += 8
-        doc.setLineWidth(0.3)
-        doc.line(20, ypos, 190, ypos)
-        ypos += 6
-        doc.setFont("Helvetica", "normal")
-        doc.setFontSize(9)
-
-        // Examen Macroscópico
-        doc.setFont("Helvetica", "bold")
-        doc.text("EXAMEN MACROSCÓPICO", 20, ypos)
-        ypos += 5
-        doc.setFont("Helvetica", "normal")
-        const macroData = [
-          `Aspecto: ${examenesEspeciales.heces.data.aspecto || 'No especificado'}`,
-          `Consistencia: ${examenesEspeciales.heces.data.consistencia || 'No especificado'}`,
-          `Color: ${examenesEspeciales.heces.data.color || 'No especificado'}`,
-          `Olor: ${examenesEspeciales.heces.data.olor || 'No especificado'}`,
-          `Moco: ${examenesEspeciales.heces.data.moco || 'No especificado'}`,
-          `Sangre oculta: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
-          `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`
-        ]
-        macroData.forEach(item => {
-          doc.text(item, 25, ypos)
-          ypos += 4
-        })
-
-        // Examen Microscópico
-        ypos += 3
-        doc.setFont("Helvetica", "bold")
-        doc.text("EXAMEN MICROSCÓPICO", 20, ypos)
-        ypos += 5
-        doc.setFont("Helvetica", "normal")
-        doc.text("En la muestra se observó:", 25, ypos)
-        ypos += 4
-        
-        const observacionTexto = examenesEspeciales.heces.data.observacion_microscopica || 'No especificado'
-        const splitText = doc.splitTextToSize(observacionTexto, 165)
-        splitText.forEach(line => {
-          doc.text(line, 25, ypos)
-          ypos += 4
-        })
-      }
-
-      if (examenesEspeciales.coagulacion.enabled) {
-        ypos += 10
-        doc.setFont("Helvetica", "bold")
-        doc.setFontSize(11)
-        doc.text("EXAMEN DE COAGULACIÓN", 20, ypos)
-        ypos += 8
-        doc.setLineWidth(0.3)
-        doc.line(20, ypos, 190, ypos)
-        ypos += 6
-        doc.setFont("Helvetica", "normal")
-        doc.setFontSize(9)
-        const coagulacionData = [
-          `P.T. paciente: ${examenesEspeciales.coagulacion.data.pt_paciente || 'No especificado'}`,
-          `Control PT: ${examenesEspeciales.coagulacion.data.seg_control_pt || 'No especificado'}`,
-          `Razón P/C: ${examenesEspeciales.coagulacion.data.razon_pc || 'No especificado'}`,
-          `ISI: ${examenesEspeciales.coagulacion.data.isi || 'No especificado'}`,
-          `INR: ${examenesEspeciales.coagulacion.data.inr || 'No especificado'}`,
-          `P.T.T. Paciente: ${examenesEspeciales.coagulacion.data.ptt_paciente || 'No especificado'}`,
-          `Control PTT: ${examenesEspeciales.coagulacion.data.seg_control_ptt || 'No especificado'}`,
-          `Dif. P-C: ${examenesEspeciales.coagulacion.data.dif_pc || 'No especificado'}`,
-          `Referencia: V.R. (+/-6seg. diferencia P-C)`
-        ]
-        coagulacionData.forEach(item => {
-          doc.text(item, 25, ypos)
-          ypos += 4
-        })
-        if (examenesEspeciales.coagulacion.data.observaciones) {
-          ypos += 3
+        if (ensurePageSpace(20)) {
+          ypos += 10
           doc.setFont("Helvetica", "bold")
-          doc.text("Observaciones:", 20, ypos)
-          ypos += 5
+          doc.setFontSize(11)
+          doc.text("EXAMEN DE HECES", 20, ypos)
+          ypos += 8
+          doc.setLineWidth(0.3)
+          doc.line(20, ypos, 190, ypos)
+          ypos += 6
           doc.setFont("Helvetica", "normal")
-          const coagulacionObsLines = doc.splitTextToSize(examenesEspeciales.coagulacion.data.observaciones, 160)
-          coagulacionObsLines.forEach(line => {
-            doc.text(line, 25, ypos)
-            ypos += 4
-          })
+          doc.setFontSize(9)
+
+          // Examen Macroscópico
+          if (ensurePageSpace(12)) {
+            doc.setFont("Helvetica", "bold")
+            doc.text("EXAMEN MACROSCÓPICO", 20, ypos)
+            ypos += 5
+            doc.setFont("Helvetica", "normal")
+            const macroData = [
+              `Aspecto: ${examenesEspeciales.heces.data.aspecto || 'No especificado'}`,
+              `Consistencia: ${examenesEspeciales.heces.data.consistencia || 'No especificado'}`,
+              `Color: ${examenesEspeciales.heces.data.color || 'No especificado'}`,
+              `Olor: ${examenesEspeciales.heces.data.olor || 'No especificado'}`,
+              `Moco: ${examenesEspeciales.heces.data.moco || 'No especificado'}`,
+              `Sangre oculta: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
+              `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`
+            ]
+            macroData.forEach(item => {
+              if (!ensurePageSpace(4)) return
+              doc.text(item, 25, ypos)
+              ypos += 4
+            })
+
+            // Examen Microscópico
+            ypos += 3
+            if (ensurePageSpace(12)) {
+              doc.setFont("Helvetica", "bold")
+              doc.text("EXAMEN MICROSCÓPICO", 20, ypos)
+              ypos += 5
+              doc.setFont("Helvetica", "normal")
+              if (!ensurePageSpace(4)) return
+              doc.text("En la muestra se observó:", 25, ypos)
+              ypos += 4
+              
+              const observacionTexto = examenesEspeciales.heces.data.observacion_microscopica || 'No especificado'
+              const splitText = doc.splitTextToSize(observacionTexto, 165)
+              splitText.forEach(line => {
+                if (!ensurePageSpace(4)) return
+                doc.text(line, 25, ypos)
+                ypos += 4
+              })
+            }
+          }
         }
       }
 
-      // Validar si el contenido cabe en la página
-      const maxYpos = 270 // Altura aproximada de la página en jsPDF
-      if (ypos > maxYpos) {
-        console.warn('El PDF es muy largo. Considera dividir en múltiples páginas.')
+      if (examenesEspeciales.coagulacion.enabled) {
+        if (ensurePageSpace(20)) {
+          ypos += 10
+          doc.setFont("Helvetica", "bold")
+          doc.setFontSize(11)
+          doc.text("EXAMEN DE COAGULACIÓN", 20, ypos)
+          ypos += 8
+          doc.setLineWidth(0.3)
+          doc.line(20, ypos, 190, ypos)
+          ypos += 6
+          doc.setFont("Helvetica", "normal")
+          doc.setFontSize(9)
+          const coagulacionData = [
+            `P.T. paciente: ${examenesEspeciales.coagulacion.data.pt_paciente || 'No especificado'}`,
+            `Control PT: ${examenesEspeciales.coagulacion.data.seg_control_pt || 'No especificado'}`,
+            `Razón P/C: ${examenesEspeciales.coagulacion.data.razon_pc || 'No especificado'}`,
+            `ISI: ${examenesEspeciales.coagulacion.data.isi || 'No especificado'}`,
+            `INR: ${examenesEspeciales.coagulacion.data.inr || 'No especificado'}`,
+            `P.T.T. Paciente: ${examenesEspeciales.coagulacion.data.ptt_paciente || 'No especificado'}`,
+            `Control PTT: ${examenesEspeciales.coagulacion.data.seg_control_ptt || 'No especificado'}`,
+            `Dif. P-C: ${examenesEspeciales.coagulacion.data.dif_pc || 'No especificado'}`,
+            `Referencia: V.R. (+/-6seg. diferencia P-C)`
+          ]
+          coagulacionData.forEach(item => {
+            if (!ensurePageSpace(4)) return
+            doc.text(item, 25, ypos)
+            ypos += 4
+          })
+          if (examenesEspeciales.coagulacion.data.observaciones && ensurePageSpace(20)) {
+            ypos += 3
+            doc.setFont("Helvetica", "bold")
+            doc.text("Observaciones:", 20, ypos)
+            ypos += 5
+            doc.setFont("Helvetica", "normal")
+            const coagulacionObsLines = doc.splitTextToSize(examenesEspeciales.coagulacion.data.observaciones, 160)
+            coagulacionObsLines.forEach(line => {
+              if (!ensurePageSpace(4)) return
+              doc.text(line, 25, ypos)
+              ypos += 4
+            })
+          }
+        }
       }
 
       const pdfBlob = doc.output('blob')
