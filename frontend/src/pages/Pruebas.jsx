@@ -430,7 +430,7 @@ function Pruebas() {
       area: formData.area.trim(),
       tipo_muestra: formData.tipo_muestra.trim(),
       precio_bs: parseFloat(formData.precio_bs),
-      descripcion: formData.descripcion.trim() || undefined
+      descripcion: formData.descripcion.trim()
     }
 
     // Solo agregar unidad_medida y valores de referencia si es prueba numérica

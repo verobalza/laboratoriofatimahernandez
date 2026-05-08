@@ -2374,15 +2374,7 @@ function Examenes() {
                                 className="input-resultado"
                               />
                             </div>
-                            <div className="resultado-inputs">
-                              <textarea
-                                placeholder="Observaciones"
-                                value={observaciones[prueba.id] || ''}
-                                onChange={(e) => handleObservacionesChange(prueba.id, e.target.value)}
-                                className="input-observaciones"
-                                rows="2"
-                              />
-                            </div>
+                          
                           </div>
                         ))}
                     </div>
@@ -2412,15 +2404,7 @@ function Examenes() {
                                 className="input-resultado"
                               />
                             </div>
-                            <div className="resultado-inputs">
-                              <textarea
-                                placeholder="Observaciones"
-                                value={observaciones[prueba.id] || ''}
-                                onChange={(e) => handleObservacionesChange(prueba.id, e.target.value)}
-                                className="input-observaciones"
-                                rows="2"
-                              />
-                            </div>
+                            
                           </div>
                         ))}
                     </div>
@@ -2448,15 +2432,6 @@ function Examenes() {
                                 value={resultados[prueba.id] || ''}
                                 onChange={(e) => handleResultadoChange(prueba.id, e.target.value)}
                                 className="input-resultado"
-                              />
-                            </div>
-                            <div className="resultado-inputs">
-                              <textarea
-                                placeholder="Observaciones"
-                                value={observaciones[prueba.id] || ''}
-                                onChange={(e) => handleObservacionesChange(prueba.id, e.target.value)}
-                                className="input-observaciones"
-                                rows="2"
                               />
                             </div>
                           </div>
