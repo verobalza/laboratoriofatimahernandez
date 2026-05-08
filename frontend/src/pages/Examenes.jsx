@@ -615,66 +615,69 @@ function Examenes() {
       }
 
       // Posicionar contenido debajo del membrete
-      doc.setFontSize(8)
+      doc.setFontSize(10)
 
       // Línea decorativa
-      doc.setLineWidth(0.5)
-      doc.line(20, ypos, 190, ypos)
-      ypos += 7
+      doc.setDrawColor(30, 67, 183);
+      doc.setLineWidth(0.6);
+      doc.setLineDash([1.5, 2], 0);
+      doc.line(20, ypos, 190, ypos);
+      ypos += 8;
 
       // NOMBRE + CÉDULA + SEXO (misma línea)
       doc.setFont("Helvetica", "bold")
-      doc.text("Paciente:", 17, ypos)
+      doc.text("Paciente:", 20, ypos)
       doc.setFont("Helvetica", "normal")
       doc.text(`${selectedPaciente.nombre} ${selectedPaciente.apellido}`, 30, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Cédula:", 97, ypos)
+      doc.text("Cédula:", 50, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.cedula || ''}`, 110, ypos)
+      doc.text(`${selectedPaciente.cedula || ''}`, 57, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Sexo:", 150, ypos)
+      doc.text("Sexo:", 65, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.sexo || ''}`, 165, ypos)
+      doc.text(`${selectedPaciente.sexo || ''}`, 72, ypos)
       ypos += 6
 
       // DIRECCIÓN + EDAD + TELÉFONO
       doc.setFont("Helvetica", "bold")
-      doc.text("Dirección:", 17, ypos)
+      doc.text("Dirección:", 20, ypos)
       doc.setFont("Helvetica", "normal")
       doc.text(`${selectedPaciente.direccion || ''}`, 37, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Edad:", 120, ypos)
+      doc.text("Edad:", 50, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.edad || ''}`, 130, ypos)
+      doc.text(`${selectedPaciente.edad || ''}`, 57, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Teléfono:", 150, ypos)
+      doc.text("Teléfono:", 65, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.telefono || ''}`, 170, ypos)
+      doc.text(`${selectedPaciente.telefono || ''}`, 72, ypos)
       ypos += 6
 
       // CONVENIO + FECHA
       doc.setFont("Helvetica", "bold")
-      doc.text("Convenio:", 17, ypos)
+      doc.text("Convenio:", 20, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.convenio || ''}`, 40, ypos)
+      doc.text(`${selectedPaciente.convenio || ''}`, 30, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Fecha:", 120, ypos)
+      doc.text("Fecha:", 50, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedDate}`, 135, ypos)
+      doc.text(`${selectedDate}`, 57, ypos)
       ypos += 10
 
 
 
       // Línea decorativa
-      doc.setLineWidth(0.5)
-      doc.line(20, ypos, 190, ypos)
-      ypos += 7
-      
+      doc.setDrawColor(30, 67, 183);
+      doc.setLineWidth(0.6);
+      doc.setLineDash([1.5, 2], 0);
+      doc.line(20, ypos, 190, ypos);
+      ypos += 8;
 
 
       // TÍTULO CENTRADO Y MÁS GRANDE
