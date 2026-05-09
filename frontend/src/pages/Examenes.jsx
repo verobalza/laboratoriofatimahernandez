@@ -787,7 +787,7 @@ function Examenes() {
               doc.addPage()
               ypos = 20
             }
-            doc.text(line, 190, ypos, { align: 'left', maxWidth: 150 })
+            doc.text(line, 140, ypos, { align: 'left', maxWidth: 150 })
             ypos += 5
           })
           ypos += 2
@@ -846,12 +846,6 @@ function Examenes() {
       })
 
       const orderedNoHematologia = pruebasSeleccionadas.filter((p) => !isHematologiaPrueba(p))
-      const firstHematologiaIndex = pruebasSeleccionadas.findIndex(isHematologiaPrueba)
-      const beforeCount = firstHematologiaIndex === -1
-        ? orderedNoHematologia.length
-        : pruebasSeleccionadas.slice(0, firstHematologiaIndex).filter((p) => !isHematologiaPrueba(p)).length
-      const beforePruebas = orderedNoHematologia.slice(0, beforeCount)
-      const afterPruebas = orderedNoHematologia.slice(beforeCount)
 
       const printedGrupoIds = new Set()
       const renderPruebasLista = (listaPruebas) => {
@@ -866,15 +860,7 @@ function Examenes() {
         })
       }
 
-      renderPruebasLista(beforePruebas)
-
-      const HEMATOLOGIA_ORDER = ['roja', 'blanca', 'plaquetaria']
-      const HEMATOLOGIA_LABELS = {
-        roja: 'SERIE ROJA',
-        blanca: 'SERIE BLANCA',
-        plaquetaria: 'SERIE PLAQUETARIA'
-      }
-
+      // Primero imprimir hematología completa
       if (hematologiaPruebas.length > 0) {
         if (ypos > 270) {
           doc.addPage()
@@ -882,6 +868,7 @@ function Examenes() {
         }
         doc.setFont('Helvetica', 'bold')
         doc.setFontSize(12)
+        doc.setTextColor(0, 0, 0)
         doc.text('HEMATOLOGÍA COMPLETA', 20, ypos)
         ypos += 8
         doc.setLineWidth(0.4)
@@ -971,7 +958,8 @@ function Examenes() {
         })
       }
 
-      renderPruebasLista(afterPruebas)
+      // Luego imprimir todas las pruebas no hematológicas
+      renderPruebasLista(orderedNoHematologia)
 
       // Agregar exámenes especiales si están habilitados
       if (examenesEspeciales.orina.enabled) {
