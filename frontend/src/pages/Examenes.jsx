@@ -761,13 +761,16 @@ function Examenes() {
           doc.setFont('Helvetica', 'normal')
           doc.setFontSize(8)
           doc.setTextColor(122, 123, 127)
-          const descripcionLines = doc.splitTextToSize(p.descripcion, 150)
+          const descripcionLines = p.descripcion
+            .split('\n')
+            .flatMap((line) => doc.splitTextToSize(line, 150))
+
           descripcionLines.forEach((line) => {
             if (ypos > 270) {
               doc.addPage()
               ypos = 20
             }
-            doc.text(line, 20, ypos, { align: 'justify', maxWidth: 150 })
+            doc.text(line, 20, ypos)
             ypos += 5
           })
           ypos += 2
