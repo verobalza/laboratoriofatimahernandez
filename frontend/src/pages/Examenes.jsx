@@ -915,24 +915,8 @@ function Examenes() {
               doc.setLineWidth(0.3)
               doc.line(20, ypos, 190, ypos)
               ypos += 8
-              doc.setFont('Helvetica', 'italic', 'bold')
-              doc.setFontSize(9)
-              doc.setTextColor(0, 0, 0)
-              doc.text('OBSERVACIONES EN SANGRE PERIFÉRICA:', 20, ypos)
-              ypos += 5
-              const hematoObsLines = doc.splitTextToSize(hematologiaObservacionGeneral.trim(), 160)
-              hematoObsLines.forEach((line) => {
-                if (ypos > 270) {
-                  doc.addPage()
-                  ypos = 20
-                }
-                doc.text(line, 20, ypos)
-                ypos += 4
-              })
-              ypos += 6
-            }
 
-            if (serie === 'plaquetaria' && hematologiaOtros.length > 0) {
+              if (serie === 'plaquetaria' && hematologiaOtros.length > 0) {
               if (ypos > 270) {
                 doc.addPage()
                 ypos = 20
@@ -963,7 +947,28 @@ function Examenes() {
               })
               ypos += 4
             }
-            ypos += 4
+
+             doc.setLineWidth(0.3)
+              doc.line(20, ypos, 190, ypos)
+              ypos += 8
+              doc.setFont('Helvetica', 'italic', 'bold')
+              doc.setFontSize(9)
+              doc.setTextColor(0, 0, 0)
+              doc.text('OBSERVACIONES EN SANGRE PERIFÉRICA:', 20, ypos)
+              ypos += 5
+              const hematoObsLines = doc.splitTextToSize(hematologiaObservacionGeneral.trim(), 160)
+              hematoObsLines.forEach((line) => {
+                if (ypos > 270) {
+                  doc.addPage()
+                  ypos = 20
+                }
+                doc.text(line, 20, ypos)
+                ypos += 4
+              })
+              ypos += 6
+            }
+
+            
           }
         })
       }
@@ -1199,11 +1204,7 @@ function Examenes() {
           ...examenesEspeciales.miscelaneos.data,
           metodo: 'Wistergreen'
         } : null,
-        coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null,
-        hematologia: {
-          observacion_general: hematologiaObservacionGeneral.trim() || null,
-          otros: hematologiaOtros.length > 0 ? hematologiaOtros : null
-        }
+        coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null
       }))
 
       // uploadPDF ya sube y registra en examenes_pdf; no duplicar con saveExamenPDF
