@@ -637,14 +637,14 @@ function Examenes() {
       doc.setFont("Helvetica", "bold")
       doc.text("Sexo:", 130, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.sexo || ''}`, 150, ypos)
+      doc.text(`${selectedPaciente.sexo || ''}`, 148, ypos)
       ypos += 6
 
       // DIRECCIÓN + EDAD + TELÉFONO
       doc.setFont("Helvetica", "bold")
       doc.text("Dirección:", 22, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.direccion || ''}`, 38, ypos)
+      doc.text(`${selectedPaciente.direccion || ''}`, 40, ypos)
 
       doc.setFont("Helvetica", "bold")
       doc.text("Edad:", 96, ypos)
@@ -654,7 +654,7 @@ function Examenes() {
       doc.setFont("Helvetica", "bold")
       doc.text("Teléfono:", 130, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.telefono || ''}`, 150, ypos)
+      doc.text(`${selectedPaciente.telefono || ''}`, 148, ypos)
       ypos += 6
 
       // CONVENIO + FECHA
