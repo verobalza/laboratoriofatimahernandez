@@ -251,6 +251,12 @@ function Examenes() {
 
   const HEMATOLOGIA_GRUPO_PRINCIPAL = 'hematología completa'
   const HEMATOLOGIA_SERIES = ['roja', 'blanca', 'plaquetaria']
+  const HEMATOLOGIA_ORDER = HEMATOLOGIA_SERIES
+  const HEMATOLOGIA_LABELS = {
+    roja: 'SERIE ROJA',
+    blanca: 'SERIE BLANCA',
+    plaquetaria: 'SERIE PLAQUETARIA'
+  }
 
   const normalizeHematologiaSerie = (value = '') => value.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
