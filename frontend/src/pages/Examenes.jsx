@@ -758,16 +758,16 @@ function Examenes() {
             doc.addPage()
             ypos = 20
           }
-          doc.setFont('Helvetica', fueraDeRango ? 'bold' : 'normal')
+          doc.setFont('Helvetica', 'normal')
           doc.setFontSize(8)
-          doc.setTextColor(0, 0, 0)
-          const descripcionLines = doc.splitTextToSize(p.descripcion, 60)
+          doc.setTextColor(122, 123, 127)
+          const descripcionLines = doc.splitTextToSize(p.descripcion, 150)
           descripcionLines.forEach((line) => {
             if (ypos > 270) {
               doc.addPage()
               ypos = 20
             }
-            doc.text(line, 170, ypos, { align: 'right' })
+            doc.text(line, 20, ypos, { align: 'justify', maxWidth: 150 })
             ypos += 5
           })
           ypos += 2

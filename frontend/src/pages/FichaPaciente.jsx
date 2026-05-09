@@ -260,7 +260,7 @@ function FichaPaciente() {
                   <div className="data-item">
                     <span className="data-label">Sexo</span>
                     <span className="data-value">
-                      {paciente.sexo === 'M' ? 'Masculino' : paciente.sexo === 'F' ? 'Femenino' : paciente.sexo || '—'}
+                      {paciente.sexo === 'Masculino' ? 'Masculino' : paciente.sexo === 'Femenino' ? 'Femenino' : paciente.sexo || '—'}
                     </span>
                   </div>
                 </div>
