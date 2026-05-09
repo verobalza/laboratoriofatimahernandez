@@ -1402,7 +1402,7 @@
   }
 }
 
-/* ============ HEMATOLOGÕA COMPLETA ============ */
+/* ============ HEMATOLOGÔøΩA COMPLETA ============ */
 .hematologia-completa-section {
   margin: 2rem 0;
   padding: 1.5rem;
@@ -1567,3 +1567,100 @@
   padding-top: 1rem;
   border-top: 1px dashed rgba(59, 130, 246, 0.35);
 }
+
+/* ============ ESTILOS PARA "OTROS" EN HEMATOLOG√çA ============ */
+.hematologia-otros {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-blue);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.otro-item {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.otro-item:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.02);
+}
+
+.otro-inputs {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.input-celula,
+.input-porcentaje {
+  padding: 0.75rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input-celula:focus,
+.input-porcentaje:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: white;
+}
+
+.porcentaje-symbol {
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.btn-remove-otro {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.btn-remove-otro:hover {
+  background: #fecaca;
+  color: #991b1b;
+  transform: scale(1.1);
+}
+
+.btn-add-otro {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.btn-add-otro:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-add-otro:active {
+  transform: translateY(0);
+}
+

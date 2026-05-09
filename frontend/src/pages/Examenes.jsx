@@ -54,6 +54,7 @@ function Examenes() {
   const [resultados, setResultados] = useState({})
   const [observaciones, setObservaciones] = useState({})
   const [hematologiaObservacionGeneral, setHematologiaObservacionGeneral] = useState('')
+  const [hematologiaOtros, setHematologiaOtros] = useState([])
   const [submitting, setSubmitting] = useState(false)
 
   // ============ EXÁMENES ESPECIALES ============
@@ -339,6 +340,7 @@ function Examenes() {
     setResultados({})
     setObservaciones({})
     setHematologiaObservacionGeneral('')
+    setHematologiaOtros([])
     setExamenesEspeciales({
       orina: { enabled: false, data: {} },
       heces: { enabled: false, data: {} },
@@ -380,6 +382,21 @@ function Examenes() {
 
   const handleObservacionesChange = (pruebaId, value) => {
     setObservaciones((prev) => ({ ...prev, [pruebaId]: value }))
+  }
+
+  // ============ MANEJO DE OTROS EN HEMATOLOGÍA ============
+  const handleHematologiaOtroChange = (index, field, value) => {
+    const newOtros = [...hematologiaOtros]
+    newOtros[index] = { ...newOtros[index], [field]: value }
+    setHematologiaOtros(newOtros)
+  }
+
+  const addHematologiaOtro = () => {
+    setHematologiaOtros([...hematologiaOtros, { celula: '', porcentaje: '' }])
+  }
+
+  const removeHematologiaOtro = (index) => {
+    setHematologiaOtros(hematologiaOtros.filter((_, i) => i !== index))
   }
 
   // ============ MANEJO DE EXÁMENES ESPECIALES ============
@@ -756,7 +773,7 @@ function Examenes() {
         if (p.descripcion) {
           if (ypos > 270) {
             doc.addPage()
-            ypos = 150
+            ypos = 20
           }
           doc.setFont('Helvetica', 'normal')
           doc.setFontSize(8)
@@ -770,7 +787,7 @@ function Examenes() {
               doc.addPage()
               ypos = 20
             }
-            doc.text(line, 20, ypos)
+            doc.text(line, 190, ypos, { align: 'right', maxWidth: 150 })
             ypos += 5
           })
           ypos += 2
@@ -913,6 +930,38 @@ function Examenes() {
                 ypos += 4
               })
               ypos += 6
+            }
+
+            if (serie === 'plaquetaria' && hematologiaOtros.length > 0) {
+              if (ypos > 270) {
+                doc.addPage()
+                ypos = 20
+              }
+              doc.setLineWidth(0.3)
+              doc.line(20, ypos, 190, ypos)
+              ypos += 8
+              doc.setFont('Helvetica', 'bold')
+              doc.setFontSize(10)
+              doc.setTextColor(0, 0, 0)
+              doc.text('OTROS', 20, ypos)
+              ypos += 5
+
+              hematologiaOtros.forEach((otro) => {
+                if (!otro.celula && !otro.porcentaje) return
+                if (ypos > 270) {
+                  doc.addPage()
+                  ypos = 20
+                }
+                doc.setFont('Helvetica', 'normal')
+                doc.setFontSize(9)
+                doc.setTextColor(0, 0, 0)
+                const celulaNombre = otro.celula || '—'
+                const porcentajeText = otro.porcentaje ? `${otro.porcentaje}%` : '—'
+                doc.text(celulaNombre, 20, ypos)
+                doc.text(porcentajeText, 140, ypos, { align: 'right' })
+                ypos += 5
+              })
+              ypos += 4
             }
             ypos += 4
           }
@@ -1150,7 +1199,11 @@ function Examenes() {
           ...examenesEspeciales.miscelaneos.data,
           metodo: 'Wistergreen'
         } : null,
-        coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null
+        coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null,
+        hematologia: {
+          observacion_general: hematologiaObservacionGeneral.trim() || null,
+          otros: hematologiaOtros.length > 0 ? hematologiaOtros : null
+        }
       }))
 
       // uploadPDF ya sube y registra en examenes_pdf; no duplicar con saveExamenPDF
@@ -2498,6 +2551,50 @@ function Examenes() {
                             </div>
                           </div>
                         ))}
+                    </div>
+
+                    {/* Otros en Hematología */}
+                    <div className="hematologia-otros">
+                      <h4 className="serie-titulo">Otros</h4>
+                      {hematologiaOtros.map((otro, index) => (
+                        <div key={index} className="otro-item">
+                          <div className="otro-inputs">
+                            <input
+                              type="text"
+                              placeholder="Nombre de la célula"
+                              value={otro.celula || ''}
+                              onChange={(e) => handleHematologiaOtroChange(index, 'celula', e.target.value)}
+                              className="input-celula"
+                            />
+                            <input
+                              type="number"
+                              placeholder="Porcentaje"
+                              value={otro.porcentaje || ''}
+                              onChange={(e) => handleHematologiaOtroChange(index, 'porcentaje', e.target.value)}
+                              className="input-porcentaje"
+                              min="0"
+                              max="100"
+                              step="0.1"
+                            />
+                            <span className="porcentaje-symbol">%</span>
+                            <button
+                              type="button"
+                              onClick={() => removeHematologiaOtro(index)}
+                              className="btn-remove-otro"
+                              title="Eliminar"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={addHematologiaOtro}
+                        className="btn-add-otro"
+                      >
+                        + Agregar
+                      </button>
                     </div>
 
                     <div className="hematologia-observacion-general">
