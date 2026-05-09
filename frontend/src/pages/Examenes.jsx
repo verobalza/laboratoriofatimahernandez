@@ -787,7 +787,7 @@ function Examenes() {
               doc.addPage()
               ypos = 20
             }
-            doc.text(line, 190, ypos, { align: 'right', maxWidth: 150 })
+            doc.text(line, 190, ypos, { align: 'left', maxWidth: 150 })
             ypos += 5
           })
           ypos += 2
