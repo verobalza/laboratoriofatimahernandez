@@ -27,6 +27,12 @@ function GrupoSelector({ grupos, allPruebas, selectedPruebas, onTogglePrueba, on
     return !!grupo && normalize(grupo.nombre || '') === HEMATOLOGIA_NOMBRE
   }
 
+  const isHematologiaGroup = (grupo) => {
+    if (!grupo) return false
+    const normalized = normalize(grupo.nombre || '')
+    return ['serie roja', 'serie blanca', 'serie plaquetaria', 'hematologia completa', 'hematología completa'].includes(normalized)
+  }
+
   const getHematologiaPruebas = () => {
     const seriesGroupIds = grupos
       .filter((grupo) => ['serie roja', 'serie blanca', 'serie plaquetaria'].includes(normalize(grupo.nombre || '')))
@@ -126,7 +132,9 @@ function GrupoSelector({ grupos, allPruebas, selectedPruebas, onTogglePrueba, on
                 return (
                   <div key={prueba.id} className="grupo-prueba-item">
                     <span className="grupo-prueba-nombre">{prueba.nombre_prueba}</span>
-                    {grupo && <span className="grupo-prueba-grupo">{grupo.nombre}</span>}
+                    {grupo && !isHematologiaGroup(grupo) && (
+                      <span className="grupo-prueba-grupo">{grupo.nombre}</span>
+                    )}
                     <button
                       className="grupo-prueba-remove"
                       onClick={() => onTogglePrueba(prueba.id)}

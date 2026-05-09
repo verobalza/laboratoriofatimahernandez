@@ -43,7 +43,7 @@ function Pruebas() {
     tipo_muestra: '',
     valor_referencia_min: '',
     valor_referencia_max: '',
-    descripcion: '',
+    descripcion: [''],
     precio_bs: '',
     precio_usd: ''
   })
@@ -321,7 +321,7 @@ function Pruebas() {
       tipo_muestra: '',
       valor_referencia_min: '',
       valor_referencia_max: '',
-      descripcion: '',
+      descripcion: [''],
       precio_bs: '',
       precio_usd: ''
     })
@@ -350,7 +350,7 @@ function Pruebas() {
       tipo_muestra: prueba.tipo_muestra || '',
       valor_referencia_min: prueba.valor_referencia_min ?? '',
       valor_referencia_max: prueba.valor_referencia_max ?? '',
-      descripcion: prueba.descripcion || '',
+      descripcion: prueba.descripcion ? prueba.descripcion.split('\n') : [''],
       precio_bs: prueba.precio_bs != null ? String(prueba.precio_bs) : '',
       precio_usd: prueba.precio_usd != null ? String(prueba.precio_usd.toFixed(2)) : ''
     })
@@ -423,6 +423,10 @@ function Pruebas() {
 
     setSubmitting(true)
 
+    const descripcionLines = formData.descripcion
+      .map((line) => line.trim())
+      .filter((line) => line !== '')
+
     const dataToSend = {
       nombre_prueba: formData.nombre_prueba.trim(),
       tipo_prueba: formData.tipo_prueba,
@@ -430,7 +434,7 @@ function Pruebas() {
       area: formData.area.trim(),
       tipo_muestra: formData.tipo_muestra.trim(),
       precio_bs: parseFloat(formData.precio_bs),
-      descripcion: formData.descripcion.trim()
+      descripcion: descripcionLines.length > 0 ? descripcionLines.join('\n') : ''
     }
 
     // Solo agregar unidad_medida y valores de referencia si es prueba numérica
@@ -849,6 +853,33 @@ function Pruebas() {
         return newErrors
       })
     }
+  }
+
+  const addDescripcionLinea = () => {
+    setFormData((prev) => ({
+      ...prev,
+      descripcion: [...prev.descripcion, '']
+    }))
+  }
+
+  const updateDescripcionLinea = (index, value) => {
+    setFormData((prev) => {
+      const descripcion = [...prev.descripcion]
+      descripcion[index] = value
+      return { ...prev, descripcion }
+    })
+  }
+
+  const removeDescripcionLinea = (index) => {
+    setFormData((prev) => {
+      const descripcion = [...prev.descripcion]
+      if (descripcion.length <= 1) {
+        descripcion[0] = ''
+      } else {
+        descripcion.splice(index, 1)
+      }
+      return { ...prev, descripcion }
+    })
   }
 
   const handleDeleteUnidad = async (unidad) => {
@@ -1340,18 +1371,38 @@ function Pruebas() {
 
               {/* Descripción */}
               <div className="form-group">
-                <label htmlFor="descripcion" className="form-label">
+                <label className="form-label">
                   Descripción (opcional)
                 </label>
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  placeholder="Información adicional sobre la prueba..."
-                  value={formData.descripcion}
-                  onChange={handleFormChange}
-                  className="form-textarea"
-                  rows="3"
-                />
+                <div className="descripcion-items">
+                  {formData.descripcion.map((line, index) => (
+                    <div key={index} className="descripcion-line-item">
+                      <input
+                        type="text"
+                        placeholder={`Línea ${index + 1}`}
+                        value={line}
+                        onChange={(e) => updateDescripcionLinea(index, e.target.value)}
+                        className="form-input"
+                      />
+                      <button
+                        type="button"
+                        className="btn-remove-line"
+                        onClick={() => removeDescripcionLinea(index)}
+                        disabled={formData.descripcion.length <= 1}
+                        title="Eliminar línea"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="btn-add-line"
+                  onClick={addDescripcionLinea}
+                >
+                  + Agregar línea
+                </button>
               </div>
 
               {/* Precio BS */}

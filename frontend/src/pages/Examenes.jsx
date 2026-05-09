@@ -921,9 +921,7 @@ function Examenes() {
                 doc.addPage()
                 ypos = 20
               }
-              doc.setLineWidth(0.3)
-              doc.line(20, ypos, 190, ypos)
-              ypos += 8
+             
               doc.setFont('Helvetica', 'bold')
               doc.setFontSize(10)
               doc.setTextColor(0, 0, 0)
