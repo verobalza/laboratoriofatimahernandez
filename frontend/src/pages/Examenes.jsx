@@ -625,48 +625,48 @@ function Examenes() {
 
       // NOMBRE + CÉDULA + SEXO (misma línea)
       doc.setFont("Helvetica", "bold")
-      doc.text("Paciente:", 20, ypos)
+      doc.text("Paciente:", 22, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.nombre} ${selectedPaciente.apellido}`, 40, ypos)
+      doc.text(`${selectedPaciente.nombre} ${selectedPaciente.apellido}`, 38, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Cédula:", 85, ypos)
+      doc.text("Cédula:", 96, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.cedula || ''}`, 105, ypos)
+      doc.text(`${selectedPaciente.cedula || ''}`, 110, ypos)
 
       doc.setFont("Helvetica", "bold")
       doc.text("Sexo:", 130, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.sexo || ''}`, 145, ypos)
+      doc.text(`${selectedPaciente.sexo || ''}`, 150, ypos)
       ypos += 6
 
       // DIRECCIÓN + EDAD + TELÉFONO
       doc.setFont("Helvetica", "bold")
-      doc.text("Dirección:", 20, ypos)
+      doc.text("Dirección:", 22, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.direccion || ''}`, 40, ypos)
+      doc.text(`${selectedPaciente.direccion || ''}`, 38, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Edad:", 85, ypos)
+      doc.text("Edad:", 96, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.edad || ''}`, 105, ypos)
+      doc.text(`${selectedPaciente.edad || ''}`, 110, ypos)
 
       doc.setFont("Helvetica", "bold")
       doc.text("Teléfono:", 130, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.telefono || ''}`, 145, ypos)
+      doc.text(`${selectedPaciente.telefono || ''}`, 150, ypos)
       ypos += 6
 
       // CONVENIO + FECHA
       doc.setFont("Helvetica", "bold")
-      doc.text("Convenio:", 20, ypos)
+      doc.text("Convenio:", 22, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedPaciente.convenio || ''}`, 40, ypos)
+      doc.text(`${selectedPaciente.convenio || ''}`, 38, ypos)
 
       doc.setFont("Helvetica", "bold")
-      doc.text("Fecha:", 85, ypos)
+      doc.text("Fecha:", 96, ypos)
       doc.setFont("Helvetica", "normal")
-      doc.text(`${selectedDate}`, 105, ypos)
+      doc.text(`${selectedDate}`, 110, ypos)
       ypos += 10
 
 
@@ -892,10 +892,13 @@ function Examenes() {
                 doc.addPage()
                 ypos = 20
               }
+              doc.setLineWidth(0.3)
+              doc.line(20, ypos, 190, ypos)
+              ypos += 8
               doc.setFont('Helvetica', 'italic', 'bold')
               doc.setFontSize(9)
               doc.setTextColor(0, 0, 0)
-              doc.text('Observaciones:', 20, ypos)
+              doc.text('OBSERVACIONES EN SANGRE PERIFÉRICA:', 20, ypos)
               ypos += 5
               const hematoObsLines = doc.splitTextToSize(hematologiaObservacionGeneral.trim(), 160)
               hematoObsLines.forEach((line) => {
