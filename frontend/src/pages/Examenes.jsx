@@ -756,7 +756,7 @@ function Examenes() {
         if (p.descripcion) {
           if (ypos > 270) {
             doc.addPage()
-            ypos = 20
+            ypos = 150
           }
           doc.setFont('Helvetica', 'normal')
           doc.setFontSize(8)
