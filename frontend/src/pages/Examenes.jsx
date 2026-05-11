@@ -932,11 +932,9 @@ function Examenes() {
             if (serie === 'blanca' && hematologiaOtros.length > 0) {
               if (ypos > 270) {
                 doc.addPage()
-                ypos = 20
+                ypos = 15
               }
-              doc.setLineWidth(0.3)
-              doc.line(20, ypos, 190, ypos)
-              ypos += 8
+              
 
               doc.setFont('Helvetica', 'bold')
               doc.setFontSize(10)
