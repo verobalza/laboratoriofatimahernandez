@@ -85,7 +85,31 @@ function Examenes() {
     setpruebasLoading(true)
     try {
       const data = await api.getAllPruebas()
-      setAllPruebas(data || [])
+      
+      // Ordenar pruebas: primero por grupo_id y posición, luego por nombre
+      const sortedPruebas = (data || []).sort((a, b) => {
+        // Agrupar por grupo_id
+        if (a.grupo_id !== b.grupo_id) {
+          // Si ambas tienen grupo, comparar por grupo_id (alfabético)
+          if (a.grupo_id && b.grupo_id) {
+            return a.grupo_id.localeCompare(b.grupo_id)
+          }
+          // Pruebas sin grupo al final
+          return a.grupo_id ? -1 : 1
+        }
+        
+        // Mismo grupo: ordenar por posición
+        if (a.grupo_id === b.grupo_id) {
+          const posA = a.posicion || Infinity
+          const posB = b.posicion || Infinity
+          if (posA !== posB) return posA - posB
+        }
+        
+        // Fallback: ordenar por nombre
+        return (a.nombre_prueba || '').localeCompare(b.nombre_prueba || '')
+      })
+      
+      setAllPruebas(sortedPruebas)
     } catch (error) {
       console.error('Error cargando pruebas:', error)
       setMensaje({ type: 'error', text: 'Error al cargar pruebas' })
@@ -299,7 +323,9 @@ function Examenes() {
     const grupo = allGrupos.find((g) => g.id === grupoId)
     if (grupo && grupoIncluyeHematologiaCompleta(grupo)) {
       const hematoIds = getHematologiaPruebas().map((p) => p.id)
-      return [...new Set([...pruebasDelGrupo, ...hematoIds])]
+      // Mantener orden: primero pruebas del grupo, luego hematología (sin duplicados)
+      const merged = [...pruebasDelGrupo, ...hematoIds]
+      return [...new Map(merged.map(id => [id, id])).keys()]
     }
     return pruebasDelGrupo
   }
@@ -319,8 +345,12 @@ function Examenes() {
         setSelectedPruebas((prevPruebas) => prevPruebas.filter((id) => !pruebasDelGrupo.includes(id)))
         return prev.filter((id) => id !== grupoId)
       } else {
-        // Seleccionar grupo
-        setSelectedPruebas((prevPruebas) => [...new Set([...prevPruebas, ...pruebasDelGrupo])])
+        // Seleccionar grupo: mantener orden de pruebas
+        setSelectedPruebas((prevPruebas) => {
+          const merged = [...prevPruebas, ...pruebasDelGrupo]
+          // Eliminar duplicados manteniendo orden (Map preserva orden de inserción)
+          return [...new Map(merged.map(id => [id, id])).keys()]
+        })
         return [...prev, grupoId]
       }
     })
@@ -900,7 +930,7 @@ function Examenes() {
               printPrueba(p)
             })
 
-            if (serie === 'plaquetaria' && hematologiaObservacionGeneral.trim()) {
+            if (serie === 'blanca' && hematologiaOtros.length > 0) {
               if (ypos > 270) {
                 doc.addPage()
                 ypos = 20
@@ -909,12 +939,6 @@ function Examenes() {
               doc.line(20, ypos, 190, ypos)
               ypos += 8
 
-              if (serie === 'plaquetaria' && hematologiaOtros.length > 0) {
-              if (ypos > 270) {
-                doc.addPage()
-                ypos = 20
-              }
-             
               doc.setFont('Helvetica', 'bold')
               doc.setFontSize(10)
               doc.setTextColor(0, 0, 0)
@@ -939,7 +963,12 @@ function Examenes() {
               ypos += 4
             }
 
-             doc.setLineWidth(0.3)
+            if (serie === 'plaquetaria' && hematologiaObservacionGeneral.trim()) {
+              if (ypos > 270) {
+                doc.addPage()
+                ypos = 20
+              }
+              doc.setLineWidth(0.3)
               doc.line(20, ypos, 190, ypos)
               ypos += 8
               doc.setFont('Helvetica', 'italic', 'bold')

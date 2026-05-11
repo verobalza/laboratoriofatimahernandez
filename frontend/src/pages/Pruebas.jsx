@@ -590,9 +590,13 @@ function Pruebas() {
         activo: grupoFormData.activo
       })
       
-      // 2. Actualizar las pruebas seleccionadas con el grupo_id
-      for (const pruebaId of selectedPruebasGrupo) {
-        await api.updatePrueba(pruebaId, { grupo_id: nuevoGrupo.id })
+      // 2. Actualizar las pruebas seleccionadas con el grupo_id Y posición
+      for (let i = 0; i < selectedPruebasGrupo.length; i++) {
+        const pruebaId = selectedPruebasGrupo[i]
+        await api.updatePrueba(pruebaId, { 
+          grupo_id: nuevoGrupo.id,
+          posicion: i + 1  // Posición basada en índice (1-indexed)
+        })
       }
       
       setMensaje({ type: 'success', text: `✅ Grupo "${nuevoGrupo.nombre}" creado con ${selectedPruebasGrupo.length} prueba(s)` })
@@ -664,13 +668,17 @@ function Pruebas() {
       const pruebasActuales = pruebas.filter(p => p.grupo_id === grupoEnEdicion.id)
       for (const prueba of pruebasActuales) {
         if (!selectedPruebasGrupo.includes(prueba.id)) {
-          await api.updatePrueba(prueba.id, { grupo_id: null })
+          await api.updatePrueba(prueba.id, { grupo_id: null, posicion: null })
         }
       }
       
-      // 3. Asignar nuevas pruebas
-      for (const pruebaId of selectedPruebasGrupo) {
-        await api.updatePrueba(pruebaId, { grupo_id: grupoEnEdicion.id })
+      // 3. Asignar nuevas pruebas CON POSICIÓN
+      for (let i = 0; i < selectedPruebasGrupo.length; i++) {
+        const pruebaId = selectedPruebasGrupo[i]
+        await api.updatePrueba(pruebaId, { 
+          grupo_id: grupoEnEdicion.id,
+          posicion: i + 1  // Posición basada en índice (1-indexed)
+        })
       }
       
       setMensaje({ type: 'success', text: `✅ Grupo "${grupoFormData.nombre}" actualizado` })

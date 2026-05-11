@@ -19,6 +19,7 @@ class PruebaBase(BaseModel):
     descripcion: Optional[str] = None
     precio_bs: float
     grupo_id: Optional[str] = None
+    posicion: Optional[int] = None
 
     @field_validator("nombre_prueba", "tipo_muestra", "area")
     @classmethod
@@ -66,16 +67,10 @@ class PruebaUpdate(BaseModel):
     valor_referencia_min: Optional[float] = None
     valor_referencia_max: Optional[float] = None
     descripcion: Optional[str] = None
-    tipo_prueba: Optional[str] = None
     serie: Optional[str] = None
-    area: Optional[str] = None
-    unidad_medida: Optional[str] = None
-    tipo_muestra: Optional[str] = None
-    valor_referencia_min: Optional[float] = None
-    valor_referencia_max: Optional[float] = None
-    descripcion: Optional[str] = None
     precio_bs: Optional[float] = None
     grupo_id: Optional[str] = None
+    posicion: Optional[int] = None
 
     @field_validator("nombre_prueba", "unidad_medida", "tipo_muestra", "area")
     @classmethod
@@ -104,15 +99,6 @@ class PruebaUpdate(BaseModel):
         if normalized not in ['roja', 'blanca', 'plaquetaria']:
             raise ValueError("La serie debe ser 'roja', 'blanca' o 'plaquetaria'")
         return normalized
-
-    @field_validator("tipo_prueba")
-    @classmethod
-    def validate_tipo_prueba(cls, v: Optional[str]) -> Optional[str]:
-        if v is None:
-            return v
-        if v not in ['numerica', 'serologia']:
-            raise ValueError("El tipo de prueba debe ser 'numerica' o 'serologia'")
-        return v
 
     @field_validator("precio_bs")
     @classmethod

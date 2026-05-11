@@ -94,7 +94,7 @@ async def get_grupo(grupo_id: str):
 @router.get("/{grupo_id}/pruebas", response_model=List[PruebaOut])
 async def get_pruebas_by_grupo(grupo_id: str):
     """
-    Obtiene todas las pruebas de un grupo específico.
+    Obtiene todas las pruebas de un grupo específico, ordenadas por posición.
     """
     supabase = get_supabase_client()
 
@@ -103,7 +103,8 @@ async def get_pruebas_by_grupo(grupo_id: str):
             supabase.table("pruebas")
             .select("*")
             .eq("grupo_id", grupo_id)
-            .order("nombre_prueba")
+            .order("posicion", desc=False)
+            .order("nombre_prueba")  # Fallback para pruebas sin posición
             .execute()
         )
     except Exception as e:
