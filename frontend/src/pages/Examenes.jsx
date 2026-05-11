@@ -985,9 +985,6 @@ function Examenes() {
               doc.text('OBSERVACIONES EN SANGRE PERIFÉRICA:', 20, ypos)
               ypos += 5
 
-              doc.setLineWidth(0.3)
-              doc.line(20, ypos, 190, ypos)
-              ypos += 8
               const hematoObsLines = doc.splitTextToSize(hematologiaObservacionGeneral.trim(), 160)
               hematoObsLines.forEach((line) => {
                 if (ypos > 270) {
