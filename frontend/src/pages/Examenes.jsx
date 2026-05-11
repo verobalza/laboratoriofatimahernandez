@@ -330,6 +330,7 @@ function Examenes() {
   }
 
   const hematoPruebaIds = getHematologiaPruebas().map((p) => p.id)
+  const selectedHematologiaPruebas = getHematologiaPruebas().filter((p) => selectedPruebas.includes(p.id))
   const hematologiaCompleta = hematoPruebaIds.length > 0 && hematoPruebaIds.every((id) => selectedPruebas.includes(id))
 
   const toggleGrupo = (grupoId) => {
@@ -921,9 +922,12 @@ function Examenes() {
             doc.setTextColor(0, 0, 0)
             doc.text(HEMATOLOGIA_LABELS[serie], 20, ypos)
             ypos += 6
-            doc.setLineWidth(0.3)
-            doc.line(20, ypos, 190, ypos)
-            ypos += 8
+            const dibujarLineaDespuesDeBlanca = serie === 'blanca' && hematologiaOtros.length > 0
+            if (!dibujarLineaDespuesDeBlanca) {
+              doc.setLineWidth(0.3)
+              doc.line(20, ypos, 190, ypos)
+              ypos += 8
+            }
 
             hematologiaPorSerie[serie].forEach((p) => {
               printPrueba(p)
@@ -934,7 +938,6 @@ function Examenes() {
                 doc.addPage()
                 ypos = 15
               }
-              
 
               doc.setFont('Helvetica', 'bold')
               doc.setFontSize(10)
@@ -958,6 +961,14 @@ function Examenes() {
                 ypos += 5
               })
               ypos += 4
+
+              if (ypos > 270) {
+                doc.addPage()
+                ypos = 20
+              }
+              doc.setLineWidth(0.3)
+              doc.line(20, ypos, 190, ypos)
+              ypos += 8
             }
 
             if (serie === 'plaquetaria' && hematologiaObservacionGeneral.trim()) {
@@ -2484,10 +2495,12 @@ function Examenes() {
             <section className="seccion seccion-resultados">
               <h2>3. Ingresar Resultados</h2>
               <div className="resultados-form">
-                {/* Bloque especial de Hematología si está activada */}
-                {hematologiaCompleta && (
+                {/* Bloque especial de Hematología si hay pruebas de hematología seleccionadas */}
+                {selectedHematologiaPruebas.length > 0 && (
                   <div className="hematologia-resultados-section">
-                    <h3 className="hematologia-titulo">🧬 Hematología Completa</h3>
+                    <h3 className="hematologia-titulo">
+                      🧬 {hematologiaCompleta ? 'Hematología Completa' : 'Hematología'}
+                    </h3>
 
                     {/* Serie Roja */}
                     <div className="hematologia-serie">
@@ -2623,9 +2636,9 @@ function Examenes() {
                     </div>
 
                     <div className="hematologia-observacion-general">
-                      <h4 className="serie-titulo">Observaciones del bioanalista</h4>
+                      <h4 className="serie-titulo">Observaciones en sangre periférica</h4>
                       <textarea
-                        placeholder="Escribe aquí tu apreciación general de la hematología completa..."
+                        placeholder="Escribe aquí las observaciones en sangre periférica..."
                         value={hematologiaObservacionGeneral}
                         onChange={(e) => setHematologiaObservacionGeneral(e.target.value)}
                         className="input-observaciones"
