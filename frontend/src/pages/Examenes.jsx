@@ -87,27 +87,26 @@ function Examenes() {
       const data = await api.getAllPruebas()
       
       // Ordenar pruebas: primero por grupo_id y posición, luego por nombre
-      const sortedPruebas = (data || []).sort((a, b) => {
-        // Agrupar por grupo_id
-        if (a.grupo_id !== b.grupo_id) {
-          // Si ambas tienen grupo, comparar por grupo_id (alfabético)
-          if (a.grupo_id && b.grupo_id) {
-            return a.grupo_id.localeCompare(b.grupo_id)
+      const sortedPruebas = (data || [])
+        .map((item, index) => ({ ...item, __originalIndex: index }))
+        .sort((a, b) => {
+          // Agrupar por grupo_id
+          if (a.grupo_id !== b.grupo_id) {
+            if (a.grupo_id && b.grupo_id) {
+              return a.grupo_id.localeCompare(b.grupo_id)
+            }
+            return a.grupo_id ? -1 : 1
           }
-          // Pruebas sin grupo al final
-          return a.grupo_id ? -1 : 1
-        }
-        
-        // Mismo grupo: ordenar por posición
-        if (a.grupo_id === b.grupo_id) {
-          const posA = a.posicion || Infinity
-          const posB = b.posicion || Infinity
+
+          // Mismo grupo: ordenar por posición
+          const posA = a.posicion ?? Infinity
+          const posB = b.posicion ?? Infinity
           if (posA !== posB) return posA - posB
-        }
-        
-        // Fallback: ordenar por nombre
-        return (a.nombre_prueba || '').localeCompare(b.nombre_prueba || '')
-      })
+
+          // Misma posición o sin posición: conservar el orden original del backend
+          return a.__originalIndex - b.__originalIndex
+        })
+        .map(({ __originalIndex, ...item }) => item)
       
       setAllPruebas(sortedPruebas)
     } catch (error) {
@@ -1332,7 +1331,9 @@ function Examenes() {
 
 
   // Filtrar pruebas seleccionadas para mostrar en formulario
-  const pruebasSeleccionadas = allPruebas.filter((p) => selectedPruebas.includes(p.id))
+  const pruebasSeleccionadas = selectedPruebas
+    .map((id) => allPruebas.find((p) => p.id === id))
+    .filter(Boolean)
 
   return (
     <div className="examenes-container">
@@ -2550,35 +2551,6 @@ function Examenes() {
                         ))}
                     </div>
 
-                    {/* Serie Plaquetaria */}
-                    <div className="hematologia-serie">
-                      <h4 className="serie-titulo">Serie Plaquetaria</h4>
-                      {getPruebasBySerie('plaquetaria')
-                        .filter((p) => selectedPruebas.includes(p.id))
-                        .map((prueba) => (
-                          <div key={prueba.id} className="resultado-item hematologia-item">
-                            <div className="resultado-header">
-                              <h5>{prueba.nombre_prueba}</h5>
-                              {prueba.unidad_medida && <span className="unidad">{prueba.unidad_medida}</span>}
-                            </div>
-                            {prueba.valor_referencia_min !== null && prueba.valor_referencia_max !== null && (
-                              <div className="rango-referencia">
-                                Rango: {prueba.valor_referencia_min} - {prueba.valor_referencia_max}
-                              </div>
-                            )}
-                            <div className="resultado-inputs">
-                              <input
-                                type="text"
-                                placeholder="Resultado"
-                                value={resultados[prueba.id] || ''}
-                                onChange={(e) => handleResultadoChange(prueba.id, e.target.value)}
-                                className="input-resultado"
-                              />
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-
                     {/* Otros en Hematología */}
                     <div className="hematologia-otros">
                       <h4 className="serie-titulo">Otros</h4>
@@ -2621,6 +2593,35 @@ function Examenes() {
                       >
                         + Agregar
                       </button>
+                    </div>
+
+                    {/* Serie Plaquetaria */}
+                    <div className="hematologia-serie">
+                      <h4 className="serie-titulo">Serie Plaquetaria</h4>
+                      {getPruebasBySerie('plaquetaria')
+                        .filter((p) => selectedPruebas.includes(p.id))
+                        .map((prueba) => (
+                          <div key={prueba.id} className="resultado-item hematologia-item">
+                            <div className="resultado-header">
+                              <h5>{prueba.nombre_prueba}</h5>
+                              {prueba.unidad_medida && <span className="unidad">{prueba.unidad_medida}</span>}
+                            </div>
+                            {prueba.valor_referencia_min !== null && prueba.valor_referencia_max !== null && (
+                              <div className="rango-referencia">
+                                Rango: {prueba.valor_referencia_min} - {prueba.valor_referencia_max}
+                              </div>
+                            )}
+                            <div className="resultado-inputs">
+                              <input
+                                type="text"
+                                placeholder="Resultado"
+                                value={resultados[prueba.id] || ''}
+                                onChange={(e) => handleResultadoChange(prueba.id, e.target.value)}
+                                className="input-resultado"
+                              />
+                            </div>
+                          </div>
+                        ))}
                     </div>
 
                     <div className="hematologia-observacion-general">
