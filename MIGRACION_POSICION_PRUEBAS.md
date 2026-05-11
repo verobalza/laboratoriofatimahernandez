@@ -5,7 +5,11 @@ Agregar un campo `posicion` a la tabla `pruebas` para preservar el orden de sele
 
 ## 🗄️ SQL Migration
 
-Ejecutar en Supabase SQL Editor:
+Ejecutar en Supabase SQL Editor o usar el archivo:
+
+`backend/db/ADD_POSICION_PRUEBAS.sql`
+
+Si usas el SQL editor, ejecuta:
 
 ```sql
 -- 1. Agregar columna posicion (nullable inicialmente)

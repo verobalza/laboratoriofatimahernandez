@@ -86,10 +86,13 @@ CREATE TABLE pruebas (
   valor_referencia_min FLOAT,
   valor_referencia_max FLOAT,
   descripcion TEXT,
+  grupo_id UUID REFERENCES grupos(id) ON DELETE SET NULL,
+  posicion INTEGER DEFAULT NULL,
   creado_en TIMESTAMP DEFAULT now()
 );
 
 CREATE INDEX idx_pruebas_nombre ON pruebas(nombre_prueba);
+CREATE INDEX idx_pruebas_grupo_posicion ON pruebas(grupo_id, posicion);
 
 ALTER TABLE pruebas ENABLE ROW LEVEL SECURITY;
 
