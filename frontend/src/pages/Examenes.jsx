@@ -922,12 +922,9 @@ function Examenes() {
             doc.setTextColor(0, 0, 0)
             doc.text(HEMATOLOGIA_LABELS[serie], 20, ypos)
             ypos += 6
-            const dibujarLineaDespuesDeBlanca = serie === 'blanca' && hematologiaOtros.length > 0
-            if (!dibujarLineaDespuesDeBlanca) {
-              doc.setLineWidth(0.3)
-              doc.line(20, ypos, 190, ypos)
-              ypos += 8
-            }
+            doc.setLineWidth(0.3)
+            doc.line(20, ypos, 190, ypos)
+            ypos += 8
 
             hematologiaPorSerie[serie].forEach((p) => {
               printPrueba(p)
