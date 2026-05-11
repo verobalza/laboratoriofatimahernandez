@@ -1744,8 +1744,8 @@ function Examenes() {
                                     >
                                       <option value="">Seleccionar</option>
                                       <option value="normal">Normal</option>
-                                      <option value="fragrante">Fragrante</option>
-                                      <option value="fuerte">Fuerte</option>
+                                      <option value="fragrante">Característico</option>
+                                      <option value="fuerte">Suigeneris</option>
                                     </select>
                                   </div>
 
