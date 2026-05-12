@@ -762,6 +762,20 @@ function Examenes() {
         return true
       }
 
+      function printTwoPerLine(doc, items, x1, x2, ypos) {
+        for (let i = 0; i < items.length; i += 2) {
+          const left = items[i]
+          const right = items[i + 1] || ""
+
+          doc.text(left, x1, ypos)
+          if (right) doc.text(right, x2, ypos)
+
+          ypos += 5
+        }
+        return ypos
+      }
+
+
       const printPrueba = (p) => {
         const res = resultados[String(p.id)] || '—'
         const unidad = p.unidad_medida || ''
@@ -1028,10 +1042,8 @@ function Examenes() {
           `pH: ${examenesEspeciales.orina.data.ph || 'No especificado'}`,
           `Reacción: ${examenesEspeciales.orina.data.reaccion || 'No especificado'}`
         ]
-        fisicoData.forEach(item => {
-          doc.text(item, 25, ypos)
-          ypos += 4
-        })
+        ypos = printTwoPerLine(doc, fisicoData, 25, 110, ypos)
+
 
         // Examen Químico
         ypos += 3
@@ -1049,10 +1061,8 @@ function Examenes() {
           `Urobilinógeno: ${examenesEspeciales.orina.data.urobilinogenos || 'No especificado'}`,
           `Hemoglobina: ${examenesEspeciales.orina.data.hemoglobina || 'No especificado'}`
         ]
-        quimicoData.forEach(item => {
-          doc.text(item, 25, ypos)
-          ypos += 4
-        })
+        ypos = printTwoPerLine(doc, quimicoData, 25, 110, ypos)
+
 
         // Examen Microscópico
         ypos += 3
@@ -1094,11 +1104,8 @@ function Examenes() {
             `K: ${examenesEspeciales.miscelaneos.data.k || 'No especificado'}`,
             `Método: Wistergreen`
           ]
-          miscelaneosData.forEach(item => {
-            if (!ensurePageSpace(4)) return
-            doc.text(item, 25, ypos)
-            ypos += 4
-          })
+          ypos = printTwoPerLine(doc, miscelaneosData, 25, 110, ypos)
+
           if (examenesEspeciales.miscelaneos.data.observaciones && ensurePageSpace(20)) {
             ypos += 3
             doc.setFont("Helvetica", "bold")
@@ -1143,11 +1150,8 @@ function Examenes() {
               `Sangre oculta: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
               `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`
             ]
-            macroData.forEach(item => {
-              if (!ensurePageSpace(4)) return
-              doc.text(item, 25, ypos)
-              ypos += 4
-            })
+            ypos = printTwoPerLine(doc, macroData, 25, 110, ypos)
+
 
             // Examen Microscópico
             ypos += 3
@@ -1195,11 +1199,8 @@ function Examenes() {
             `Dif. P-C: ${examenesEspeciales.coagulacion.data.dif_pc || 'No especificado'}`,
             `Referencia: V.R. (+/-6seg. diferencia P-C)`
           ]
-          coagulacionData.forEach(item => {
-            if (!ensurePageSpace(4)) return
-            doc.text(item, 25, ypos)
-            ypos += 4
-          })
+          ypos = printTwoPerLine(doc, coagulacionData, 25, 110, ypos)
+
           if (examenesEspeciales.coagulacion.data.observaciones && ensurePageSpace(20)) {
             ypos += 3
             doc.setFont("Helvetica", "bold")
