@@ -1042,7 +1042,7 @@ function Examenes() {
           `pH: ${examenesEspeciales.orina.data.ph || 'No especificado'}`,
           `Reacción: ${examenesEspeciales.orina.data.reaccion || 'No especificado'}`
         ]
-        ypos = printTwoPerLine(doc, fisicoData, 25, 110, ypos)
+        ypos = printTwoPerLine(doc, fisicoData, 25, 95, ypos)
 
 
         // Examen Químico
@@ -1061,7 +1061,7 @@ function Examenes() {
           `Urobilinógeno: ${examenesEspeciales.orina.data.urobilinogenos || 'No especificado'}`,
           `Hemoglobina: ${examenesEspeciales.orina.data.hemoglobina || 'No especificado'}`
         ]
-        ypos = printTwoPerLine(doc, quimicoData, 25, 110, ypos)
+        ypos = printTwoPerLine(doc, quimicoData, 25, 95, ypos)
 
 
         // Examen Microscópico
@@ -1080,10 +1080,8 @@ function Examenes() {
           `Levaduras: ${examenesEspeciales.orina.data.levaduras || 'No especificado'}`,
           `Protozoarios: ${examenesEspeciales.orina.data.protozoarios || 'No especificado'}`
         ]
-        microscopicoData.forEach(item => {
-          doc.text(item, 25, ypos)
-          ypos += 4
-        })
+        ypos = printTwoPerLine(doc, microscopicoData, 25, 95, ypos)
+
       }
 
       if (examenesEspeciales.miscelaneos.enabled) {
@@ -1104,7 +1102,7 @@ function Examenes() {
             `K: ${examenesEspeciales.miscelaneos.data.k || 'No especificado'}`,
             `Método: Wistergreen`
           ]
-          ypos = printTwoPerLine(doc, miscelaneosData, 25, 110, ypos)
+          ypos = printTwoPerLine(doc, miscelaneosData, 25, 95, ypos)
 
           if (examenesEspeciales.miscelaneos.data.observaciones && ensurePageSpace(20)) {
             ypos += 3
@@ -1150,7 +1148,7 @@ function Examenes() {
               `Sangre oculta: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
               `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`
             ]
-            ypos = printTwoPerLine(doc, macroData, 25, 110, ypos)
+            ypos = printTwoPerLine(doc, macroData, 25, 95, ypos)
 
 
             // Examen Microscópico
@@ -1199,7 +1197,7 @@ function Examenes() {
             `Dif. P-C: ${examenesEspeciales.coagulacion.data.dif_pc || 'No especificado'}`,
             `Referencia: V.R. (+/-6seg. diferencia P-C)`
           ]
-          ypos = printTwoPerLine(doc, coagulacionData, 25, 110, ypos)
+          ypos = printTwoPerLine(doc, coagulacionData, 25, 95, ypos)
 
           if (examenesEspeciales.coagulacion.data.observaciones && ensurePageSpace(20)) {
             ypos += 3
@@ -1651,7 +1649,7 @@ function Examenes() {
 
                     {/* Exámenes Especiales - Checkboxes Globales */}
                     <div className="examenes-especiales-section">
-                      <h3 className="section-title">Uronálisis Y Copronálisis</h3>
+                      <h3 className="section-title">Uronálisis, Copronálisis, Miscelaneos y Coagulación</h3>
                       <div className="examenes-especiales-checkboxes">
                         <label className="examen-especial-checkbox">
                           <input
