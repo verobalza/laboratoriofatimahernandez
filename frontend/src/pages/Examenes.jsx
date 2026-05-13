@@ -1223,7 +1223,7 @@ function Examenes() {
 
       if (firmaResult) {
         const firmaFormat = firmaResult.src.toLowerCase().endsWith('.jpg') || firmaResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
-        const firmaWidth = 195
+        const firmaWidth = 220
         const firmaHeight = 45
         const firmaX = 10
         const firmaY = 230
