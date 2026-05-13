@@ -1223,10 +1223,10 @@ function Examenes() {
 
       if (firmaResult) {
         const firmaFormat = firmaResult.src.toLowerCase().endsWith('.jpg') || firmaResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
-        const firmaWidth = 160
+        const firmaWidth = 195
         const firmaHeight = 45
-        const firmaX = 20
-        const firmaY = 255
+        const firmaX = 10
+        const firmaY = 245
         const totalPages = doc.internal.getNumberOfPages()
 
         for (let page = 1; page <= totalPages; page++) {
