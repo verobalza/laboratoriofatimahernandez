@@ -1226,7 +1226,7 @@ function Examenes() {
         const firmaWidth = 210
         const firmaHeight = 40
         const firmaX = 25
-        const firmaY = 240
+        const firmaY = 250
         const totalPages = doc.internal.getNumberOfPages()
 
         for (let page = 1; page <= totalPages; page++) {
