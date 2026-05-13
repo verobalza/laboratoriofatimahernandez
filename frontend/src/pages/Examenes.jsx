@@ -1223,9 +1223,9 @@ function Examenes() {
 
       if (firmaResult) {
         const firmaFormat = firmaResult.src.toLowerCase().endsWith('.jpg') || firmaResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
-        const firmaWidth = 220
+        const firmaWidth = 215
         const firmaHeight = 45
-        const firmaX = 10
+        const firmaX = 5
         const firmaY = 230
         const totalPages = doc.internal.getNumberOfPages()
 
