@@ -1243,22 +1243,24 @@ function Examenes() {
         for (let page = 1; page <= totalPages; page++) {
           doc.setPage(page)
 
-          // Línea superior de firma con sello centrado
+          // Línea superior ubicada justo arriba de la firma, con sello centrado
           const lineY = firmaY - 10
-          doc.setLineWidth(0.3)
-          const selloWidth = Math.min(80, pageWidth - 80)
-          const selloHeight = 22
+          const selloWidth = Math.min(70, pageWidth - 80)
+          const selloHeight = 20
           const selloX = (pageWidth - selloWidth) / 2
           const selloY = lineY - selloHeight / 2
-          const gap = 6
+          const gap = 8
+          const leftLineStart = 20
           const leftLineEnd = selloX - gap
           const rightLineStart = selloX + selloWidth + gap
+          const rightLineEnd = pageWidth - 20
 
-          if (leftLineEnd > 20) {
-            doc.line(20, lineY, leftLineEnd, lineY)
+          doc.setLineWidth(0.3)
+          if (leftLineEnd > leftLineStart) {
+            doc.line(leftLineStart, lineY, leftLineEnd, lineY)
           }
-          if (rightLineStart < pageWidth - 10) {
-            doc.line(rightLineStart, lineY, pageWidth - 10, lineY)
+          if (rightLineStart < rightLineEnd) {
+            doc.line(rightLineStart, lineY, rightLineEnd, lineY)
           }
 
           if (selloResult) {
