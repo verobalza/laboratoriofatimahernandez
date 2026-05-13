@@ -661,6 +661,13 @@ function Examenes() {
         '/firma.jpeg'
       ])
 
+      const selloResult = await loadImageFromCandidates([
+        '/sellos.png',
+        'sellos.png',
+        '/Sellos.png',
+        'Sellos.png'
+      ])
+
       let ypos = 70
 
       if (membreteResult) {
@@ -1235,11 +1242,31 @@ function Examenes() {
 
         for (let page = 1; page <= totalPages; page++) {
           doc.setPage(page)
-          doc.addImage(firmaResult.image, firmaFormat, firmaX, firmaY, firmaWidth, firmaHeight)
-          // Línea horizontal en el medio de la firma
-          const lineY = firmaY + firmaHeight / 2
+
+          // Línea superior de firma con sello centrado
+          const lineY = firmaY - 10
           doc.setLineWidth(0.3)
-          doc.line(20, lineY, 190, lineY)
+          const selloWidth = Math.min(80, pageWidth - 80)
+          const selloHeight = 22
+          const selloX = (pageWidth - selloWidth) / 2
+          const selloY = lineY - selloHeight / 2
+          const gap = 6
+          const leftLineEnd = selloX - gap
+          const rightLineStart = selloX + selloWidth + gap
+
+          if (leftLineEnd > 20) {
+            doc.line(20, lineY, leftLineEnd, lineY)
+          }
+          if (rightLineStart < pageWidth - 10) {
+            doc.line(rightLineStart, lineY, pageWidth - 10, lineY)
+          }
+
+          if (selloResult) {
+            const selloFormat = selloResult.src.toLowerCase().endsWith('.jpg') || selloResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
+            doc.addImage(selloResult.image, selloFormat, selloX, selloY, selloWidth, selloHeight)
+          }
+
+          doc.addImage(firmaResult.image, firmaFormat, firmaX, firmaY, firmaWidth, firmaHeight)
         }
       } else {
         console.warn('No se encontró la firma en PDF; se generará el documento sin ella.')
