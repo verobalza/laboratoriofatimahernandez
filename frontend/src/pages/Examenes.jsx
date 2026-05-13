@@ -1286,16 +1286,10 @@ function Examenes() {
     // Verificar que hay al menos un resultado ingresado en pruebas normales
     const hasResults = Object.values(resultados).some((valor) => valor && valor.trim() !== '')
 
-    // Verificar que exámenes especiales están completados si están habilitados
-    const orinaComplete = !examenesEspeciales.orina.enabled || Object.values(examenesEspeciales.orina.data).some(val => val !== null && val !== '')
-    const hecesComplete = !examenesEspeciales.heces.enabled || Object.values(examenesEspeciales.heces.data).some(val => val !== null && val !== '')
-    const miscelaneosComplete = !examenesEspeciales.miscelaneos.enabled || Object.values(examenesEspeciales.miscelaneos.data).some(val => val !== null && val !== '')
-    const coagulacionComplete = !examenesEspeciales.coagulacion.enabled || Object.values(examenesEspeciales.coagulacion.data).some(val => val !== null && val !== '')
+    // Permitir generar si hay resultados en pruebas normales o si algún examen especial está habilitado
+    const hasEspeciales = examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled
 
-    return hasResults || (
-      orinaComplete && hecesComplete && miscelaneosComplete && coagulacionComplete &&
-      (examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled)
-    )
+    return hasResults || hasEspeciales
   }
 
   const handleEnviarWhatsApp = () => {
