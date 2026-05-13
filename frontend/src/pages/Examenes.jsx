@@ -768,13 +768,16 @@ function Examenes() {
         return true
       }
 
-      function printTwoPerLine(doc, items, x1, x2, ypos) {
-        for (let i = 0; i < items.length; i += 2) {
-          const left = items[i]
-          const right = items[i + 1] || ""
+      function printTwoPerLine(doc, items, x1, x2, x3, ypos) {
+        for (let i = 0; i < items.length; i += 3) {
 
-          doc.text(left, x1, ypos)
-          if (right) doc.text(right, x2, ypos)
+          const col1 = items[i]
+          const col2 = items[i + 1] || ""
+          const col3 = items[i + 2] || ""
+
+          doc.text(col1, x1, ypos)
+          if (col2) doc.text(col2, x2, ypos)
+          if (col3) doc.text(col3, x3, ypos)
 
           ypos += 5
         }
@@ -1048,7 +1051,7 @@ function Examenes() {
           `pH: ${examenesEspeciales.orina.data.ph || 'No especificado'}`,
           `Reacción: ${examenesEspeciales.orina.data.reaccion || 'No especificado'}`
         ]
-        ypos = printTwoPerLine(doc, fisicoData, 25, 95, ypos)
+        ypos = printTwoPerLine(doc, fisicoData, 25, 90, 155, ypos)
 
 
         // Examen Químico
@@ -1067,7 +1070,7 @@ function Examenes() {
           `Urobilinógeno: ${examenesEspeciales.orina.data.urobilinogenos || 'No especificado'}`,
           `Hemoglobina: ${examenesEspeciales.orina.data.hemoglobina || 'No especificado'}`
         ]
-        ypos = printTwoPerLine(doc, quimicoData, 25, 95, ypos)
+        ypos = printTwoPerLine(doc, quimicoData, 25, 90, 155, ypos)
 
 
         // Examen Microscópico
@@ -1086,7 +1089,7 @@ function Examenes() {
           `Levaduras: ${examenesEspeciales.orina.data.levaduras || 'No especificado'}`,
           `Protozoarios: ${examenesEspeciales.orina.data.protozoarios || 'No especificado'}`
         ]
-        ypos = printTwoPerLine(doc, microscopicoData, 25, 95, ypos)
+        ypos = printTwoPerLine(doc, microscopicoData, 25, 90, 155, ypos)
 
       }
 
@@ -1108,7 +1111,7 @@ function Examenes() {
             `K: ${examenesEspeciales.miscelaneos.data.k || 'No especificado'}`,
             `Método: Wistergreen`
           ]
-          ypos = printTwoPerLine(doc, miscelaneosData, 25, 95, ypos)
+          ypos = printTwoPerLine(doc, miscelaneosData, 25, 90, 155, ypos)
 
           if (examenesEspeciales.miscelaneos.data.observaciones && ensurePageSpace(20)) {
             ypos += 3
@@ -1154,7 +1157,7 @@ function Examenes() {
               `Sangre oculta: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
               `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`
             ]
-            ypos = printTwoPerLine(doc, macroData, 25, 95, ypos)
+            ypos = printTwoPerLine(doc, macroData, 25, 90, 155, ypos)
 
 
             // Examen Microscópico
@@ -1203,7 +1206,7 @@ function Examenes() {
             `Dif. P-C: ${examenesEspeciales.coagulacion.data.dif_pc || 'No especificado'}`,
             `Referencia: V.R. (+/-6seg. diferencia P-C)`
           ]
-          ypos = printTwoPerLine(doc, coagulacionData, 25, 95, ypos)
+          ypos = printTwoPerLine(doc, coagulacionData, 25, 90, 155, ypos)
 
           if (examenesEspeciales.coagulacion.data.observaciones && ensurePageSpace(20)) {
             ypos += 3
