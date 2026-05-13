@@ -623,25 +623,21 @@ function Examenes() {
     try {
       const doc = new jsPDF()
 
-      // Cargar membrete como imagen (PNG) y dibujar una sola vez, con fallback si no existe
-      const loadMembrete = async () => {
-        const candidatePaths = [
-          '/membrete.png',
-          '/Membrete Empresa Geométrico Azul.png',
-          '/membrete.jpg',
-          '/membrete.jpeg'
-        ]
+      const loadImage = async (src) => {
+        return await new Promise((resolve, reject) => {
+          const image = new Image()
+          image.crossOrigin = 'anonymous'
+          image.onload = () => resolve(image)
+          image.onerror = () => reject(new Error(`No se pudo cargar ${src}`))
+          image.src = src
+        })
+      }
 
-        for (const src of candidatePaths) {
+      const loadImageFromCandidates = async (paths) => {
+        for (const src of paths) {
           try {
-            await new Promise((resolve, reject) => {
-              const img = new Image()
-              img.crossOrigin = 'anonymous'
-              img.onload = () => resolve(img)
-              img.onerror = () => reject(new Error(`No se pudo cargar ${src}`))
-              img.src = src
-            })
-            return src
+            const image = await loadImage(src)
+            return { image, src }
           } catch (e) {
             // sigue intentando con otro nombre de archivo
           }
@@ -649,18 +645,28 @@ function Examenes() {
         return null
       }
 
-      const membreteSrc = await loadMembrete()
+      const membreteResult = await loadImageFromCandidates([
+        '/membrete.png',
+        '/Membrete Empresa Geométrico Azul.png',
+        '/membrete.jpg',
+        '/membrete.jpeg'
+      ])
+
+      const firmaResult = await loadImageFromCandidates([
+        '/firma.png',
+        'firma.png',
+        '/Firma.png',
+        'Firma.png',
+        '/firma.jpg',
+        '/firma.jpeg'
+      ])
+
       let ypos = 70
 
-      if (membreteSrc) {
-        const headerImg = await new Promise((resolve, reject) => {
-          const image = new Image()
-          image.crossOrigin = 'anonymous'
-          image.onload = () => resolve(image)
-          image.onerror = (err) => reject(new Error('No se pudo cargar el membrete'))
-          image.src = membreteSrc
-        })
-        doc.addImage(headerImg, 'PNG', 0, 0, 200, 230)
+      if (membreteResult) {
+        const { image: headerImg } = membreteResult
+        const headerFormat = membreteResult.src.toLowerCase().endsWith('.jpg') || membreteResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
+        doc.addImage(headerImg, headerFormat, 0, 0, 200, 230)
         ypos = 70
       } else {
         console.warn('No se encontró membresía en formato PNG/JPG; se generará PDF sin membrete.')
@@ -672,7 +678,7 @@ function Examenes() {
 
       // Línea decorativa
       doc.setLineWidth(0.3)
-      doc.setDrawColor(30, 67, 183);
+      doc.setDrawColor(214, 166, 124);
       doc.line(20, ypos, 195, ypos)
       ypos += 7
 
@@ -726,7 +732,7 @@ function Examenes() {
 
       // Línea decorativa
       doc.setLineWidth(0.3)
-      doc.setDrawColor(30, 67, 183);
+      doc.setDrawColor(214, 166, 126);
       doc.line(20, ypos, 190, ypos)
       ypos += 15
       
@@ -1213,6 +1219,22 @@ function Examenes() {
             })
           }
         }
+      }
+
+      if (firmaResult) {
+        const firmaFormat = firmaResult.src.toLowerCase().endsWith('.jpg') || firmaResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
+        const firmaWidth = 45
+        const firmaHeight = 25
+        const firmaX = 150
+        const firmaY = 255
+        const totalPages = doc.internal.getNumberOfPages()
+
+        for (let page = 1; page <= totalPages; page++) {
+          doc.setPage(page)
+          doc.addImage(firmaResult.image, firmaFormat, firmaX, firmaY, firmaWidth, firmaHeight)
+        }
+      } else {
+        console.warn('No se encontró la firma en PDF; se generará el documento sin ella.')
       }
 
       const pdfBlob = doc.output('blob')
