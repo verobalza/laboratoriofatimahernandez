@@ -1236,6 +1236,10 @@ function Examenes() {
         for (let page = 1; page <= totalPages; page++) {
           doc.setPage(page)
           doc.addImage(firmaResult.image, firmaFormat, firmaX, firmaY, firmaWidth, firmaHeight)
+          // Línea horizontal en el medio de la firma
+          const lineY = firmaY + firmaHeight / 2
+          doc.setLineWidth(0.3)
+          doc.line(20, lineY, 190, lineY)
         }
       } else {
         console.warn('No se encontró la firma en PDF; se generará el documento sin ella.')
