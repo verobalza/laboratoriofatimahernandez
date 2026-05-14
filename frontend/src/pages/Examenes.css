@@ -1493,6 +1493,12 @@
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
+.serie-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+  margin: 1.5rem 0;
+}
 .hematologia-item {
   margin-bottom: 1.5rem;
   padding: 1rem;
