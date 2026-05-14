@@ -1114,9 +1114,8 @@ function Examenes() {
               if (value === "Trichomonas vaginalis") {
                 const prefixWidth = doc.getTextWidth(prefix)
                 doc.setFont("Helvetica", "bolditalic")
-                doc.text("T", 155 + prefixWidth, ypos)
+                doc.text(value, 155 + prefixWidth, ypos)
                 doc.setFont("Helvetica", "normal")
-                doc.text("richomonas vaginalis", 155 + prefixWidth + doc.getTextWidth("T"), ypos)
               } else {
                 doc.text(value, 155 + doc.getTextWidth(prefix), ypos)
               }
