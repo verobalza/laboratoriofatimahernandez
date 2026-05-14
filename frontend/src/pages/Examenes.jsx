@@ -805,7 +805,7 @@ function Examenes() {
         doc.text(p.nombre_prueba, 20, ypos)
 
         const resultadoUnidad = p.tipo_prueba === 'serologia'
-          ? res
+          ? res.toUpperCase()
           : [res, unidad].filter(Boolean).join(' ').trim() || '—'
 
         const valorNumerico = parseFloat(res)
@@ -934,12 +934,20 @@ function Examenes() {
         doc.line(20, ypos, 190, ypos)
         ypos += 10
 
-        HEMATOLOGIA_ORDER.forEach((serie) => {
+        HEMATOLOGIA_ORDER.forEach((serie, index) => {
           if (hematologiaPorSerie[serie] && hematologiaPorSerie[serie].length > 0) {
             if (ypos > 270) {
               doc.addPage()
               ypos = 20
             }
+
+            // Agregar línea divisoria arriba si no es la primera serie (roja)
+            if (index > 0) {
+              doc.setLineWidth(0.3)
+              doc.line(20, ypos, 190, ypos)
+              ypos += 8
+            }
+
             doc.setFont('Helvetica', 'bold')
             doc.setFontSize(11)
             doc.setTextColor(0, 0, 0)
