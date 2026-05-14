@@ -1242,16 +1242,26 @@ function Examenes() {
       if (firmaResult) {
         const firmaFormat = firmaResult.src.toLowerCase().endsWith('.jpg') || firmaResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
         const pageWidth = doc.internal.pageSize.getWidth()
+        const pageHeight = doc.internal.pageSize.getHeight()
         const firmaWidth = 180
-        const firmaHeight = 60
+        const firmaHeight = 55
         const firmaX = (pageWidth - firmaWidth) / 2
-        const firmaY = 240
-        const totalPages = doc.internal.getNumberOfPages()
+        const espacioReservado = 20
+        const margenFinal = 15
 
-        for (let page = 1; page <= totalPages; page++) {
-          doc.setPage(page)
-          doc.addImage(firmaResult.image, firmaFormat, firmaX, firmaY, firmaWidth, firmaHeight)
+        // Verificar si hay espacio en la página actual para la firma
+        if (!ensurePageSpace(espacioReservado)) {
+          // Si no hay espacio, la función ensurePageSpace ya creó una nueva página
+          // y resetea ypos a 20
         }
+
+        // Posicionar la firma con margen adicional
+        const firmaY = Math.max(ypos + margenFinal, pageHeight - 60)
+
+        // Colocar la firma solo en la última página
+        const ultimaPagina = doc.internal.getNumberOfPages()
+        doc.setPage(ultimaPagina)
+        doc.addImage(firmaResult.image, firmaFormat, firmaX, firmaY, firmaWidth, firmaHeight)
       } else {
         console.warn('No se encontró la firma en PDF; se generará el documento sin ella.')
       }
@@ -2608,6 +2618,8 @@ function Examenes() {
                           </div>
                         ))}
                     </div>
+
+                    <hr className="serie-divider" />
 
                     {/* Otros en Hematología */}
                     <div className="hematologia-otros">
