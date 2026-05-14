@@ -1098,7 +1098,34 @@ function Examenes() {
           `Levaduras: ${examenesEspeciales.orina.data.levaduras || 'No especificado'}`,
           `Protozoarios: ${examenesEspeciales.orina.data.protozoarios || 'No especificado'}`
         ]
-        ypos = printTwoPerLine(doc, microscopicoData, 25, 90, 155, ypos)
+        // Imprimir en columnas con formato especial para Protozoarios
+        for (let i = 0; i < microscopicoData.length; i += 3) {
+          const col1 = microscopicoData[i]
+          const col2 = microscopicoData[i + 1] || ""
+          const col3 = microscopicoData[i + 2] || ""
+
+          doc.text(col1, 25, ypos)
+          if (col2) doc.text(col2, 90, ypos)
+          if (col3) {
+            if (col3.startsWith("Protozoarios: ")) {
+              const prefix = "Protozoarios: "
+              const value = col3.substring(prefix.length)
+              doc.text(prefix, 155, ypos)
+              if (value === "Trichomonas vaginalis") {
+                const prefixWidth = doc.getTextWidth(prefix)
+                doc.setFont("Helvetica", "bolditalic")
+                doc.text("T", 155 + prefixWidth, ypos)
+                doc.setFont("Helvetica", "normal")
+                doc.text("richomonas vaginalis", 155 + prefixWidth + doc.getTextWidth("T"), ypos)
+              } else {
+                doc.text(value, 155 + doc.getTextWidth(prefix), ypos)
+              }
+            } else {
+              doc.text(col3, 155, ypos)
+            }
+          }
+          ypos += 5
+        }
 
         if (examenesEspeciales.orina.data.observaciones_microscopicas && ensurePageSpace(15)) {
           ypos += 3
@@ -2075,7 +2102,7 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('orina', 'protozoarios', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="trichomonas vaginalis">Trichomona vaginalis</option>
+                                      <option value="Trichomonas vaginalis">Trichomonas vaginalis</option>
                                     </select>
                                   </div>
 
@@ -3211,7 +3238,7 @@ function Examenes() {
 
 
           {/* SECCIÓN 4: Acciones Finales */}
-          {selectedPaciente && (selectedPruebas.length > 0 || examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled) && (
+          {selectedPaciente && (selectedPruebas.length > 0 || examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled) && (
             <section className="seccion seccion-acciones">
               <h2>4. Finalizar</h2>
               <div className="acciones-grid">
