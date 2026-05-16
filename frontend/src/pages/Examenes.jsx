@@ -1286,7 +1286,7 @@ function Examenes() {
             doc.setFont("Helvetica", "normal")
             doc.text(examenesEspeciales.coagulacion.data.pt_paciente ? `${examenesEspeciales.coagulacion.data.pt_paciente} Seg` : 'No especificado', 50, ypos)
             
-            doc.text("Control P.T.:", 90, ypos)
+            doc.text("Control P.T.:", 90, ypos, "bold")
             doc.text(examenesEspeciales.coagulacion.data.seg_control_pt ? `${examenesEspeciales.coagulacion.data.seg_control_pt} Seg` : 'No especificado', 110, ypos)
             
             doc.text("Razón P/C:", 155, ypos)
@@ -1311,10 +1311,10 @@ function Examenes() {
             doc.setFont("Helvetica", "normal")
             doc.text(examenesEspeciales.coagulacion.data.ptt_paciente ? `${examenesEspeciales.coagulacion.data.ptt_paciente} Seg` : 'No especificado', 50, ypos)
             
-            doc.text("Control P.T.T.:", 90, ypos)
+            doc.text("Control P.T.T.:", 90, ypos, "bold")
             doc.text(examenesEspeciales.coagulacion.data.seg_control_ptt ? `${examenesEspeciales.coagulacion.data.seg_control_ptt} Seg` : 'No especificado', 110, ypos)
             
-            doc.text("Dif. P-C:", 155, ypos)
+            doc.text("Dif. P-C:", 155, ypos, )
             doc.text(examenesEspeciales.coagulacion.data.dif_pc || 'No especificado', 180, ypos)
             ypos += 5
           }
