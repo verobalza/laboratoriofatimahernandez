@@ -676,7 +676,7 @@ function Examenes() {
       doc.setFontSize(10)
 
       // Línea decorativa
-      doc.setLineWidth(0.3)
+      doc.setLineWidth(0.5)
       doc.setDrawColor(214, 166, 124);
       doc.line(20, ypos, 195, ypos)
       ypos += 7
@@ -725,12 +725,12 @@ function Examenes() {
       doc.text("Fecha:", 96, ypos)
       doc.setFont("Helvetica", "normal")
       doc.text(`${selectedDate}`, 110, ypos)
-      ypos += 10
+      ypos += 7
 
 
 
       // Línea decorativa
-      doc.setLineWidth(0.3)
+      doc.setLineWidth(0.5)
       doc.setDrawColor(214, 166, 126);
       doc.line(20, ypos, 190, ypos)
       ypos += 5
