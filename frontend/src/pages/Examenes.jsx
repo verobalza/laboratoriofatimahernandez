@@ -669,7 +669,7 @@ function Examenes() {
         ypos = 70
       } else {
         console.warn('No se encontró membresía en formato PNG/JPG; se generará PDF sin membrete.')
-        ypos = 20
+        ypos = 10
       }
 
       // Posicionar contenido debajo del membrete
