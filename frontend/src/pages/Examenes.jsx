@@ -1318,11 +1318,11 @@ function Examenes() {
             doc.text("V.R. (+/-6seg. diferencia P-C)", 155, ypos)
             doc.setFont("Helvetica", "normal")
             doc.setFontSize(9)
-            ypos += 5
+            ypos += 2
           }
 
           if (examenesEspeciales.coagulacion.data.observaciones && ensurePageSpace(20)) {
-            ypos += 3
+            ypos += 1
             doc.setFont("Helvetica", "bold")
             doc.text("Observaciones:", 20, ypos)
             ypos += 5
