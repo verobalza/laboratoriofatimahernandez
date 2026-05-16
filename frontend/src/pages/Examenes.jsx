@@ -1234,7 +1234,7 @@ function Examenes() {
               splitText.forEach(line => {
                 if (!ensurePageSpace(4)) return
                 doc.text(line, 25, ypos)
-                ypos += 4
+                ypos += 10
               })
 
               const detalleMicroscopico = []
