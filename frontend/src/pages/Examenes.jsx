@@ -1130,7 +1130,7 @@ function Examenes() {
 
       if (examenesEspeciales.miscelaneos.enabled) {
         if (ensurePageSpace(20)) {
-          ypos += 10
+          ypos += 4
           doc.setFont("Helvetica", "bold")
           doc.setFontSize(11)
           doc.text("MISCELÁNEOS", 20, ypos)
@@ -1167,7 +1167,7 @@ function Examenes() {
             doc.text(examenesEspeciales.miscelaneos.data.k || 'No especificado', 30, ypos)
            
             doc.text("Método:", 38, ypos)
-            doc.text("Westergreen", 45, ypos)
+            doc.text("Westergreen", 55, ypos)
             ypos += 5
           }
 
@@ -1279,7 +1279,7 @@ function Examenes() {
             doc.text(examenesEspeciales.coagulacion.data.seg_control_pt ? `${examenesEspeciales.coagulacion.data.seg_control_pt} Seg` : 'No especificado', 110, ypos)
             
             doc.text("Razón P/C:", 155, ypos)
-            doc.text(examenesEspeciales.coagulacion.data.razon_pc || 'No especificado', 180, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.razon_pc || 'No especificado', 175, ypos)
             ypos += 5
           }
 
@@ -1289,7 +1289,7 @@ function Examenes() {
             doc.text(examenesEspeciales.coagulacion.data.isi || 'No especificado', 31, ypos)
             
             doc.text("INR:", 90, ypos)
-            doc.text(examenesEspeciales.coagulacion.data.inr || 'No especificado', 96, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.inr || 'No especificado', 100, ypos)
             ypos += 5
           }
 
@@ -1303,7 +1303,7 @@ function Examenes() {
             doc.setFont("Helvetica", "bold")
             doc.text("Control P.T.T.:", 90, ypos)
             doc.setFont("Helvetica", "normal")
-            doc.text(examenesEspeciales.coagulacion.data.seg_control_ptt ? `${examenesEspeciales.coagulacion.data.seg_control_ptt} Seg` : 'No especificado', 110, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.seg_control_ptt ? `${examenesEspeciales.coagulacion.data.seg_control_ptt} Seg` : 'No especificado', 120, ypos)
             
             doc.text("Dif. P-C:", 155, ypos)
             doc.text(examenesEspeciales.coagulacion.data.dif_pc || 'No especificado', 180, ypos)
