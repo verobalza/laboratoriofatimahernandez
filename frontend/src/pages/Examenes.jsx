@@ -562,7 +562,6 @@ function Examenes() {
           vsg_2hora: examenesEspeciales.miscelaneos.data.vsg_2hora,
           k: examenesEspeciales.miscelaneos.data.k,
           metodo: 'Wistergreen',
-          observaciones: examenesEspeciales.miscelaneos.data.observaciones
         }
         await api.createMiscelaneos(miscelaneosData)
       }
@@ -1147,34 +1146,44 @@ function Examenes() {
           ypos += 10
           doc.setFont("Helvetica", "bold")
           doc.setFontSize(11)
-          doc.text("EXAMEN MISCELÁNEOS", 20, ypos)
+          doc.text("MISCELÁNEOS", 20, ypos)
           ypos += 8
           doc.setLineWidth(0.3)
           doc.line(20, ypos, 190, ypos)
           ypos += 6
           doc.setFont("Helvetica", "normal")
           doc.setFontSize(9)
-          const miscelaneosData = [
-            `VSG 1er hora: ${examenesEspeciales.miscelaneos.data.vsg_1hora || 'No especificado'}`,
-            `VSG 2da hora: ${examenesEspeciales.miscelaneos.data.vsg_2hora || 'No especificado'}`,
-            `K: ${examenesEspeciales.miscelaneos.data.k || 'No especificado'}`,
-            `Método: Wistergreen`
-          ]
-          ypos = printTwoPerLine(doc, miscelaneosData, 25, 90, 155, ypos)
 
-          if (examenesEspeciales.miscelaneos.data.observaciones && ensurePageSpace(20)) {
-            ypos += 3
+          // VSG 1er Hora
+          if (ensurePageSpace(6)) {
             doc.setFont("Helvetica", "bold")
-            doc.text("Observaciones:", 20, ypos)
+            doc.text("Velocidad sedimentación globular (V.S.G.) 1er Hora", 25, ypos)
             ypos += 5
             doc.setFont("Helvetica", "normal")
-            const miscelaneosObsLines = doc.splitTextToSize(examenesEspeciales.miscelaneos.data.observaciones, 160)
-            miscelaneosObsLines.forEach(line => {
-              if (!ensurePageSpace(4)) return
-              doc.text(line, 25, ypos)
-              ypos += 4
-            })
+            doc.text(examenesEspeciales.miscelaneos.data.vsg_1hora ? `${examenesEspeciales.miscelaneos.data.vsg_1hora} mm` : 'No especificado', 25, ypos)
+            ypos += 5
           }
+
+          // VSG 2da Hora
+          if (ensurePageSpace(6)) {
+            doc.setFont("Helvetica", "bold")
+            doc.text("Velocidad sedimentación globular (V.S.G.) 2da Hora", 25, ypos)
+            ypos += 5
+            doc.setFont("Helvetica", "normal")
+            doc.text(examenesEspeciales.miscelaneos.data.vsg_2hora ? `${examenesEspeciales.miscelaneos.data.vsg_2hora} mm` : 'No especificado', 25, ypos)
+            ypos += 5
+          }
+
+          // K y Método en dos líneas
+          if (ensurePageSpace(8)) {
+            doc.text("K:", 25, ypos)
+            doc.text(examenesEspeciales.miscelaneos.data.k || 'No especificado', 90, ypos)
+            
+            doc.text("Método:", 155, ypos)
+            doc.text("Wistergreen", 180, ypos)
+            ypos += 5
+          }
+
         }
       }
 
@@ -1227,6 +1236,31 @@ function Examenes() {
                 doc.text(line, 25, ypos)
                 ypos += 4
               })
+
+              const detalleMicroscopico = []
+              if (examenesEspeciales.heces.data.recuento) {
+                detalleMicroscopico.push(`Recuento: ${examenesEspeciales.heces.data.recuento}`)
+              }
+              if (examenesEspeciales.heces.data.leucocitario) {
+                detalleMicroscopico.push(`Leucocitario: ${examenesEspeciales.heces.data.leucocitario}`)
+              }
+              if (examenesEspeciales.heces.data.linf) {
+                detalleMicroscopico.push(`Linf: ${examenesEspeciales.heces.data.linf}`)
+              }
+              if (examenesEspeciales.heces.data.eos) {
+                detalleMicroscopico.push(`Eos: ${examenesEspeciales.heces.data.eos}`)
+              }
+              if (examenesEspeciales.heces.data.mon) {
+                detalleMicroscopico.push(`Mon: ${examenesEspeciales.heces.data.mon}`)
+              }
+
+              if (detalleMicroscopico.length > 0) {
+                if (!ensurePageSpace(6)) return
+                detalleMicroscopico.forEach((line) => {
+                  doc.text(line, 25, ypos)
+                  ypos += 4
+                })
+              }
             }
           }
         }
@@ -1237,25 +1271,62 @@ function Examenes() {
           ypos += 10
           doc.setFont("Helvetica", "bold")
           doc.setFontSize(11)
-          doc.text("EXAMEN DE COAGULACIÓN", 20, ypos)
+          doc.text("COAGULACIÓN", 20, ypos)
           ypos += 8
           doc.setLineWidth(0.3)
           doc.line(20, ypos, 190, ypos)
           ypos += 6
           doc.setFont("Helvetica", "normal")
           doc.setFontSize(9)
-          const coagulacionData = [
-            `P.T. paciente: ${examenesEspeciales.coagulacion.data.pt_paciente || 'No especificado'}`,
-            `Control PT: ${examenesEspeciales.coagulacion.data.seg_control_pt || 'No especificado'}`,
-            `Razón P/C: ${examenesEspeciales.coagulacion.data.razon_pc || 'No especificado'}`,
-            `ISI: ${examenesEspeciales.coagulacion.data.isi || 'No especificado'}`,
-            `INR: ${examenesEspeciales.coagulacion.data.inr || 'No especificado'}`,
-            `P.T.T. Paciente: ${examenesEspeciales.coagulacion.data.ptt_paciente || 'No especificado'}`,
-            `Control PTT: ${examenesEspeciales.coagulacion.data.seg_control_ptt || 'No especificado'}`,
-            `Dif. P-C: ${examenesEspeciales.coagulacion.data.dif_pc || 'No especificado'}`,
-            `Referencia: V.R. (+/-6seg. diferencia P-C)`
-          ]
-          ypos = printTwoPerLine(doc, coagulacionData, 25, 90, 155, ypos)
+          // 1era línea: P.T. paciente | Control PT | Razón P/C
+          if (ensurePageSpace(5)) {
+            doc.setFont("Helvetica", "bold")
+            doc.text("P.T. paciente:", 25, ypos)
+            doc.setFont("Helvetica", "normal")
+            doc.text(examenesEspeciales.coagulacion.data.pt_paciente ? `${examenesEspeciales.coagulacion.data.pt_paciente} Seg` : 'No especificado', 50, ypos)
+            
+            doc.text("Control P.T.:", 90, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.seg_control_pt ? `${examenesEspeciales.coagulacion.data.seg_control_pt} Seg` : 'No especificado', 110, ypos)
+            
+            doc.text("Razón P/C:", 155, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.razon_pc || 'No especificado', 180, ypos)
+            ypos += 5
+          }
+
+          // 2da línea: ISI | INR
+          if (ensurePageSpace(5)) {
+            doc.text("ISI:", 25, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.isi || 'No especificado', 50, ypos)
+            
+            doc.text("INR:", 90, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.inr || 'No especificado', 110, ypos)
+            ypos += 5
+          }
+
+          // 3era línea: P.T.T. Paciente | Control PTT | Dif. P-C | V.R.
+          if (ensurePageSpace(5)) {
+            doc.setFont("Helvetica", "bold")
+            doc.text("P.T.T. Paciente:", 25, ypos)
+            doc.setFont("Helvetica", "normal")
+            doc.text(examenesEspeciales.coagulacion.data.ptt_paciente ? `${examenesEspeciales.coagulacion.data.ptt_paciente} Seg` : 'No especificado', 50, ypos)
+            
+            doc.text("Control P.T.T.:", 90, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.seg_control_ptt ? `${examenesEspeciales.coagulacion.data.seg_control_ptt} Seg` : 'No especificado', 110, ypos)
+            
+            doc.text("Dif. P-C:", 155, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.dif_pc || 'No especificado', 180, ypos)
+            ypos += 5
+          }
+
+          // Referencia
+          if (ensurePageSpace(4)) {
+            doc.setFont("Helvetica", "italic")
+            doc.setFontSize(8)
+            doc.text("V.R. (+/-6seg. diferencia P-C)", 155, ypos)
+            doc.setFont("Helvetica", "normal")
+            doc.setFontSize(9)
+            ypos += 5
+          }
 
           if (examenesEspeciales.coagulacion.data.observaciones && ensurePageSpace(20)) {
             ypos += 3
@@ -2163,10 +2234,9 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('heces', 'aspecto', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="dura">Dura</option>
-                                      <option value="normal">Normal</option>
-                                      <option value="blanda">Blanda</option>
-                                      <option value="liquida">Líquida</option>
+                                      <option value="dura">Homogéneo</option>
+                                      <option value="normal">Heterogéneo</option>
+                                    
                                     </select>
                                   </div>
 
@@ -2195,13 +2265,13 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('heces', 'color', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="cafe_claro">Café claro</option>
-                                      <option value="cafe">Café</option>
-                                      <option value="cafe_oscuro">Café oscuro</option>
+                                      <option value="cafe_claro">Marrón</option>
+                                      <option value="cafe">Marrón claro</option>
+                                      <option value="cafe_oscuro">Marrón oscuro</option>
                                       <option value="amarillo">Amarillo</option>
-                                      <option value="verde">Verde</option>
-                                      <option value="negro">Negro</option>
-                                      <option value="rojo">Rojo</option>
+                                      <option value="verde">Verdozo</option>
+                                      <option value="negro">Rojizo</option>
+                                      <option value="rojo">Negro</option>
                                       <option value="blanco">Blanco</option>
                                     </select>
                                   </div>
@@ -2216,9 +2286,8 @@ function Examenes() {
                                       <option value="">Seleccionar</option>
                                       <option value="normal">Normal</option>
                                       <option value="fecal">Fecal</option>
-                                      <option value="agrio">Agrio</option>
-                                      <option value="rancio">Rancio</option>
-                                      <option value="putrefacto">Putrefacto</option>
+                                      <option value="agrio">Fétido</option>
+                                    
                                     </select>
                                   </div>
 
@@ -2234,6 +2303,7 @@ function Examenes() {
                                       <option value="escaso">Escaso</option>
                                       <option value="presente">Presente</option>
                                       <option value="abundante">Abundante</option>
+                                      <option value="abundante">Moderado</option>
                                     </select>
                                   </div>
 
@@ -2245,9 +2315,9 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('heces', 'sangre_oculta', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="negativa">Negativa</option>
-                                      <option value="positiva">Positiva</option>
-                                      <option value="trazas">Trazas</option>
+                                      <option value="negativa">+</option>
+                                      <option value="positiva">++</option>
+                                      <option value="trazas">+++</option>
                                     </select>
                                   </div>
 
@@ -2283,6 +2353,59 @@ function Examenes() {
                                     />
                                   </div>
 
+                                  <div className="fields-grid" style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '12px' }}>
+                                    <div className="field-group">
+                                      <label className="field-label">Recuento</label>
+                                      <input
+                                        type="text"
+                                        className="field-input"
+                                        value={examenesEspeciales.heces.data.recuento || ''}
+                                        onChange={(e) => handleExamenEspecialChange('heces', 'recuento', e.target.value)}
+                                        placeholder="Recuento"
+                                      />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Leucocitario</label>
+                                      <input
+                                        type="text"
+                                        className="field-input"
+                                        value={examenesEspeciales.heces.data.leucocitario || ''}
+                                        onChange={(e) => handleExamenEspecialChange('heces', 'leucocitario', e.target.value)}
+                                        placeholder="Leucocitario"
+                                      />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Linf</label>
+                                      <input
+                                        type="text"
+                                        className="field-input"
+                                        value={examenesEspeciales.heces.data.linf || ''}
+                                        onChange={(e) => handleExamenEspecialChange('heces', 'linf', e.target.value)}
+                                        placeholder="Linf"
+                                      />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Eos</label>
+                                      <input
+                                        type="text"
+                                        className="field-input"
+                                        value={examenesEspeciales.heces.data.eos || ''}
+                                        onChange={(e) => handleExamenEspecialChange('heces', 'eos', e.target.value)}
+                                        placeholder="Eos"
+                                      />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Mon</label>
+                                      <input
+                                        type="text"
+                                        className="field-input"
+                                        value={examenesEspeciales.heces.data.mon || ''}
+                                        onChange={(e) => handleExamenEspecialChange('heces', 'mon', e.target.value)}
+                                        placeholder="Mon"
+                                      />
+                                    </div>
+                                  </div>
+
                                   <div className="field-group" style={{ gridColumn: '1 / -1' }}>
                                     <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                                       <input
@@ -2291,7 +2414,7 @@ function Examenes() {
                                         onChange={(e) => {
                                           const isChecked = e.target.checked
                                           if (isChecked) {
-                                            handleExamenEspecialChange('heces', 'observacion_microscopica', 'No se observaron formas parasitarias en la muestra examinada.')
+                                            handleExamenEspecialChange('heces', 'observacion_microscopica', 'NO SE OBSERVARON FORMAS PARASITARIAS EN LA MUESTRA EXAMINADA.')
                                             handleExamenEspecialChange('heces', 'no_se_observaron_parasitos', true)
                                           } else {
                                             handleExamenEspecialChange('heces', 'observacion_microscopica', '')
@@ -2299,7 +2422,27 @@ function Examenes() {
                                           }
                                         }}
                                       />
-                                      <span>No se observaron formas parasitarias en la muestra examinada</span>
+                                      <span>NO SE OBSERVARON FORMAS PARASITARIAS EN LA MUESTRA EXAMINADA</span>
+                                    </label>
+                                  </div>
+
+                                  <div className="field-group" style={{ gridColumn: '1 / -1' }}>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                                      <input
+                                        type="checkbox"
+                                        checked={examenesEspeciales.heces.data.no_hay_recuento_leucocitario || false}
+                                        onChange={(e) => {
+                                          const isChecked = e.target.checked
+                                          if (isChecked) {
+                                            handleExamenEspecialChange('heces', 'recuento', '')
+                                            handleExamenEspecialChange('heces', 'leucocitario', '')
+                                            handleExamenEspecialChange('heces', 'no_hay_recuento_leucocitario', true)
+                                          } else {
+                                            handleExamenEspecialChange('heces', 'no_hay_recuento_leucocitario', false)
+                                          }
+                                        }}
+                                      />
+                                      <span>NO HAY RECUENTO PARA RECUENTO LEUCOCITARIO</span>
                                     </label>
                                   </div>
                                 </div>
@@ -2325,7 +2468,7 @@ function Examenes() {
                               <h4 className="section-title">Resultados</h4>
                               <div className="fields-grid">
                                 <div className="field-group">
-                                  <label className="field-label">VSG 1er hora</label>
+                                  <label className="field-label">Velocidad sedimentación globular (V.S.G.) 1er Hora</label>
                                   <input
                                     type="text"
                                     className="field-input"
@@ -2335,7 +2478,7 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">VSG 2da hora</label>
+                                  <label className="field-label">Velocidad sedimentación globular (V.S.G.) 2da Hora</label>
                                   <input
                                     type="text"
                                     className="field-input"
@@ -2358,22 +2501,8 @@ function Examenes() {
                             </div>
 
                             <div className="examen-section">
-                              <h4 className="section-title">Observaciones</h4>
-                              <div className="field-group">
-                                <label className="field-label">Observaciones</label>
-                                <textarea
-                                  className="field-textarea"
-                                  value={examenesEspeciales.miscelaneos.data.observaciones || ''}
-                                  onChange={(e) => handleExamenEspecialChange('miscelaneos', 'observaciones', e.target.value)}
-                                  rows="3"
-                                  placeholder="Observaciones adicionales"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="examen-section">
                               <h4 className="section-title">Método</h4>
-                              <p className="field-value">Wistergreen</p>
+                              <p className="field-value">Westergreen</p>
                             </div>
                           </div>
                         </div>
