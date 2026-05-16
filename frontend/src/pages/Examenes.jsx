@@ -1130,14 +1130,14 @@ function Examenes() {
 
       if (examenesEspeciales.miscelaneos.enabled) {
         if (ensurePageSpace(20)) {
-          ypos += 4
+          ypos += 5
           doc.setFont("Helvetica", "bold")
           doc.setFontSize(11)
           doc.text("MISCELÁNEOS", 20, ypos)
-          ypos += 8
+          ypos += 4
           doc.setLineWidth(0.3)
           doc.line(20, ypos, 190, ypos)
-          ypos += 6
+          ypos += 4
           doc.setFont("Helvetica", "normal")
           doc.setFontSize(9)
 
@@ -1176,14 +1176,14 @@ function Examenes() {
 
       if (examenesEspeciales.heces.enabled) {
         if (ensurePageSpace(20)) {
-          ypos += 10
+          ypos += 5
           doc.setFont("Helvetica", "bold")
           doc.setFontSize(11)
           doc.text("EXAMEN DE HECES", 20, ypos)
-          ypos += 8
+          ypos += 4
           doc.setLineWidth(0.3)
           doc.line(20, ypos, 190, ypos)
-          ypos += 6
+          ypos += 4
           doc.setFont("Helvetica", "normal")
           doc.setFontSize(9)
 
@@ -1256,14 +1256,14 @@ function Examenes() {
 
       if (examenesEspeciales.coagulacion.enabled) {
         if (ensurePageSpace(20)) {
-          ypos += 10
+          ypos += 5
           doc.setFont("Helvetica", "bold")
           doc.setFontSize(11)
           doc.text("COAGULACIÓN", 20, ypos)
-          ypos += 8
+          ypos += 4
           doc.setLineWidth(0.3)
           doc.line(20, ypos, 190, ypos)
-          ypos += 6
+          ypos += 4
           doc.setFont("Helvetica", "normal")
           doc.setFontSize(9)
           // 1era línea: P.T. paciente | Control PT | Razón P/C
