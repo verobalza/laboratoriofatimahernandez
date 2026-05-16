@@ -561,7 +561,7 @@ function Examenes() {
           vsg_1hora: examenesEspeciales.miscelaneos.data.vsg_1hora,
           vsg_2hora: examenesEspeciales.miscelaneos.data.vsg_2hora,
           k: examenesEspeciales.miscelaneos.data.k,
-          metodo: 'Wistergreen',
+          metodo: 'Westergreen',
         }
         await api.createMiscelaneos(miscelaneosData)
       }
@@ -1160,7 +1160,7 @@ function Examenes() {
             doc.text("Velocidad sedimentación globular (V.S.G.) 1er Hora", 25, ypos)
             ypos += 5
             doc.setFont("Helvetica", "normal")
-            doc.text(examenesEspeciales.miscelaneos.data.vsg_1hora ? `${examenesEspeciales.miscelaneos.data.vsg_1hora} mm` : 'No especificado', 25, ypos)
+            doc.text(examenesEspeciales.miscelaneos.data.vsg_1hora ? `${examenesEspeciales.miscelaneos.data.vsg_1hora} mm/h` : 'No especificado', 25, ypos)
             ypos += 5
           }
 
@@ -1170,17 +1170,17 @@ function Examenes() {
             doc.text("Velocidad sedimentación globular (V.S.G.) 2da Hora", 25, ypos)
             ypos += 5
             doc.setFont("Helvetica", "normal")
-            doc.text(examenesEspeciales.miscelaneos.data.vsg_2hora ? `${examenesEspeciales.miscelaneos.data.vsg_2hora} mm` : 'No especificado', 25, ypos)
+            doc.text(examenesEspeciales.miscelaneos.data.vsg_2hora ? `${examenesEspeciales.miscelaneos.data.vsg_2hora} mm/h` : 'No especificado', 25, ypos)
             ypos += 5
           }
 
           // K y Método en dos líneas
           if (ensurePageSpace(8)) {
             doc.text("K:", 25, ypos)
-            doc.text(examenesEspeciales.miscelaneos.data.k || 'No especificado', 90, ypos)
-            
-            doc.text("Método:", 155, ypos)
-            doc.text("Wistergreen", 180, ypos)
+            doc.text(examenesEspeciales.miscelaneos.data.k || 'No especificado', 30, ypos)
+           
+            doc.text("Método:", 38, ypos)
+            doc.text("Westergreen", 45, ypos)
             ypos += 5
           }
 
@@ -1239,11 +1239,9 @@ function Examenes() {
 
               const detalleMicroscopico = []
               if (examenesEspeciales.heces.data.recuento) {
-                detalleMicroscopico.push(`Recuento: ${examenesEspeciales.heces.data.recuento}`)
+                detalleMicroscopico.push(`Recuento Leucocitario: Seg. N.: ${examenesEspeciales.heces.data.recuento}`)
               }
-              if (examenesEspeciales.heces.data.leucocitario) {
-                detalleMicroscopico.push(`Leucocitario: ${examenesEspeciales.heces.data.leucocitario}`)
-              }
+              
               if (examenesEspeciales.heces.data.linf) {
                 detalleMicroscopico.push(`Linf: ${examenesEspeciales.heces.data.linf}`)
               }
@@ -1256,7 +1254,10 @@ function Examenes() {
 
               if (detalleMicroscopico.length > 0) {
                 if (!ensurePageSpace(6)) return
-                detalleMicroscopico.forEach((line) => {
+                const detalleLinea = detalleMicroscopico.join(' / ')
+                const splitDetalle = doc.splitTextToSize(detalleLinea, 165)
+                splitDetalle.forEach((line) => {
+                  if (!ensurePageSpace(4)) return
                   doc.text(line, 25, ypos)
                   ypos += 4
                 })
@@ -1296,10 +1297,10 @@ function Examenes() {
           // 2da línea: ISI | INR
           if (ensurePageSpace(5)) {
             doc.text("ISI:", 25, ypos)
-            doc.text(examenesEspeciales.coagulacion.data.isi || 'No especificado', 50, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.isi || 'No especificado', 31, ypos)
             
             doc.text("INR:", 90, ypos)
-            doc.text(examenesEspeciales.coagulacion.data.inr || 'No especificado', 110, ypos)
+            doc.text(examenesEspeciales.coagulacion.data.inr || 'No especificado', 96, ypos)
             ypos += 5
           }
 
@@ -1318,10 +1319,11 @@ function Examenes() {
             ypos += 5
           }
 
-          // Referencia
+          // Referencias
           if (ensurePageSpace(4)) {
             doc.setFont("Helvetica", "italic")
             doc.setFontSize(8)
+            doc.text("Referencia Razón P/C: 0,8 - 1,20", 25, ypos)
             doc.text("V.R. (+/-6seg. diferencia P-C)", 155, ypos)
             doc.setFont("Helvetica", "normal")
             doc.setFontSize(9)
@@ -2353,9 +2355,9 @@ function Examenes() {
                                     />
                                   </div>
 
-                                  <div className="fields-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+                                  <div className="fields-row">
                                     <div className="field-group">
-                                      <label className="field-label">Recuento</label>
+                                      <label className="field-label">Recuento Leucocitario: Seg. N.</label>
                                       <input
                                         type="text"
                                         className="field-input"
@@ -2364,16 +2366,7 @@ function Examenes() {
                                         placeholder="Recuento"
                                       />
                                     </div>
-                                    <div className="field-group">
-                                      <label className="field-label">Leucocitario</label>
-                                      <input
-                                        type="text"
-                                        className="field-input"
-                                        value={examenesEspeciales.heces.data.leucocitario || ''}
-                                        onChange={(e) => handleExamenEspecialChange('heces', 'leucocitario', e.target.value)}
-                                        placeholder="Leucocitario"
-                                      />
-                                    </div>
+
                                     <div className="field-group">
                                       <label className="field-label">Linf</label>
                                       <input

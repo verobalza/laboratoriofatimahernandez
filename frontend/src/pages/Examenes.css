@@ -1325,6 +1325,20 @@
   align-items: start;
 }
 
+.fields-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.fields-row .field-group {
+  flex: 1 1 220px;
+  min-width: 180px;
+  max-width: 280px;
+}
+
 .field-group {
   display: flex;
   flex-direction: column;
