@@ -1327,10 +1327,12 @@
 
 .fields-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
   gap: 12px;
   align-items: flex-start;
   width: 100%;
+  overflow-x: auto;
 }
 
 .fields-row .field-group {

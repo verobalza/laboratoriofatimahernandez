@@ -733,7 +733,7 @@ function Examenes() {
       doc.setLineWidth(0.3)
       doc.setDrawColor(214, 166, 126);
       doc.line(20, ypos, 190, ypos)
-      ypos += 15
+      ypos += 5
       
       // Volver a tamaño normal
       doc.setFontSize(10)
