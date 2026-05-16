@@ -2353,7 +2353,7 @@ function Examenes() {
                                     />
                                   </div>
 
-                                  <div className="fields-grid" style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '12px' }}>
+                                  <div className="fields-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
                                     <div className="field-group">
                                       <label className="field-label">Recuento</label>
                                       <input
@@ -2436,8 +2436,10 @@ function Examenes() {
                                           if (isChecked) {
                                             handleExamenEspecialChange('heces', 'recuento', '')
                                             handleExamenEspecialChange('heces', 'leucocitario', '')
+                                            handleExamenEspecialChange('heces', 'observacion_microscopica', 'NO HAY RECUENTO PARA RECUENTO LEUCOCITARIO')
                                             handleExamenEspecialChange('heces', 'no_hay_recuento_leucocitario', true)
                                           } else {
+                                            handleExamenEspecialChange('heces', 'observacion_microscopica', '')
                                             handleExamenEspecialChange('heces', 'no_hay_recuento_leucocitario', false)
                                           }
                                         }}
