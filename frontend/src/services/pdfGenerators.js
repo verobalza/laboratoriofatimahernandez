@@ -36,13 +36,13 @@ const agregarEncabezado = (doc, titulo, subtitulo) => {
   doc.setFontSize(16)
   doc.setTextColor(255, 255, 255)
   doc.setFont(undefined, 'bold')
-  doc.text(titulo, pageWidth / 2, 18, { align: 'center' })
+  doc.text(titulo, pageWidth / 2, 18, 'center')
   
   // Subtítulo
   if (subtitulo) {
     doc.setFontSize(10)
     doc.setFont(undefined, 'normal')
-    doc.text(subtitulo, pageWidth / 2, 27, { align: 'center' })
+    doc.text(subtitulo, pageWidth / 2, 27, 'center')
   }
   
   doc.setTextColor(0, 0, 0)
@@ -90,8 +90,8 @@ const agregarFooter = (doc) => {
   
   doc.setFontSize(8)
   doc.setTextColor(128, 128, 128)
-  doc.text('Laboratorio Clínico - Sistema de Gestión de Exámenes', pageWidth / 2, pageHeight - 10, { align: 'center' })
-  doc.text('Todos los derechos reservados', pageWidth / 2, pageHeight - 5, { align: 'center' })
+  doc.text('Laboratorio Clínico - Sistema de Gestión de Exámenes', pageWidth / 2, pageHeight - 10, 'center')
+  doc.text('Todos los derechos reservados', pageWidth / 2, pageHeight - 5, 'center')
 }
 
 // ============ GENERADOR DE PDF ORINA ============

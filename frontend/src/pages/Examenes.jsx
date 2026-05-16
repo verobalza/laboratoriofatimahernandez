@@ -735,19 +735,6 @@ function Examenes() {
       doc.line(20, ypos, 190, ypos)
       ypos += 15
       
-
-
-      // TÍTULO CENTRADO Y MÁS GRANDE
-      doc.setFontSize(14)
-      doc.setFont("Helvetica", "bold")
-      doc.text("Pruebas realizadas y resultados", 100, ypos, { align: "center" })
-      ypos += 6
-
-      // Línea decorativa
-      doc.setLineWidth(0.9)
-      doc.line(20, ypos, 190, ypos)
-      ypos += 12
-
       // Volver a tamaño normal
       doc.setFontSize(10)
       doc.setFont("Helvetica", "normal")
@@ -818,13 +805,13 @@ function Examenes() {
 
         doc.setFont('Helvetica', 'normal')
         doc.setTextColor(fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80, fueraDeRango ? 0 : 80)
-        doc.text(resultadoUnidad, 140, ypos, { align: 'right' })
+        doc.text(resultadoUnidad, 140, ypos, 'right')
 
         doc.setFont('Helvetica', 'normal')
         doc.setFontSize(9)
         doc.setTextColor(80, 80, 80)
         if (rango) {
-          doc.text(rango, 190, ypos, { align: 'right' })
+          doc.text(rango, 190, ypos, 'right')
         }
         ypos += 7
 
@@ -845,7 +832,7 @@ function Examenes() {
               doc.addPage()
               ypos = 20
             }
-            doc.text(line, 140, ypos, { align: 'left', maxWidth: 150 })
+            doc.text(line, 140, ypos)
             ypos += 5
           })
           ypos += 2
@@ -984,7 +971,7 @@ function Examenes() {
                 const celulaNombre = otro.celula || '—'
                 const porcentajeText = otro.porcentaje ? `${otro.porcentaje}%` : '—'
                 doc.text(celulaNombre, 20, ypos)
-                doc.text(porcentajeText, 140, ypos, { align: 'right' })
+                doc.text(porcentajeText, 140, ypos, 'right')
                 ypos += 5
               })
               ypos += 4
