@@ -1144,19 +1144,20 @@ function Examenes() {
           // VSG 1er Hora
           if (ensurePageSpace(6)) {
             doc.setFont("Helvetica", "bold")
-            doc.text("Velocidad sedimentación globular", 25, ypos)
+            doc.text("Velocidad sedimentación globular (V.S.G.)", 25, ypos)
             ypos += 5
-            doc.setFont("Helvetica")
+            
+          }
+
+          // VSG 2da Hora
+          if (ensurePageSpace(6)) {
+            doc.setFont("Helvetica","bold")
             doc.text("1er Hora", 25, ypos)
             ypos += 5
             doc.setFont("Helvetica", "normal")
             doc.text(examenesEspeciales.miscelaneos.data.vsg_1hora ? `${examenesEspeciales.miscelaneos.data.vsg_1hora} mm/h` : 'No especificado', 25, ypos)
             ypos += 5
-          }
-
-          // VSG 2da Hora
-          if (ensurePageSpace(6)) {
-            doc.setFont("Helvetica")
+            doc.setFont("Helvetica", "bold")
             doc.text("2da Hora", 25, ypos)
             ypos += 5
             doc.setFont("Helvetica", "normal")
@@ -1169,8 +1170,8 @@ function Examenes() {
             doc.text("I.K:", 25, ypos)
             doc.text(examenesEspeciales.miscelaneos.data.k || 'No especificado', 30, ypos)
            
-            doc.text("Método:", 38, ypos)
-            doc.text("Westergreen", 55, ypos)
+            doc.text("Método:", 50, ypos)
+            doc.text("Westergreen", 65, ypos)
             ypos += 5
           }
 
@@ -2261,14 +2262,14 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('heces', 'color', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="cafe_claro">Marrón</option>
-                                      <option value="cafe">Marrón claro</option>
-                                      <option value="cafe_oscuro">Marrón oscuro</option>
+                                      <option value="Marrón">Marrón</option>
+                                      <option value="Marrón claro">Marrón claro</option>
+                                      <option value="Marrón oscuro">Marrón oscuro</option>
                                       <option value="amarillo">Amarillo</option>
-                                      <option value="verde">Verdozo</option>
-                                      <option value="negro">Rojizo</option>
-                                      <option value="rojo">Negro</option>
-                                      <option value="blanco">Blanco</option>
+                                      <option value="verdozo">Verdozo</option>
+                                      <option value="Rojizo">Rojizo</option>
+                                      <option value="Negro">Negro</option>
+                                      <option value="Blanco">Blanco</option>
                                     </select>
                                   </div>
 
@@ -2450,7 +2451,7 @@ function Examenes() {
                               <h4 className="section-title">Resultados</h4>
                               <div className="fields-grid">
                                 <div className="field-group">
-                                  <label className="field-label">Velocidad sedimentación globular (V.S.G.) 1er Hora</label>
+                                  <label className="field-label"> (V.S.G.) 1er Hora</label>
                                   <input
                                     type="text"
                                     className="field-input"
@@ -2460,7 +2461,7 @@ function Examenes() {
                                   />
                                 </div>
                                 <div className="field-group">
-                                  <label className="field-label">Velocidad sedimentación globular (V.S.G.) 2da Hora</label>
+                                  <label className="field-label"> (V.S.G.) 2da Hora</label>
                                   <input
                                     type="text"
                                     className="field-input"
