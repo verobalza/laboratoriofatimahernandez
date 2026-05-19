@@ -1144,7 +1144,10 @@ function Examenes() {
           // VSG 1er Hora
           if (ensurePageSpace(6)) {
             doc.setFont("Helvetica", "bold")
-            doc.text("Velocidad sedimentación globular (V.S.G.) 1er Hora", 25, ypos)
+            doc.text("Velocidad sedimentación globular", 25, ypos)
+            ypos += 5
+            doc.setFont("Helvetica")
+            doc.text("1er Hora", 25, ypos)
             ypos += 5
             doc.setFont("Helvetica", "normal")
             doc.text(examenesEspeciales.miscelaneos.data.vsg_1hora ? `${examenesEspeciales.miscelaneos.data.vsg_1hora} mm/h` : 'No especificado', 25, ypos)
@@ -1153,8 +1156,8 @@ function Examenes() {
 
           // VSG 2da Hora
           if (ensurePageSpace(6)) {
-            doc.setFont("Helvetica", "bold")
-            doc.text("Velocidad sedimentación globular (V.S.G.) 2da Hora", 25, ypos)
+            doc.setFont("Helvetica")
+            doc.text("2da Hora", 25, ypos)
             ypos += 5
             doc.setFont("Helvetica", "normal")
             doc.text(examenesEspeciales.miscelaneos.data.vsg_2hora ? `${examenesEspeciales.miscelaneos.data.vsg_2hora} mm/h` : 'No especificado', 25, ypos)
@@ -1163,7 +1166,7 @@ function Examenes() {
 
           // K y Método en dos líneas
           if (ensurePageSpace(8)) {
-            doc.text("K:", 25, ypos)
+            doc.text("I.K:", 25, ypos)
             doc.text(examenesEspeciales.miscelaneos.data.k || 'No especificado', 30, ypos)
            
             doc.text("Método:", 38, ypos)
@@ -2227,8 +2230,8 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('heces', 'aspecto', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="dura">Homogéneo</option>
-                                      <option value="normal">Heterogéneo</option>
+                                      <option value="Homogéneo">Homogéneo</option>
+                                      <option value="Heterogéneo">Heterogéneo</option>
                                     
                                     </select>
                                   </div>
@@ -2311,6 +2314,8 @@ function Examenes() {
                                       <option value="negativa">+</option>
                                       <option value="positiva">++</option>
                                       <option value="trazas">+++</option>
+                                      <option value="trazas">-</option>
+                                      <option value="trazas">NO ESPECIFICADO</option>
                                     </select>
                                   </div>
 
@@ -2416,19 +2421,10 @@ function Examenes() {
                                         type="checkbox"
                                         checked={examenesEspeciales.heces.data.no_hay_recuento_leucocitario || false}
                                         onChange={(e) => {
-                                          const isChecked = e.target.checked
-                                          if (isChecked) {
-                                            handleExamenEspecialChange('heces', 'recuento', '')
-                                            handleExamenEspecialChange('heces', 'leucocitario', '')
-                                            handleExamenEspecialChange('heces', 'observacion_microscopica', 'NO HAY RECUENTO PARA RECUENTO LEUCOCITARIO')
-                                            handleExamenEspecialChange('heces', 'no_hay_recuento_leucocitario', true)
-                                          } else {
-                                            handleExamenEspecialChange('heces', 'observacion_microscopica', '')
-                                            handleExamenEspecialChange('heces', 'no_hay_recuento_leucocitario', false)
-                                          }
+                                          handleExamenEspecialChange('heces', 'no_hay_recuento_leucocitario', e.target.checked)
                                         }}
                                       />
-                                      <span>NO HAY RECUENTO PARA RECUENTO LEUCOCITARIO</span>
+                                      <span>NO HAY CRITERIO PARA RECUENTO LEUCOCITARIO</span>
                                     </label>
                                   </div>
                                 </div>
