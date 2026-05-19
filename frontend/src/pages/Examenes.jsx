@@ -2311,11 +2311,11 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('heces', 'sangre_oculta', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="negativa">+</option>
-                                      <option value="positiva">++</option>
-                                      <option value="trazas">+++</option>
-                                      <option value="trazas">-</option>
-                                      <option value="trazas">NO ESPECIFICADO</option>
+                                      <option value="-">-</option>
+                                      <option value="+">+</option>
+                                      <option value="++">++</option>
+                                      <option value="+++">+++</option>
+                                      <option value="NO ESPECIFICADO">NO ESPECIFICADO</option>
                                     </select>
                                   </div>
 
