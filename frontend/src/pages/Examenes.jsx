@@ -62,13 +62,47 @@ function Examenes() {
     orina: { enabled: false, data: {} },
     heces: { enabled: false, data: {} },
     miscelaneos: { enabled: false, data: {} },
-    coagulacion: { enabled: false, data: {} }
+    coagulacion: { enabled: false, data: {} },
+    perfil20: { enabled: false, data: {
+      hemoglobina: "",
+      hematocrito: "",
+      chcm: "",
+      leucocitos: "",
+      plaquetas: "",
+      segmentados: "",
+      linfocitos: "",
+      eosinofilos: "",
+      monocitos: "",
+      bastones: "",
+      basofilos: "",
+      glicemia: "",
+      urea: "",
+      creatinina: "",
+      acido_urico: "",
+      colesterol: "",
+      trigliceridos: "",
+      hdl: "",
+      ldl: "",
+      vldl: "",
+      bilirrubina_total: "",
+      bilirrubina_directa: "",
+      bilirrubina_indirecta: "",
+      tgo: "",
+      tgp: "",
+      proteinas_totales: "",
+      albumina: "",
+      globulinas: "",
+      relacion_ag: "",
+      fosfatasas_alcalinas: "",
+      observaciones: ""
+    } }
   })
   const [showCamposEspeciales, setShowCamposEspeciales] = useState({
     orina: false,
     heces: false,
     miscelaneos: false,
-    coagulacion: false
+    coagulacion: false,
+    perfil20: false
   })
 
  
@@ -381,13 +415,15 @@ function Examenes() {
       orina: { enabled: false, data: {} },
       heces: { enabled: false, data: {} },
       miscelaneos: { enabled: false, data: {} },
-      coagulacion: { enabled: false, data: {} }
+      coagulacion: { enabled: false, data: {} },
+      perfil20: { enabled: false, data: {} }
     })
     setShowCamposEspeciales({
       orina: false,
       heces: false,
       miscelaneos: false,
-      coagulacion: false
+      coagulacion: false,
+      perfil20: false
     })
   }
 
@@ -470,7 +506,7 @@ function Examenes() {
       return
     }
 
-    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled) {
+    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled) {
       setMensaje({ type: 'error', text: 'Selecciona al menos una prueba o examen especial' })
       return
     }
@@ -607,7 +643,7 @@ function Examenes() {
 
   // ============ GENERAR PDF ============
   const handleGenerarPDF = async () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de generar PDF' })
       return
     }
@@ -1255,6 +1291,70 @@ function Examenes() {
               }
             }
           }
+
+            if (examenesEspeciales.perfil20.enabled) {
+              if (ensurePageSpace(20)) {
+                ypos += 5
+                doc.setFont("Helvetica", "bold")
+                doc.setFontSize(11)
+                doc.text("EXAMEN DE QUÍMICA SANGUÍNEA (PERFIL 20)", 20, ypos)
+                ypos += 6
+                doc.setLineWidth(0.3)
+                doc.line(20, ypos, 190, ypos)
+                ypos += 6
+                doc.setFont("Helvetica", "normal")
+                doc.setFontSize(9)
+
+                const perfilData = [
+                  `Hemoglobina (g/dl): ${examenesEspeciales.perfil20.data.hemoglobina || 'No especificado'}`,
+                  `Hematocrito (%): ${examenesEspeciales.perfil20.data.hematocrito || 'No especificado'}`,
+                  `C.H.C.M. (%): ${examenesEspeciales.perfil20.data.chcm || 'No especificado'}`,
+                  `Leucocitos (mm³): ${examenesEspeciales.perfil20.data.leucocitos || 'No especificado'}`,
+                  `Plaquetas (mm³): ${examenesEspeciales.perfil20.data.plaquetas || 'No especificado'}`,
+                  `Segmentados (%): ${examenesEspeciales.perfil20.data.segmentados || 'No especificado'}`,
+                  `Linfocitos (%): ${examenesEspeciales.perfil20.data.linfocitos || 'No especificado'}`,
+                  `Eosinófilos (%): ${examenesEspeciales.perfil20.data.eosinofilos || 'No especificado'}`,
+                  `Monocitos (%): ${examenesEspeciales.perfil20.data.monocitos || 'No especificado'}`,
+                  `Bastones (%): ${examenesEspeciales.perfil20.data.bastones || 'No especificado'}`,
+                  `Basófilos (%): ${examenesEspeciales.perfil20.data.basofilos || 'No especificado'}`,
+                  `Glicemia (mg/dl): ${examenesEspeciales.perfil20.data.glicemia || 'No especificado'}`,
+                  `Urea (mg/dl): ${examenesEspeciales.perfil20.data.urea || 'No especificado'}`,
+                  `Creatinina (mg/dl): ${examenesEspeciales.perfil20.data.creatinina || 'No especificado'}`,
+                  `Ácido úrico (mg/dl): ${examenesEspeciales.perfil20.data.acido_urico || 'No especificado'}`,
+                  `Colesterol (mg/dl): ${examenesEspeciales.perfil20.data.colesterol || 'No especificado'}`,
+                  `Triglicéridos (mg/dl): ${examenesEspeciales.perfil20.data.trigliceridos || 'No especificado'}`,
+                  `HDL (mg/dl): ${examenesEspeciales.perfil20.data.hdl || 'No especificado'}`,
+                  `LDL (mg/dl): ${examenesEspeciales.perfil20.data.ldl || 'No especificado'}`,
+                  `VLDL (mg/dl): ${examenesEspeciales.perfil20.data.vldl || 'No especificado'}`,
+                  `Bilirrubina total (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_total || 'No especificado'}`,
+                  `Bilirrubina directa (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_directa || 'No especificado'}`,
+                  `Bilirrubina indirecta (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_indirecta || 'No especificado'}`,
+                  `TGO (U/L): ${examenesEspeciales.perfil20.data.tgo || 'No especificado'}`,
+                  `TGP (U/L): ${examenesEspeciales.perfil20.data.tgp || 'No especificado'}`,
+                  `Proteínas totales (g/dl): ${examenesEspeciales.perfil20.data.proteinas_totales || 'No especificado'}`,
+                  `Albúmina (g/dl): ${examenesEspeciales.perfil20.data.albumina || 'No especificado'}`,
+                  `Globulinas (g/dl): ${examenesEspeciales.perfil20.data.globulinas || 'No especificado'}`,
+                  `Relación Alb/Glob: ${examenesEspeciales.perfil20.data.relacion_ag || 'No especificado'}`,
+                  `Fosfatasas alcalinas (IU/L): ${examenesEspeciales.perfil20.data.fosfatasas_alcalinas || 'No especificado'}`
+                ]
+
+                ypos = printTwoPerLine(doc, perfilData, 25, 90, 155, ypos)
+
+                if (examenesEspeciales.perfil20.data.observaciones && ensurePageSpace(10)) {
+                  ypos += 4
+                  doc.setFont("Helvetica", "bold")
+                  doc.text("Observaciones:", 20, ypos)
+                  ypos += 4
+                  doc.setFont("Helvetica", "normal")
+                  const obsLines = doc.splitTextToSize(examenesEspeciales.perfil20.data.observaciones, 160)
+                  obsLines.forEach(line => {
+                    if (!ensurePageSpace(4)) return
+                    doc.text(line, 25, ypos)
+                    ypos += 4
+                  })
+                }
+              }
+            }
         }
       }
 
@@ -1383,7 +1483,8 @@ function Examenes() {
           ...examenesEspeciales.miscelaneos.data,
           metodo: 'Wistergreen'
         } : null,
-        coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null
+        coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null,
+        perfil20: examenesEspeciales.perfil20.enabled ? examenesEspeciales.perfil20.data : null
       }))
 
       // uploadPDF ya sube y registra en examenes_pdf; no duplicar con saveExamenPDF
@@ -1410,13 +1511,13 @@ function Examenes() {
     const hasResults = Object.values(resultados).some((valor) => valor && valor.trim() !== '')
 
     // Permitir generar si hay resultados en pruebas normales o si algún examen especial está habilitado
-    const hasEspeciales = examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled
+    const hasEspeciales = examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled
 
     return hasResults || hasEspeciales
   }
 
   const handleEnviarWhatsApp = () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de enviar por WhatsApp' })
       return
     }
@@ -1815,6 +1916,15 @@ function Examenes() {
                           />
                           <span className="checkmark"></span>
                           Examen de Heces
+                        </label>
+                        <label className="examen-especial-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={examenesEspeciales.perfil20.enabled}
+                            onChange={() => toggleExamenEspecial('perfil20')}
+                          />
+                          <span className="checkmark"></span>
+                          PERFIL 20 (Química Sanguínea)
                         </label>
                         <label className="examen-especial-checkbox">
                           <input
@@ -2491,6 +2601,165 @@ function Examenes() {
                         </div>
                       </div>
                     )}
+
+                      {examenesEspeciales.perfil20.enabled && (
+                        <div className="examen-especial-form-container">
+                          <div className="examen-especial-card">
+                            <div className="examen-header">
+                              <div className="examen-icon">🧪</div>
+                              <div className="examen-title">
+                                <h3>PERFIL 20 (Química Sanguínea)</h3>
+                                <p>Hematología básica, diferencial y química sanguínea</p>
+                              </div>
+                            </div>
+
+                            <div className="examen-content">
+                              <div className="examen-section">
+                                <h4 className="section-title">1. Hematología básica</h4>
+                                <div className="fields-grid">
+                                  <div className="field-group">
+                                    <label className="field-label">Hemoglobina (g/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.hemoglobina || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'hemoglobina', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Hematocrito (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.hematocrito || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'hematocrito', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">C.H.C.M. (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.chcm || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'chcm', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Leucocitos (mm³)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.leucocitos || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'leucocitos', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Plaquetas (mm³)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.plaquetas || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'plaquetas', e.target.value)} />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="examen-section">
+                                <h4 className="section-title">2. Hemograma diferencial</h4>
+                                <div className="fields-grid">
+                                  <div className="field-group">
+                                    <label className="field-label">Segmentados (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.segmentados || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'segmentados', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Linfocitos (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.linfocitos || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'linfocitos', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Eosinófilos (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.eosinofilos || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'eosinofilos', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Monocitos (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.monocitos || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'monocitos', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Bastones (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.bastones || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'bastones', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Basófilos (%)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.basofilos || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'basofilos', e.target.value)} />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="examen-section">
+                                <h4 className="section-title">3. Química sanguínea (Perfil 20)</h4>
+                                <div className="fields-grid">
+                                  <div className="field-group">
+                                    <label className="field-label">Glicemia (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.glicemia || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'glicemia', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Urea (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.urea || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'urea', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Creatinina (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.creatinina || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'creatinina', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Ácido úrico (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.acido_urico || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'acido_urico', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Colesterol (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.colesterol || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'colesterol', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Triglicéridos (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.trigliceridos || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'trigliceridos', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">HDL (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.hdl || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'hdl', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">LDL (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.ldl || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'ldl', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">VLDL (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.vldl || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'vldl', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Bilirrubina total (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.bilirrubina_total || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'bilirrubina_total', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Bilirrubina directa (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.bilirrubina_directa || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'bilirrubina_directa', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Bilirrubina indirecta (mg/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.bilirrubina_indirecta || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'bilirrubina_indirecta', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">TGO (U/L)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.tgo || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'tgo', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">TGP (U/L)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.tgp || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'tgp', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Proteínas totales (g/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.proteinas_totales || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'proteinas_totales', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Albúmina (g/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.albumina || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'albumina', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Globulinas (g/dl)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.globulinas || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'globulinas', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Relación Alb/Glob</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.relacion_ag || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'relacion_ag', e.target.value)} />
+                                  </div>
+                                  <div className="field-group">
+                                    <label className="field-label">Fosfatasas alcalinas (IU/L)</label>
+                                    <input type="text" className="field-input" value={examenesEspeciales.perfil20.data.fosfatasas_alcalinas || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'fosfatasas_alcalinas', e.target.value)} />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="examen-section">
+                                <h5 className="section-title">Observaciones</h5>
+                                <textarea className="field-textarea" rows="4" value={examenesEspeciales.perfil20.data.observaciones || ''} onChange={(e) => handleExamenEspecialChange('perfil20', 'observaciones', e.target.value)} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                     {examenesEspeciales.coagulacion.enabled && (
                       <div className="examen-especial-form-container">
@@ -3349,7 +3618,7 @@ function Examenes() {
 
 
           {/* SECCIÓN 4: Acciones Finales */}
-          {selectedPaciente && (selectedPruebas.length > 0 || examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled) && (
+          {selectedPaciente && (selectedPruebas.length > 0 || examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled) && (
             <section className="seccion seccion-acciones">
               <h2>4. Finalizar</h2>
               <div className="acciones-grid">
