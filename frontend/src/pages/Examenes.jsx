@@ -2281,9 +2281,9 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('heces', 'olor', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="normal">Normal</option>
-                                      <option value="fecal">Fecal</option>
-                                      <option value="agrio">Fétido</option>
+                                      <option value="Normal">Normal</option>
+                                      <option value="Fecal">Fecal</option>
+                                      <option value="Fétido">Fétido</option>
                                     
                                     </select>
                                   </div>

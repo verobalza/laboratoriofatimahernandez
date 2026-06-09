@@ -11,7 +11,7 @@ class PruebaBase(BaseModel):
     nombre_prueba: str
     tipo_prueba: Optional[str] = 'numerica'
     serie: Optional[str] = None
-    area: str
+    area: Optional[str]= None
     unidad_medida: Optional[str] = None
     tipo_muestra: str
     valor_referencia_min: Optional[float] = None
