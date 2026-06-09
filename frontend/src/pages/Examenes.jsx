@@ -1317,70 +1317,70 @@ function Examenes() {
               }
             }
           }
+        }
+      }
 
-            if (examenesEspeciales.perfil20.enabled) {
-              if (ensurePageSpace(20)) {
-                ypos += 5
-                doc.setFont("Helvetica", "bold")
-                doc.setFontSize(11)
-                doc.text("EXAMEN DE QUÍMICA SANGUÍNEA (PERFIL 20)", 20, ypos)
-                ypos += 6
-                doc.setLineWidth(0.3)
-                doc.line(20, ypos, 190, ypos)
-                ypos += 6
-                doc.setFont("Helvetica", "normal")
-                doc.setFontSize(9)
+      if (examenesEspeciales.perfil20.enabled) {
+        if (ensurePageSpace(20)) {
+          ypos += 5
+          doc.setFont("Helvetica", "bold")
+          doc.setFontSize(11)
+          doc.text("EXAMEN DE QUÍMICA SANGUÍNEA (PERFIL 20)", 20, ypos)
+          ypos += 6
+          doc.setLineWidth(0.3)
+          doc.line(20, ypos, 190, ypos)
+          ypos += 6
+          doc.setFont("Helvetica", "normal")
+          doc.setFontSize(9)
 
-                const perfilData = [
-                  `Hemoglobina (g/dl): ${examenesEspeciales.perfil20.data.hemoglobina || 'No especificado'}`,
-                  `Hematocrito (%): ${examenesEspeciales.perfil20.data.hematocrito || 'No especificado'}`,
-                  `C.H.C.M. (%): ${examenesEspeciales.perfil20.data.chcm || 'No especificado'}`,
-                  `Leucocitos (mm³): ${examenesEspeciales.perfil20.data.leucocitos || 'No especificado'}`,
-                  `Plaquetas (mm³): ${examenesEspeciales.perfil20.data.plaquetas || 'No especificado'}`,
-                  `Segmentados (%): ${examenesEspeciales.perfil20.data.segmentados || 'No especificado'}`,
-                  `Linfocitos (%): ${examenesEspeciales.perfil20.data.linfocitos || 'No especificado'}`,
-                  `Eosinófilos (%): ${examenesEspeciales.perfil20.data.eosinofilos || 'No especificado'}`,
-                  `Monocitos (%): ${examenesEspeciales.perfil20.data.monocitos || 'No especificado'}`,
-                  `Bastones (%): ${examenesEspeciales.perfil20.data.bastones || 'No especificado'}`,
-                  `Basófilos (%): ${examenesEspeciales.perfil20.data.basofilos || 'No especificado'}`,
-                  `Glicemia (mg/dl): ${examenesEspeciales.perfil20.data.glicemia || 'No especificado'}`,
-                  `Urea (mg/dl): ${examenesEspeciales.perfil20.data.urea || 'No especificado'}`,
-                  `Creatinina (mg/dl): ${examenesEspeciales.perfil20.data.creatinina || 'No especificado'}`,
-                  `Ácido úrico (mg/dl): ${examenesEspeciales.perfil20.data.acido_urico || 'No especificado'}`,
-                  `Colesterol (mg/dl): ${examenesEspeciales.perfil20.data.colesterol || 'No especificado'}`,
-                  `Triglicéridos (mg/dl): ${examenesEspeciales.perfil20.data.trigliceridos || 'No especificado'}`,
-                  `HDL (mg/dl): ${examenesEspeciales.perfil20.data.hdl || 'No especificado'}`,
-                  `LDL (mg/dl): ${examenesEspeciales.perfil20.data.ldl || 'No especificado'}`,
-                  `VLDL (mg/dl): ${examenesEspeciales.perfil20.data.vldl || 'No especificado'}`,
-                  `Bilirrubina total (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_total || 'No especificado'}`,
-                  `Bilirrubina directa (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_directa || 'No especificado'}`,
-                  `Bilirrubina indirecta (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_indirecta || 'No especificado'}`,
-                  `TGO (U/L): ${examenesEspeciales.perfil20.data.tgo || 'No especificado'}`,
-                  `TGP (U/L): ${examenesEspeciales.perfil20.data.tgp || 'No especificado'}`,
-                  `Proteínas totales (g/dl): ${examenesEspeciales.perfil20.data.proteinas_totales || 'No especificado'}`,
-                  `Albúmina (g/dl): ${examenesEspeciales.perfil20.data.albumina || 'No especificado'}`,
-                  `Globulinas (g/dl): ${examenesEspeciales.perfil20.data.globulinas || 'No especificado'}`,
-                  `Relación Alb/Glob: ${examenesEspeciales.perfil20.data.relacion_ag || 'No especificado'}`,
-                  `Fosfatasas alcalinas (IU/L): ${examenesEspeciales.perfil20.data.fosfatasas_alcalinas || 'No especificado'}`
-                ]
+          const perfilData = [
+            `Hemoglobina (g/dl): ${examenesEspeciales.perfil20.data.hemoglobina || 'No especificado'}`,
+            `Hematocrito (%): ${examenesEspeciales.perfil20.data.hematocrito || 'No especificado'}`,
+            `C.H.C.M. (%): ${examenesEspeciales.perfil20.data.chcm || 'No especificado'}`,
+            `Leucocitos (mm³): ${examenesEspeciales.perfil20.data.leucocitos || 'No especificado'}`,
+            `Plaquetas (mm³): ${examenesEspeciales.perfil20.data.plaquetas || 'No especificado'}`,
+            `Segmentados (%): ${examenesEspeciales.perfil20.data.segmentados || 'No especificado'}`,
+            `Linfocitos (%): ${examenesEspeciales.perfil20.data.linfocitos || 'No especificado'}`,
+            `Eosinófilos (%): ${examenesEspeciales.perfil20.data.eosinofilos || 'No especificado'}`,
+            `Monocitos (%): ${examenesEspeciales.perfil20.data.monocitos || 'No especificado'}`,
+            `Bastones (%): ${examenesEspeciales.perfil20.data.bastones || 'No especificado'}`,
+            `Basófilos (%): ${examenesEspeciales.perfil20.data.basofilos || 'No especificado'}`,
+            `Glicemia (mg/dl): ${examenesEspeciales.perfil20.data.glicemia || 'No especificado'}`,
+            `Urea (mg/dl): ${examenesEspeciales.perfil20.data.urea || 'No especificado'}`,
+            `Creatinina (mg/dl): ${examenesEspeciales.perfil20.data.creatinina || 'No especificado'}`,
+            `Ácido úrico (mg/dl): ${examenesEspeciales.perfil20.data.acido_urico || 'No especificado'}`,
+            `Colesterol (mg/dl): ${examenesEspeciales.perfil20.data.colesterol || 'No especificado'}`,
+            `Triglicéridos (mg/dl): ${examenesEspeciales.perfil20.data.trigliceridos || 'No especificado'}`,
+            `HDL (mg/dl): ${examenesEspeciales.perfil20.data.hdl || 'No especificado'}`,
+            `LDL (mg/dl): ${examenesEspeciales.perfil20.data.ldl || 'No especificado'}`,
+            `VLDL (mg/dl): ${examenesEspeciales.perfil20.data.vldl || 'No especificado'}`,
+            `Bilirrubina total (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_total || 'No especificado'}`,
+            `Bilirrubina directa (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_directa || 'No especificado'}`,
+            `Bilirrubina indirecta (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_indirecta || 'No especificado'}`,
+            `TGO (U/L): ${examenesEspeciales.perfil20.data.tgo || 'No especificado'}`,
+            `TGP (U/L): ${examenesEspeciales.perfil20.data.tgp || 'No especificado'}`,
+            `Proteínas totales (g/dl): ${examenesEspeciales.perfil20.data.proteinas_totales || 'No especificado'}`,
+            `Albúmina (g/dl): ${examenesEspeciales.perfil20.data.albumina || 'No especificado'}`,
+            `Globulinas (g/dl): ${examenesEspeciales.perfil20.data.globulinas || 'No especificado'}`,
+            `Relación Alb/Glob: ${examenesEspeciales.perfil20.data.relacion_ag || 'No especificado'}`,
+            `Fosfatasas alcalinas (IU/L): ${examenesEspeciales.perfil20.data.fosfatasas_alcalinas || 'No especificado'}`
+          ]
 
-                ypos = printTwoPerLine(doc, perfilData, 25, 90, 155, ypos)
+          ypos = printTwoPerLine(doc, perfilData, 25, 90, 155, ypos)
 
-                if (examenesEspeciales.perfil20.data.observaciones && ensurePageSpace(10)) {
-                  ypos += 4
-                  doc.setFont("Helvetica", "bold")
-                  doc.text("Observaciones:", 20, ypos)
-                  ypos += 4
-                  doc.setFont("Helvetica", "normal")
-                  const obsLines = doc.splitTextToSize(examenesEspeciales.perfil20.data.observaciones, 160)
-                  obsLines.forEach(line => {
-                    if (!ensurePageSpace(4)) return
-                    doc.text(line, 25, ypos)
-                    ypos += 4
-                  })
-                }
-              }
-            }
+          if (examenesEspeciales.perfil20.data.observaciones && ensurePageSpace(10)) {
+            ypos += 4
+            doc.setFont("Helvetica", "bold")
+            doc.text("Observaciones:", 20, ypos)
+            ypos += 4
+            doc.setFont("Helvetica", "normal")
+            const obsLines = doc.splitTextToSize(examenesEspeciales.perfil20.data.observaciones, 160)
+            obsLines.forEach(line => {
+              if (!ensurePageSpace(4)) return
+              doc.text(line, 25, ypos)
+              ypos += 4
+            })
+          }
         }
       }
 
