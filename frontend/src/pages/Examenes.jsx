@@ -96,6 +96,28 @@ function Examenes() {
       fosfatasas_alcalinas: "",
       observaciones: ""
     } }
+    ,
+    perfilPreoperatorio: { enabled: false, data: {
+      hemoglobina: "",
+      hematocrito: "",
+      chcm: "",
+      globulos_blancos: "",
+      segmentados: "",
+      linfocitos: "",
+      eosinofilos: "",
+      monocitos: "",
+      plaquetas: "",
+      pt_paciente: "",
+      pt_control: "",
+      razon_pc: "",
+      ptt_paciente: "",
+      ptt_control: "",
+      dif_pc: "",
+      glicemia: "",
+      hiv: "",
+      vdrl: "",
+      observaciones: ""
+    } }
   })
   const [showCamposEspeciales, setShowCamposEspeciales] = useState({
     orina: false,
@@ -103,6 +125,8 @@ function Examenes() {
     miscelaneos: false,
     coagulacion: false,
     perfil20: false
+    ,
+    perfilPreoperatorio: false
   })
 
  
@@ -416,14 +440,16 @@ function Examenes() {
       heces: { enabled: false, data: {} },
       miscelaneos: { enabled: false, data: {} },
       coagulacion: { enabled: false, data: {} },
-      perfil20: { enabled: false, data: {} }
+      perfil20: { enabled: false, data: {} },
+      perfilPreoperatorio: { enabled: false, data: {} }
     })
     setShowCamposEspeciales({
       orina: false,
       heces: false,
       miscelaneos: false,
       coagulacion: false,
-      perfil20: false
+      perfil20: false,
+      perfilPreoperatorio: false
     })
   }
 
@@ -506,7 +532,7 @@ function Examenes() {
       return
     }
 
-    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled) {
+    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled) {
       setMensaje({ type: 'error', text: 'Selecciona al menos una prueba o examen especial' })
       return
     }
@@ -643,7 +669,7 @@ function Examenes() {
 
   // ============ GENERAR PDF ============
   const handleGenerarPDF = async () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de generar PDF' })
       return
     }
@@ -1358,6 +1384,86 @@ function Examenes() {
         }
       }
 
+      if (examenesEspeciales.perfilPreoperatorio.enabled) {
+        if (ensurePageSpace(20)) {
+          ypos += 5
+          doc.setFont("Helvetica", "bold")
+          doc.setFontSize(11)
+          doc.text("PERFIL PREOPERATORIO BUCAL", 20, ypos)
+          ypos += 6
+          doc.setLineWidth(0.3)
+          doc.line(20, ypos, 190, ypos)
+          ypos += 6
+          doc.setFont("Helvetica", "normal")
+          doc.setFontSize(9)
+
+          const hemaData = [
+            `Hemoglobina (g/dl): ${examenesEspeciales.perfilPreoperatorio.data.hemoglobina || 'No especificado'}`,
+            `Hematocrito (%): ${examenesEspeciales.perfilPreoperatorio.data.hematocrito || 'No especificado'}`,
+            `C.H.C.M. (%): ${examenesEspeciales.perfilPreoperatorio.data.chcm || 'No especificado'}`,
+            `G. blancos (/mm3): ${examenesEspeciales.perfilPreoperatorio.data.globulos_blancos || 'No especificado'}`,
+            `Segmentados (%): ${examenesEspeciales.perfilPreoperatorio.data.segmentados || 'No especificado'}`,
+            `Linfocitos (%): ${examenesEspeciales.perfilPreoperatorio.data.linfocitos || 'No especificado'}`,
+            `Eos. (%): ${examenesEspeciales.perfilPreoperatorio.data.eosinofilos || 'No especificado'}`,
+            `Mon. (%): ${examenesEspeciales.perfilPreoperatorio.data.monocitos || 'No especificado'}`,
+            `Plaquetas (/mm3): ${examenesEspeciales.perfilPreoperatorio.data.plaquetas || 'No especificado'}`
+          ]
+
+          ypos = printTwoPerLine(doc, hemaData, 25, 90, 155, ypos)
+
+          // Coagulación
+          ypos += 6
+          doc.setFont("Helvetica", "bold")
+          doc.text("COAGULACIÓN", 20, ypos)
+          ypos += 6
+          doc.setFont("Helvetica", "normal")
+          const coagData = [
+            `PT Paciente: ${examenesEspeciales.perfilPreoperatorio.data.pt_paciente || 'No especificado'} seg`,
+            `Control: ${examenesEspeciales.perfilPreoperatorio.data.pt_control || 'No especificado'} seg`,
+            `Razón P/C: ${examenesEspeciales.perfilPreoperatorio.data.razon_pc || 'No especificado'}`,
+            `PTT Paciente: ${examenesEspeciales.perfilPreoperatorio.data.ptt_paciente || 'No especificado'} seg`,
+            `Control: ${examenesEspeciales.perfilPreoperatorio.data.ptt_control || 'No especificado'} seg`,
+            `Dif. P-C: ${examenesEspeciales.perfilPreoperatorio.data.dif_pc || 'No especificado'}`
+          ]
+          ypos = printTwoPerLine(doc, coagData, 25, 90, 155, ypos)
+
+          // Química
+          ypos += 6
+          doc.setFont("Helvetica", "bold")
+          doc.text("QUÍMICA", 20, ypos)
+          ypos += 5
+          doc.setFont("Helvetica", "normal")
+          doc.text(`Glicemia: ${examenesEspeciales.perfilPreoperatorio.data.glicemia || 'No especificado'} mg/dl`, 25, ypos)
+          ypos += 6
+
+          // Serología
+          doc.setFont("Helvetica", "bold")
+          doc.text("SEROLOGÍA", 20, ypos)
+          ypos += 5
+          doc.setFont("Helvetica", "normal")
+          const seroData = [
+            `HIV: ${examenesEspeciales.perfilPreoperatorio.data.hiv || 'No especificado'}`,
+            `VDRL: ${examenesEspeciales.perfilPreoperatorio.data.vdrl || 'No especificado'}`
+          ]
+          ypos = printTwoPerLine(doc, seroData, 25, 90, 155, ypos)
+
+          // Observaciones
+          if (examenesEspeciales.perfilPreoperatorio.data.observaciones && ensurePageSpace(10)) {
+            ypos += 6
+            doc.setFont("Helvetica", "bold")
+            doc.text("OBSERVACIONES", 20, ypos)
+            ypos += 5
+            doc.setFont("Helvetica", "normal")
+            const obsLines = doc.splitTextToSize(examenesEspeciales.perfilPreoperatorio.data.observaciones, 160)
+            obsLines.forEach(line => {
+              if (!ensurePageSpace(4)) return
+              doc.text(line, 25, ypos)
+              ypos += 4
+            })
+          }
+        }
+      }
+
       if (examenesEspeciales.coagulacion.enabled) {
         if (ensurePageSpace(20)) {
           ypos += 5
@@ -1485,6 +1591,7 @@ function Examenes() {
         } : null,
         coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null,
         perfil20: examenesEspeciales.perfil20.enabled ? examenesEspeciales.perfil20.data : null
+        ,perfilPreoperatorio: examenesEspeciales.perfilPreoperatorio.enabled ? examenesEspeciales.perfilPreoperatorio.data : null
       }))
 
       // uploadPDF ya sube y registra en examenes_pdf; no duplicar con saveExamenPDF
@@ -1511,13 +1618,13 @@ function Examenes() {
     const hasResults = Object.values(resultados).some((valor) => valor && valor.trim() !== '')
 
     // Permitir generar si hay resultados en pruebas normales o si algún examen especial está habilitado
-    const hasEspeciales = examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled
+    const hasEspeciales = examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled || examenesEspeciales.perfilPreoperatorio.enabled
 
     return hasResults || hasEspeciales
   }
 
   const handleEnviarWhatsApp = () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de enviar por WhatsApp' })
       return
     }
@@ -1925,6 +2032,15 @@ function Examenes() {
                           />
                           <span className="checkmark"></span>
                           PERFIL 20 (Química Sanguínea)
+                        </label>
+                        <label className="examen-especial-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={examenesEspeciales.perfilPreoperatorio.enabled}
+                            onChange={() => toggleExamenEspecial('perfilPreoperatorio')}
+                          />
+                          <span className="checkmark"></span>
+                          PERFIL PREOPERATORIO BUCAL
                         </label>
                         <label className="examen-especial-checkbox">
                           <input
@@ -2760,6 +2876,131 @@ function Examenes() {
                           </div>
                         </div>
                       )}
+
+                        {examenesEspeciales.perfilPreoperatorio.enabled && (
+                          <div className="examen-especial-form-container">
+                            <div className="examen-especial-card">
+                              <div className="examen-header">
+                                <div className="examen-icon">🦷</div>
+                                <div className="examen-title">
+                                  <h3>PERFIL PREOPERATORIO BUCAL</h3>
+                                  <p>Hematología, coagulación, química y serología</p>
+                                </div>
+                              </div>
+
+                              <div className="examen-content">
+                                <div className="examen-section">
+                                  <h4 className="section-title">1. Hematología</h4>
+                                  <div className="fields-grid">
+                                    <div className="field-group">
+                                      <label className="field-label">Hemoglobina (g/dl)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.hemoglobina || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'hemoglobina', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Hematocrito (%)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.hematocrito || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'hematocrito', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">C.H.C.M. (%)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.chcm || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'chcm', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Glóbulos blancos (/mm³)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.globulos_blancos || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'globulos_blancos', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Segmentados (%)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.segmentados || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'segmentados', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Linfocitos (%)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.linfocitos || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'linfocitos', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Eosinófilos (%)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.eosinofilos || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'eosinofilos', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Monocitos (%)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.monocitos || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'monocitos', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Plaquetas (/mm³)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.plaquetas || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'plaquetas', e.target.value)} />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="examen-section">
+                                  <h4 className="section-title">2. Coagulación</h4>
+                                  <div className="fields-grid">
+                                    <div className="field-group">
+                                      <label className="field-label">PT Paciente (seg)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.pt_paciente || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'pt_paciente', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Control PT (seg)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.pt_control || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'pt_control', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Razón P/C</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.razon_pc || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'razon_pc', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">PTT Paciente (seg)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.ptt_paciente || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'ptt_paciente', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Control PTT (seg)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.ptt_control || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'ptt_control', e.target.value)} />
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">Dif. P-C</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.dif_pc || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'dif_pc', e.target.value)} />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="examen-section">
+                                  <h4 className="section-title">3. Química</h4>
+                                  <div className="fields-grid">
+                                    <div className="field-group">
+                                      <label className="field-label">Glicemia (mg/dl)</label>
+                                      <input type="text" className="field-input" value={examenesEspeciales.perfilPreoperatorio.data.glicemia || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'glicemia', e.target.value)} />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="examen-section">
+                                  <h4 className="section-title">4. Serología</h4>
+                                  <div className="fields-grid">
+                                    <div className="field-group">
+                                      <label className="field-label">HIV</label>
+                                      <select className="field-select" value={examenesEspeciales.perfilPreoperatorio.data.hiv || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'hiv', e.target.value)}>
+                                        <option value="">Seleccionar</option>
+                                        <option value="negativo">Negativo</option>
+                                        <option value="positivo">Positivo</option>
+                                      </select>
+                                    </div>
+                                    <div className="field-group">
+                                      <label className="field-label">VDRL</label>
+                                      <select className="field-select" value={examenesEspeciales.perfilPreoperatorio.data.vdrl || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'vdrl', e.target.value)}>
+                                        <option value="">Seleccionar</option>
+                                        <option value="no reactivo">No reactivo</option>
+                                        <option value="reactivo">Reactivo</option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="examen-section">
+                                  <h5 className="section-title">Observaciones</h5>
+                                  <textarea className="field-textarea" rows="4" value={examenesEspeciales.perfilPreoperatorio.data.observaciones || ''} onChange={(e) => handleExamenEspecialChange('perfilPreoperatorio', 'observaciones', e.target.value)} />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
                     {examenesEspeciales.coagulacion.enabled && (
                       <div className="examen-especial-form-container">
@@ -3618,7 +3859,7 @@ function Examenes() {
 
 
           {/* SECCIÓN 4: Acciones Finales */}
-          {selectedPaciente && (selectedPruebas.length > 0 || examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled) && (
+          {selectedPaciente && (selectedPruebas.length > 0 || examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled || examenesEspeciales.perfilPreoperatorio.enabled) && (
             <section className="seccion seccion-acciones">
               <h2>4. Finalizar</h2>
               <div className="acciones-grid">
