@@ -820,10 +820,13 @@ function Examenes() {
       }
 
       function printTableThreeColumns(doc, pruebas, x1, x2, x3, ypos) {
-        pruebas.forEach((prueba) => {
-          if (ypos > 270) {
+        let currentY = ypos
+        for (let i = 0; i < pruebas.length; i++) {
+          const prueba = pruebas[i]
+          
+          if (currentY > 270) {
             doc.addPage()
-            ypos = 20
+            currentY = 20
           }
           
           const nombre = prueba.nombre || ''
@@ -834,13 +837,13 @@ function Examenes() {
           doc.setFontSize(9)
           doc.setTextColor(0, 0, 0)
           
-          doc.text(nombre, x1, ypos)
-          doc.text(valor, x2, ypos)
-          doc.text(referencia, x3, ypos, 'right')
+          doc.text(nombre, x1, currentY)
+          doc.text(valor, x2, currentY)
+          doc.text(referencia, x3, currentY, 'right')
           
-          ypos += 5
-        })
-        return ypos
+          currentY += 5
+        }
+        return currentY
       }
 
       function printTwoPerLine(doc, items, x1, x2, x3, ypos) {
