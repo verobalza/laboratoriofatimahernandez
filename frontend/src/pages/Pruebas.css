@@ -466,6 +466,14 @@ html {
   background: var(--white);
 }
 
+.form-input-buscador {
+  margin-bottom: 0.25rem;
+}
+
+.form-input-buscador::placeholder {
+  color: var(--text-light);
+}
+
 .form-input.error,
 .form-textarea.error {
   border-color: var(--error);

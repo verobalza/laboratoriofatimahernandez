@@ -509,6 +509,7 @@ function Pruebas() {
       serieGrupo: ''
     })
     setSelectedPruebasGrupo([])
+    setGrupoPruebasSearch('')
     setGrupoErrors({})
     setMensaje({ type: '', text: '' })
     setModalGrupoOpen(true)
@@ -518,6 +519,7 @@ function Pruebas() {
     setModalGrupoOpen(false)
     setGrupoFormData({ nombre: '', descripcion: '', activo: true })
     setSelectedPruebasGrupo([])
+    setGrupoPruebasSearch('')
     setGrupoErrors({})
   }
 
@@ -634,6 +636,7 @@ function Pruebas() {
       setSelectedPruebasGrupo([])
     }
     
+    setGrupoPruebasSearch('')
     setGrupoErrors({})
     setModalEditarGrupoOpen(true)
   }
@@ -643,6 +646,7 @@ function Pruebas() {
     setGrupoEnEdicion(null)
     setGrupoFormData({ nombre: '', descripcion: '', activo: true })
     setSelectedPruebasGrupo([])
+    setGrupoPruebasSearch('')
     setGrupoErrors({})
   }
 
@@ -960,6 +964,15 @@ function Pruebas() {
       setMensaje({ type: 'error', text: error.message || 'Error al eliminar el tipo de prueba' })
     }
   }
+
+  const normalizedGrupoPruebasSearch = grupoPruebasSearch.trim().toLowerCase()
+  const filteredPruebasGrupo = normalizedGrupoPruebasSearch
+    ? pruebas.filter((prueba) => {
+        const nombre = (prueba.nombre_prueba || '').toLowerCase()
+        const unidad = (prueba.unidad_medida || '').toLowerCase()
+        return nombre.includes(normalizedGrupoPruebasSearch) || unidad.includes(normalizedGrupoPruebasSearch)
+      })
+    : pruebas
 
   // ============ RENDERIZADO ============
   return (
