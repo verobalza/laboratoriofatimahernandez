@@ -65,6 +65,7 @@ function Pruebas() {
     incluyeHematologiaCompleta: false
   })
   const [selectedPruebasGrupo, setSelectedPruebasGrupo] = useState([])
+  const [grupoPruebasSearch, setGrupoPruebasSearch] = useState('')
   const [serieGroupIds, setSerieGroupIds] = useState({ roja: null, blanca: null, plaquetaria: null })
   const [grupoErrors, setGrupoErrors] = useState({})
   const [grupoSubmitting, setGrupoSubmitting] = useState(false)
@@ -1598,24 +1599,40 @@ function Pruebas() {
                   <span className="error-message">{grupoErrors.pruebas}</span>
                 )}
                 
+                <div className="form-group">
+                  <label htmlFor="grupo_pruebas_search" className="form-label">Buscar pruebas</label>
+                  <input
+                    id="grupo_pruebas_search"
+                    type="text"
+                    value={grupoPruebasSearch}
+                    onChange={(e) => setGrupoPruebasSearch(e.target.value)}
+                    placeholder="Busca por nombre o unidad"
+                    className="form-input form-input-buscador"
+                  />
+                </div>
+
                 <div className="pruebas-seleccion-grupo">
                   {pruebas.length > 0 ? (
-                    <div className="pruebas-checkboxes">
-                      {pruebas.map((prueba) => (
-                        <label key={prueba.id} className="checkbox-item">
-                          <input
-                            type="checkbox"
-                            checked={selectedPruebasGrupo.includes(prueba.id)}
-                            onChange={() => togglePruebaEnGrupo(prueba.id)}
-                            className="checkbox-input"
-                          />
-                          <div className="checkbox-label">
-                            <strong>{prueba.nombre_prueba}</strong>
-                            <small>{prueba.unidad_medida}</small>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
+                    filteredPruebasGrupo.length > 0 ? (
+                      <div className="pruebas-checkboxes">
+                        {filteredPruebasGrupo.map((prueba) => (
+                          <label key={prueba.id} className="checkbox-item">
+                            <input
+                              type="checkbox"
+                              checked={selectedPruebasGrupo.includes(prueba.id)}
+                              onChange={() => togglePruebaEnGrupo(prueba.id)}
+                              className="checkbox-input"
+                            />
+                            <div className="checkbox-label">
+                              <strong>{prueba.nombre_prueba}</strong>
+                              <small>{prueba.unidad_medida}</small>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="sin-pruebas">No se encontraron pruebas que coincidan con la búsqueda.</p>
+                    )
                   ) : (
                     <p className="sin-pruebas">No hay pruebas disponibles. Crea pruebas primero.</p>
                   )}
@@ -1754,24 +1771,40 @@ function Pruebas() {
                   <span className="error-message">{grupoErrors.pruebas}</span>
                 )}
                 
+                <div className="form-group">
+                  <label htmlFor="edit_grupo_pruebas_search" className="form-label">Buscar pruebas</label>
+                  <input
+                    id="edit_grupo_pruebas_search"
+                    type="text"
+                    value={grupoPruebasSearch}
+                    onChange={(e) => setGrupoPruebasSearch(e.target.value)}
+                    placeholder="Busca por nombre o unidad"
+                    className="form-input form-input-buscador"
+                  />
+                </div>
+
                 <div className="pruebas-seleccion-grupo">
                   {pruebas.length > 0 ? (
-                    <div className="pruebas-checkboxes">
-                      {pruebas.map((prueba) => (
-                        <label key={prueba.id} className="checkbox-item">
-                          <input
-                            type="checkbox"
-                            checked={selectedPruebasGrupo.includes(prueba.id)}
-                            onChange={() => togglePruebaEnGrupo(prueba.id)}
-                            className="checkbox-input"
-                          />
-                          <div className="checkbox-label">
-                            <strong>{prueba.nombre_prueba}</strong>
-                            <small>{prueba.unidad_medida}</small>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
+                    filteredPruebasGrupo.length > 0 ? (
+                      <div className="pruebas-checkboxes">
+                        {filteredPruebasGrupo.map((prueba) => (
+                          <label key={prueba.id} className="checkbox-item">
+                            <input
+                              type="checkbox"
+                              checked={selectedPruebasGrupo.includes(prueba.id)}
+                              onChange={() => togglePruebaEnGrupo(prueba.id)}
+                              className="checkbox-input"
+                            />
+                            <div className="checkbox-label">
+                              <strong>{prueba.nombre_prueba}</strong>
+                              <small>{prueba.unidad_medida}</small>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="sin-pruebas">No se encontraron pruebas que coincidan con la búsqueda.</p>
+                    )
                   ) : (
                     <p className="sin-pruebas">No hay pruebas disponibles.</p>
                   )}
