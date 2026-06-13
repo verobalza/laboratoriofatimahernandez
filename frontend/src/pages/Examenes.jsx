@@ -727,8 +727,9 @@ function Examenes() {
       if (membreteResult) {
         const { image: headerImg } = membreteResult
         const headerFormat = membreteResult.src.toLowerCase().endsWith('.jpg') || membreteResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
-        doc.addImage(headerImg, headerFormat, 0, 0, 200, 230)
-        ypos = 70
+        const headerHeight = 50
+        doc.addImage(headerImg, headerFormat, 0, 0, pageWidth, headerHeight)
+        ypos = headerHeight + 8
       } else {
         console.warn('No se encontró membresía en formato PNG/JPG; se generará PDF sin membrete.')
         ypos = 10
@@ -942,6 +943,9 @@ function Examenes() {
       }
 
       const hematologiaPruebas = pruebasSeleccionadas.filter(isHematologiaPrueba)
+      const hematoPruebaIds = getHematologiaPruebas().map((p) => p.id)
+      const hematologiaCompletaSeleccionada = hematoPruebaIds.length > 0 && hematoPruebaIds.every((id) => selectedPruebas.includes(id))
+      
       const hematologiaPorSerie = {}
       hematologiaPruebas.forEach((p) => {
         const serie = getSerieByPrueba(p)
@@ -952,7 +956,10 @@ function Examenes() {
         hematologiaPorSerie[serie].push(p)
       })
 
-      const orderedNoHematologia = pruebasSeleccionadas.filter((p) => !isHematologiaPrueba(p))
+      // Si no se seleccionó el grupo completo de hematología, las pruebas individuales se imprimirán normalmente
+      const orderedNoHematologia = hematologiaCompletaSeleccionada 
+        ? pruebasSeleccionadas.filter((p) => !isHematologiaPrueba(p))
+        : pruebasSeleccionadas.filter((p) => !isHematologiaPrueba(p)).concat(hematologiaPruebas)
 
       const printedGrupoIds = new Set()
       const renderPruebasLista = (listaPruebas) => {
@@ -967,8 +974,8 @@ function Examenes() {
         })
       }
 
-      // Primero imprimir hematología completa
-      if (hematologiaPruebas.length > 0) {
+      // Primero imprimir hematología completa (solo si se seleccionó el grupo completo)
+      if (hematologiaPruebas.length > 0 && hematologiaCompletaSeleccionada) {
         if (ypos > 270) {
           doc.addPage()
           ypos = 20
@@ -1036,14 +1043,6 @@ function Examenes() {
                 doc.text(porcentajeText, 140, ypos, 'right')
                 ypos += 5
               })
-              ypos += 4
-
-              if (ypos > 270) {
-                doc.addPage()
-                ypos = 20
-              }
-              doc.setLineWidth(0.3)
-              doc.line(20, ypos, 190, ypos)
               ypos += 8
             }
 
@@ -2004,7 +2003,7 @@ function Examenes() {
 
                     {/* Exámenes Especiales - Checkboxes Globales */}
                     <div className="examenes-especiales-section">
-                      <h3 className="section-title">Uronálisis, Copronálisis, Miscelaneos y Coagulación</h3>
+                      <h3 className="section-title"></h3>
                       <div className="examenes-especiales-checkboxes">
                         <label className="examen-especial-checkbox">
                           <input
@@ -2401,17 +2400,13 @@ function Examenes() {
 
                                   <div className="field-group">
                                     <label className="field-label">Cristales</label>
-                                    <select
-                                      className="field-select"
+                                    <input
+                                      type="text"
+                                      className="field-input"
                                       value={examenesEspeciales.orina.data.cristales || ''}
                                       onChange={(e) => handleExamenEspecialChange('orina', 'cristales', e.target.value)}
-                                    >
-                                      <option value="">Seleccionar</option>
-                                      <option value="oxalatos">Oxalatos</option>
-                                      <option value="ácido úrico">Ácido úrico</option>
-                                      <option value="uratos">Uratos</option>
-                                      <option value="otros">-</option>
-                                    </select>
+                                      placeholder="Ingrese cristales"
+                                    />
                                   </div>
                                 </div>
 
