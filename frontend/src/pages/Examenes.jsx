@@ -1195,6 +1195,7 @@ function Examenes() {
           `Piocitos: ${examenesEspeciales.orina.data.piocitos || 'No especificado'}`,
           `Bacterias: ${examenesEspeciales.orina.data.bacterias || 'No especificado'}`,
           `Hematíes: ${examenesEspeciales.orina.data.hematies || 'No especificado'}`,
+          `Cristales: ${examenesEspeciales.orina.data.cristales || 'No especificado'}`,
           `Mucina: ${examenesEspeciales.orina.data.mucina || 'No especificado'}`,
           `Cilindros: ${examenesEspeciales.orina.data.cilindros || 'No especificado'}`,
           `Levaduras: ${examenesEspeciales.orina.data.levaduras || 'No especificado'}`,
