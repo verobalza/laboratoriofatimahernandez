@@ -686,6 +686,10 @@ function Examenes() {
     try {
       const doc = new jsPDF()
 
+
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const pageHeight = doc.internal.pageSize.getHeight()
+
       const loadImage = async (src) => {
         return await new Promise((resolve, reject) => {
           const image = new Image()
@@ -1589,8 +1593,7 @@ function Examenes() {
 
       if (firmaResult) {
         const firmaFormat = firmaResult.src.toLowerCase().endsWith('.jpg') || firmaResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
-        const pageWidth = doc.internal.pageSize.getWidth()
-        const pageHeight = doc.internal.pageSize.getHeight()
+      
         const firmaWidth = 180
         const firmaHeight = 55
         const firmaX = (pageWidth - firmaWidth) / 2
