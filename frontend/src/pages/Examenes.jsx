@@ -47,6 +47,7 @@ function Examenes() {
   const [selectedPruebas, setSelectedPruebas] = useState([])
   const [selectedGrupos, setSelectedGrupos] = useState([])
   const [showPruebasSelection, setShowPruebasSelection] = useState(false)
+  const [searchPruebasTerm, setSearchPruebasTerm] = useState('')
   const [pruebasLoading, setpruebasLoading] = useState(false)
   const [allGrupos, setAllGrupos] = useState([])
 
@@ -459,6 +460,7 @@ function Examenes() {
       return
     }
     setShowPruebasSelection(false)
+    setSearchPruebasTerm('')
     // Inicializar campos de resultado
     const newResultados = {}
     const newObservaciones = {}
@@ -815,6 +817,30 @@ function Examenes() {
           return false
         }
         return true
+      }
+
+      function printTableThreeColumns(doc, pruebas, x1, x2, x3, ypos) {
+        pruebas.forEach((prueba) => {
+          if (ypos > 270) {
+            doc.addPage()
+            ypos = 20
+          }
+          
+          const nombre = prueba.nombre || ''
+          const valor = prueba.valor ? `${prueba.valor}${prueba.unidad ? ' ' + prueba.unidad : ''}` : '—'
+          const referencia = prueba.referencia || ''
+          
+          doc.setFont('Helvetica', 'normal')
+          doc.setFontSize(9)
+          doc.setTextColor(0, 0, 0)
+          
+          doc.text(nombre, x1, ypos)
+          doc.text(valor, x2, ypos)
+          doc.text(referencia, x3, ypos, 'right')
+          
+          ypos += 5
+        })
+        return ypos
       }
 
       function printTwoPerLine(doc, items, x1, x2, x3, ypos) {
@@ -1333,39 +1359,39 @@ function Examenes() {
           doc.setFontSize(9)
 
           const perfilData = [
-            `Hemoglobina (g/dl): ${examenesEspeciales.perfil20.data.hemoglobina || 'No especificado'}`,
-            `Hematocrito (%): ${examenesEspeciales.perfil20.data.hematocrito || 'No especificado'}`,
-            `C.H.C.M. (%): ${examenesEspeciales.perfil20.data.chcm || 'No especificado'}`,
-            `Leucocitos (mm³): ${examenesEspeciales.perfil20.data.leucocitos || 'No especificado'}`,
-            `Plaquetas (mm³): ${examenesEspeciales.perfil20.data.plaquetas || 'No especificado'}`,
-            `Segmentados (%): ${examenesEspeciales.perfil20.data.segmentados || 'No especificado'}`,
-            `Linfocitos (%): ${examenesEspeciales.perfil20.data.linfocitos || 'No especificado'}`,
-            `Eosinófilos (%): ${examenesEspeciales.perfil20.data.eosinofilos || 'No especificado'}`,
-            `Monocitos (%): ${examenesEspeciales.perfil20.data.monocitos || 'No especificado'}`,
-            `Bastones (%): ${examenesEspeciales.perfil20.data.bastones || 'No especificado'}`,
-            `Basófilos (%): ${examenesEspeciales.perfil20.data.basofilos || 'No especificado'}`,
-            `Glicemia (mg/dl): ${examenesEspeciales.perfil20.data.glicemia || 'No especificado'}`,
-            `Urea (mg/dl): ${examenesEspeciales.perfil20.data.urea || 'No especificado'}`,
-            `Creatinina (mg/dl): ${examenesEspeciales.perfil20.data.creatinina || 'No especificado'}`,
-            `Ácido úrico (mg/dl): ${examenesEspeciales.perfil20.data.acido_urico || 'No especificado'}`,
-            `Colesterol (mg/dl): ${examenesEspeciales.perfil20.data.colesterol || 'No especificado'}`,
-            `Triglicéridos (mg/dl): ${examenesEspeciales.perfil20.data.trigliceridos || 'No especificado'}`,
-            `HDL (mg/dl): ${examenesEspeciales.perfil20.data.hdl || 'No especificado'}`,
-            `LDL (mg/dl): ${examenesEspeciales.perfil20.data.ldl || 'No especificado'}`,
-            `VLDL (mg/dl): ${examenesEspeciales.perfil20.data.vldl || 'No especificado'}`,
-            `Bilirrubina total (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_total || 'No especificado'}`,
-            `Bilirrubina directa (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_directa || 'No especificado'}`,
-            `Bilirrubina indirecta (mg/dl): ${examenesEspeciales.perfil20.data.bilirrubina_indirecta || 'No especificado'}`,
-            `TGO (U/L): ${examenesEspeciales.perfil20.data.tgo || 'No especificado'}`,
-            `TGP (U/L): ${examenesEspeciales.perfil20.data.tgp || 'No especificado'}`,
-            `Proteínas totales (g/dl): ${examenesEspeciales.perfil20.data.proteinas_totales || 'No especificado'}`,
-            `Albúmina (g/dl): ${examenesEspeciales.perfil20.data.albumina || 'No especificado'}`,
-            `Globulinas (g/dl): ${examenesEspeciales.perfil20.data.globulinas || 'No especificado'}`,
-            `Relación Alb/Glob: ${examenesEspeciales.perfil20.data.relacion_ag || 'No especificado'}`,
-            `Fosfatasas alcalinas (IU/L): ${examenesEspeciales.perfil20.data.fosfatasas_alcalinas || 'No especificado'}`
+            { nombre: 'Hemoglobina', valor: examenesEspeciales.perfil20.data.hemoglobina, unidad: 'g/dl', referencia: '(12 - 16)' },
+            { nombre: 'Hematocrito', valor: examenesEspeciales.perfil20.data.hematocrito, unidad: '%', referencia: '(36 - 48)' },
+            { nombre: 'C.H.C.M.', valor: examenesEspeciales.perfil20.data.chcm, unidad: '%', referencia: '(32 - 36)' },
+            { nombre: 'Leucocitos', valor: examenesEspeciales.perfil20.data.leucocitos, unidad: '/mm³', referencia: '(4.5 - 11)' },
+            { nombre: 'Plaquetas', valor: examenesEspeciales.perfil20.data.plaquetas, unidad: '/mm³', referencia: '(150 - 450)' },
+            { nombre: 'Segmentados', valor: examenesEspeciales.perfil20.data.segmentados, unidad: '%', referencia: '(50 - 70)' },
+            { nombre: 'Linfocitos', valor: examenesEspeciales.perfil20.data.linfocitos, unidad: '%', referencia: '(20 - 40)' },
+            { nombre: 'Eosinófilos', valor: examenesEspeciales.perfil20.data.eosinofilos, unidad: '%', referencia: '(1 - 4)' },
+            { nombre: 'Monocitos', valor: examenesEspeciales.perfil20.data.monocitos, unidad: '%', referencia: '(2 - 8)' },
+            { nombre: 'Bastones', valor: examenesEspeciales.perfil20.data.bastones, unidad: '%', referencia: '(0 - 5)' },
+            { nombre: 'Basófilos', valor: examenesEspeciales.perfil20.data.basofilos, unidad: '%', referencia: '(0 - 1)' },
+            { nombre: 'Glicemia', valor: examenesEspeciales.perfil20.data.glicemia, unidad: 'mg/dl', referencia: '(70 - 110)' },
+            { nombre: 'Urea', valor: examenesEspeciales.perfil20.data.urea, unidad: 'mg/dl', referencia: '(10 - 50)' },
+            { nombre: 'Creatinina', valor: examenesEspeciales.perfil20.data.creatinina, unidad: 'mg/dl', referencia: '(0.6 - 1.2)' },
+            { nombre: 'Ácido úrico', valor: examenesEspeciales.perfil20.data.acido_urico, unidad: 'mg/dl', referencia: '(3.5 - 7.2)' },
+            { nombre: 'Colesterol', valor: examenesEspeciales.perfil20.data.colesterol, unidad: 'mg/dl', referencia: '(< 200)' },
+            { nombre: 'Triglicéridos', valor: examenesEspeciales.perfil20.data.trigliceridos, unidad: 'mg/dl', referencia: '(< 150)' },
+            { nombre: 'HDL', valor: examenesEspeciales.perfil20.data.hdl, unidad: 'mg/dl', referencia: '(> 40)' },
+            { nombre: 'LDL', valor: examenesEspeciales.perfil20.data.ldl, unidad: 'mg/dl', referencia: '(< 130)' },
+            { nombre: 'VLDL', valor: examenesEspeciales.perfil20.data.vldl, unidad: 'mg/dl', referencia: '(5 - 40)' },
+            { nombre: 'Bilirrubina total', valor: examenesEspeciales.perfil20.data.bilirrubina_total, unidad: 'mg/dl', referencia: '(0.1 - 1.2)' },
+            { nombre: 'Bilirrubina directa', valor: examenesEspeciales.perfil20.data.bilirrubina_directa, unidad: 'mg/dl', referencia: '(0.0 - 0.3)' },
+            { nombre: 'Bilirrubina indirecta', valor: examenesEspeciales.perfil20.data.bilirrubina_indirecta, unidad: 'mg/dl', referencia: '(0.1 - 1.0)' },
+            { nombre: 'TGO', valor: examenesEspeciales.perfil20.data.tgo, unidad: 'U/L', referencia: '(5 - 40)' },
+            { nombre: 'TGP', valor: examenesEspeciales.perfil20.data.tgp, unidad: 'U/L', referencia: '(7 - 56)' },
+            { nombre: 'Proteínas totales', valor: examenesEspeciales.perfil20.data.proteinas_totales, unidad: 'g/dl', referencia: '(6.0 - 8.3)' },
+            { nombre: 'Albúmina', valor: examenesEspeciales.perfil20.data.albumina, unidad: 'g/dl', referencia: '(3.5 - 5.1)' },
+            { nombre: 'Globulinas', valor: examenesEspeciales.perfil20.data.globulinas, unidad: 'g/dl', referencia: '(2.3 - 3.5)' },
+            { nombre: 'Relación Alb/Glob', valor: examenesEspeciales.perfil20.data.relacion_ag, unidad: '', referencia: '(1.0 - 2.5)' },
+            { nombre: 'Fosfatasas alcalinas', valor: examenesEspeciales.perfil20.data.fosfatasas_alcalinas, unidad: 'IU/L', referencia: '(30 - 120)' }
           ]
 
-          ypos = printTwoPerLine(doc, perfilData, 25, 90, 155, ypos)
+          ypos = printTableThreeColumns(doc, perfilData, 25, 100, 190, ypos)
 
           if (examenesEspeciales.perfil20.data.observaciones && ensurePageSpace(10)) {
             ypos += 4
@@ -1396,35 +1422,42 @@ function Examenes() {
           doc.setFont("Helvetica", "normal")
           doc.setFontSize(9)
 
+          // Hematología
+          doc.setFont("Helvetica", "bold")
+          doc.text("HEMATOLOGÍA", 20, ypos)
+          ypos += 5
+          doc.setFont("Helvetica", "normal")
+
           const hemaData = [
-            `Hemoglobina (g/dl): ${examenesEspeciales.perfilPreoperatorio.data.hemoglobina || 'No especificado'}`,
-            `Hematocrito (%): ${examenesEspeciales.perfilPreoperatorio.data.hematocrito || 'No especificado'}`,
-            `C.H.C.M. (%): ${examenesEspeciales.perfilPreoperatorio.data.chcm || 'No especificado'}`,
-            `G. blancos (/mm3): ${examenesEspeciales.perfilPreoperatorio.data.globulos_blancos || 'No especificado'}`,
-            `Segmentados (%): ${examenesEspeciales.perfilPreoperatorio.data.segmentados || 'No especificado'}`,
-            `Linfocitos (%): ${examenesEspeciales.perfilPreoperatorio.data.linfocitos || 'No especificado'}`,
-            `Eos. (%): ${examenesEspeciales.perfilPreoperatorio.data.eosinofilos || 'No especificado'}`,
-            `Mon. (%): ${examenesEspeciales.perfilPreoperatorio.data.monocitos || 'No especificado'}`,
-            `Plaquetas (/mm3): ${examenesEspeciales.perfilPreoperatorio.data.plaquetas || 'No especificado'}`
+            { nombre: 'Hemoglobina', valor: examenesEspeciales.perfilPreoperatorio.data.hemoglobina, unidad: 'g/dl', referencia: '(12 - 16)' },
+            { nombre: 'Hematocrito', valor: examenesEspeciales.perfilPreoperatorio.data.hematocrito, unidad: '%', referencia: '(36 - 48)' },
+            { nombre: 'C.H.C.M.', valor: examenesEspeciales.perfilPreoperatorio.data.chcm, unidad: '%', referencia: '(32 - 36)' },
+            { nombre: 'G. blancos', valor: examenesEspeciales.perfilPreoperatorio.data.globulos_blancos, unidad: '/mm³', referencia: '(4.5 - 11)' },
+            { nombre: 'Segmentados', valor: examenesEspeciales.perfilPreoperatorio.data.segmentados, unidad: '%', referencia: '(50 - 70)' },
+            { nombre: 'Linfocitos', valor: examenesEspeciales.perfilPreoperatorio.data.linfocitos, unidad: '%', referencia: '(20 - 40)' },
+            { nombre: 'Eosinófilos', valor: examenesEspeciales.perfilPreoperatorio.data.eosinofilos, unidad: '%', referencia: '(1 - 4)' },
+            { nombre: 'Monocitos', valor: examenesEspeciales.perfilPreoperatorio.data.monocitos, unidad: '%', referencia: '(2 - 8)' },
+            { nombre: 'Plaquetas', valor: examenesEspeciales.perfilPreoperatorio.data.plaquetas, unidad: '/mm³', referencia: '(150 - 450)' }
           ]
 
-          ypos = printTwoPerLine(doc, hemaData, 25, 90, 155, ypos)
+          ypos = printTableThreeColumns(doc, hemaData, 25, 100, 190, ypos)
 
           // Coagulación
           ypos += 6
           doc.setFont("Helvetica", "bold")
           doc.text("COAGULACIÓN", 20, ypos)
-          ypos += 6
+          ypos += 5
           doc.setFont("Helvetica", "normal")
+          
           const coagData = [
-            `PT Paciente: ${examenesEspeciales.perfilPreoperatorio.data.pt_paciente || 'No especificado'} seg`,
-            `Control: ${examenesEspeciales.perfilPreoperatorio.data.pt_control || 'No especificado'} seg`,
-            `Razón P/C: ${examenesEspeciales.perfilPreoperatorio.data.razon_pc || 'No especificado'}`,
-            `PTT Paciente: ${examenesEspeciales.perfilPreoperatorio.data.ptt_paciente || 'No especificado'} seg`,
-            `Control: ${examenesEspeciales.perfilPreoperatorio.data.ptt_control || 'No especificado'} seg`,
-            `Dif. P-C: ${examenesEspeciales.perfilPreoperatorio.data.dif_pc || 'No especificado'}`
+            { nombre: 'P.T. Paciente', valor: examenesEspeciales.perfilPreoperatorio.data.pt_paciente, unidad: 'seg', referencia: '(11 - 13.5)' },
+            { nombre: 'P.T. Control', valor: examenesEspeciales.perfilPreoperatorio.data.pt_control, unidad: 'seg', referencia: '(11 - 13.5)' },
+            { nombre: 'Razón P/C', valor: examenesEspeciales.perfilPreoperatorio.data.razon_pc, unidad: '', referencia: '(0.8 - 1.2)' },
+            { nombre: 'P.T.T. Paciente', valor: examenesEspeciales.perfilPreoperatorio.data.ptt_paciente, unidad: 'seg', referencia: '(25 - 35)' },
+            { nombre: 'P.T.T. Control', valor: examenesEspeciales.perfilPreoperatorio.data.ptt_control, unidad: 'seg', referencia: '(25 - 35)' },
+            { nombre: 'Dif. P-C', valor: examenesEspeciales.perfilPreoperatorio.data.dif_pc, unidad: 'seg', referencia: '(0 - 5)' }
           ]
-          ypos = printTwoPerLine(doc, coagData, 25, 90, 155, ypos)
+          ypos = printTableThreeColumns(doc, coagData, 25, 100, 190, ypos)
 
           // Química
           ypos += 6
@@ -1432,19 +1465,24 @@ function Examenes() {
           doc.text("QUÍMICA", 20, ypos)
           ypos += 5
           doc.setFont("Helvetica", "normal")
-          doc.text(`Glicemia: ${examenesEspeciales.perfilPreoperatorio.data.glicemia || 'No especificado'} mg/dl`, 25, ypos)
-          ypos += 6
+          
+          const quiData = [
+            { nombre: 'Glicemia', valor: examenesEspeciales.perfilPreoperatorio.data.glicemia, unidad: 'mg/dl', referencia: '(70 - 110)' }
+          ]
+          ypos = printTableThreeColumns(doc, quiData, 25, 100, 190, ypos)
 
           // Serología
+          ypos += 6
           doc.setFont("Helvetica", "bold")
           doc.text("SEROLOGÍA", 20, ypos)
           ypos += 5
           doc.setFont("Helvetica", "normal")
+          
           const seroData = [
-            `HIV: ${examenesEspeciales.perfilPreoperatorio.data.hiv || 'No especificado'}`,
-            `VDRL: ${examenesEspeciales.perfilPreoperatorio.data.vdrl || 'No especificado'}`
+            { nombre: 'HIV', valor: examenesEspeciales.perfilPreoperatorio.data.hiv, unidad: '', referencia: 'Negativo' },
+            { nombre: 'VDRL', valor: examenesEspeciales.perfilPreoperatorio.data.vdrl, unidad: '', referencia: 'Negativo' }
           ]
-          ypos = printTwoPerLine(doc, seroData, 25, 90, 155, ypos)
+          ypos = printTableThreeColumns(doc, seroData, 25, 100, 190, ypos)
 
           // Observaciones
           if (examenesEspeciales.perfilPreoperatorio.data.observaciones && ensurePageSpace(10)) {
@@ -3128,33 +3166,50 @@ function Examenes() {
                     )}
 
                     <div className="pruebas-grid">
-                      <div className="pruebas-list">
-                        {allPruebas.length > 0 ? (
-                          allPruebas.map((prueba) => (
-                            <label key={prueba.id} className="prueba-checkbox-item">
-                              <input
-                                type="checkbox"
-                                checked={selectedPruebas.includes(prueba.id)}
-                                onChange={() => togglePrueba(prueba.id)}
-                              />
-                              <div className="prueba-info">
-                                <strong>{prueba.nombre_prueba}</strong>
-                                <span className="prueba-unidad">
-                                  {prueba.unidad_medida}
-                                </span>
-                                {prueba.valor_referencia_min !== null &&
-                                  prueba.valor_referencia_max !== null && (
-                                    <span className="prueba-rango">
-                                      Rango: {prueba.valor_referencia_min} -{' '}
-                                      {prueba.valor_referencia_max}
-                                    </span>
-                                  )}
-                              </div>
-                            </label>
-                          ))
-                        ) : (
-                          <div className="no-pruebas">No hay pruebas disponibles</div>
-                        )}
+                      <div className="pruebas-list-container">
+                        <div className="pruebas-search">
+                          <input
+                            type="text"
+                            className="search-input"
+                            placeholder="🔍 Buscar pruebas..."
+                            value={searchPruebasTerm}
+                            onChange={(e) => setSearchPruebasTerm(e.target.value)}
+                          />
+                        </div>
+                        <div className="pruebas-list">
+                          {allPruebas.filter((p) =>
+                            p.nombre_prueba.toLowerCase().includes(searchPruebasTerm.toLowerCase())
+                          ).length > 0 ? (
+                            allPruebas.filter((p) =>
+                              p.nombre_prueba.toLowerCase().includes(searchPruebasTerm.toLowerCase())
+                            ).map((prueba) => (
+                              <label key={prueba.id} className="prueba-checkbox-item">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedPruebas.includes(prueba.id)}
+                                  onChange={() => togglePrueba(prueba.id)}
+                                />
+                                <div className="prueba-info">
+                                  <strong>{prueba.nombre_prueba}</strong>
+                                  <span className="prueba-unidad">
+                                    {prueba.unidad_medida}
+                                  </span>
+                                  {prueba.valor_referencia_min !== null &&
+                                    prueba.valor_referencia_max !== null && (
+                                      <span className="prueba-rango">
+                                        Rango: {prueba.valor_referencia_min} -{' '}
+                                        {prueba.valor_referencia_max}
+                                      </span>
+                                    )}
+                                </div>
+                              </label>
+                            ))
+                          ) : (
+                            <div className="no-pruebas">
+                              {searchPruebasTerm ? 'No se encontraron pruebas' : 'No hay pruebas disponibles'}
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <div className="pruebas-actions">
                         <button

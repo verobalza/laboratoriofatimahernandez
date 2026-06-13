@@ -458,6 +458,36 @@
   margin-top: 1.5rem;
 }
 
+.pruebas-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pruebas-search {
+  width: 100%;
+}
+
+.pruebas-search .search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--primary-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.pruebas-search .search-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.pruebas-search .search-input::placeholder {
+  color: var(--text-light);
+}
+
 .pruebas-list {
   max-height: 400px;
   overflow-y: auto;
