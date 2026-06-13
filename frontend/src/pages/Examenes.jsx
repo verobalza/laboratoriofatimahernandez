@@ -63,6 +63,7 @@ function Examenes() {
     orina: { enabled: false, data: {} },
     heces: { enabled: false, data: {} },
     miscelaneos: { enabled: false, data: {} },
+    miscelaneosWintrobe: { enabled: false, data: { vsg_1hora: "" } },
     coagulacion: { enabled: false, data: {} },
     perfil20: { enabled: false, data: {
       hemoglobina: "",
@@ -124,9 +125,9 @@ function Examenes() {
     orina: false,
     heces: false,
     miscelaneos: false,
+    miscelaneosWintrobe: false,
     coagulacion: false,
-    perfil20: false
-    ,
+    perfil20: false,
     perfilPreoperatorio: false
   })
 
@@ -440,6 +441,7 @@ function Examenes() {
       orina: { enabled: false, data: {} },
       heces: { enabled: false, data: {} },
       miscelaneos: { enabled: false, data: {} },
+      miscelaneosWintrobe: { enabled: false, data: {} },
       coagulacion: { enabled: false, data: {} },
       perfil20: { enabled: false, data: {} },
       perfilPreoperatorio: { enabled: false, data: {} }
@@ -448,6 +450,7 @@ function Examenes() {
       orina: false,
       heces: false,
       miscelaneos: false,
+      miscelaneosWintrobe: false,
       coagulacion: false,
       perfil20: false,
       perfilPreoperatorio: false
@@ -534,7 +537,7 @@ function Examenes() {
       return
     }
 
-    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled) {
+    if (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.miscelaneosWintrobe.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled) {
       setMensaje({ type: 'error', text: 'Selecciona al menos una prueba o examen especial' })
       return
     }
@@ -630,6 +633,16 @@ function Examenes() {
         await api.createMiscelaneos(miscelaneosData)
       }
 
+      if (examenesEspeciales.miscelaneosWintrobe.enabled) {
+        const miscelaneosWintrobeData = {
+          paciente_id: selectedPaciente.id,
+          fecha: selectedDate,
+          vsg_1hora: examenesEspeciales.miscelaneosWintrobe.data.vsg_1hora,
+          metodo: 'Wintrobe',
+        }
+        await api.createMiscelaneos(miscelaneosWintrobeData)
+      }
+
       if (examenesEspeciales.coagulacion.enabled) {
         const coagulacionData = {
           paciente_id: selectedPaciente.id,
@@ -671,7 +684,7 @@ function Examenes() {
 
   // ============ GENERAR PDF ============
   const handleGenerarPDF = async () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.miscelaneosWintrobe.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de generar PDF' })
       return
     }
@@ -732,9 +745,18 @@ function Examenes() {
 
       if (membreteResult) {
         const { image: headerImg } = membreteResult
-        const headerFormat = membreteResult.src.toLowerCase().endsWith('.jpg') || membreteResult.src.toLowerCase().endsWith('.jpeg') ? 'JPEG' : 'PNG'
-        const headerHeight = 50
-        doc.addImage(headerImg, headerFormat, 0, 0, pageWidth, headerHeight)
+        const cropTop = 148
+        const cropHeight = 300
+        const headerHeight = (pageWidth * cropHeight) / headerImg.width
+
+        const canvas = document.createElement('canvas')
+        canvas.width = headerImg.width
+        canvas.height = cropHeight
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(headerImg, 0, cropTop, headerImg.width, cropHeight, 0, 0, canvas.width, canvas.height)
+
+        const headerDataUrl = canvas.toDataURL('image/png')
+        doc.addImage(headerDataUrl, 'PNG', 0, 0, pageWidth, headerHeight)
         ypos = headerHeight + 8
       } else {
         console.warn('No se encontró membresía en formato PNG/JPG; se generará PDF sin membrete.')
@@ -1222,6 +1244,37 @@ function Examenes() {
 
       }
 
+      if (examenesEspeciales.miscelaneosWintrobe.enabled) {
+        if (ensurePageSpace(20)) {
+          ypos += 5
+          doc.setFont("Helvetica", "bold")
+          doc.setFontSize(11)
+          doc.text("MISCELÁNEOS WINTROBE", 20, ypos)
+          ypos += 4
+          doc.setLineWidth(0.3)
+          doc.line(20, ypos, 190, ypos)
+          ypos += 4
+          doc.setFont("Helvetica", "normal")
+          doc.setFontSize(9)
+
+          if (ensurePageSpace(6)) {
+            doc.setFont("Helvetica", "bold")
+            doc.text("Velocidad de sedimentación globular (V.S.G.)", 25, ypos)
+            ypos += 5
+            doc.setFont("Helvetica", "normal")
+            doc.text("1er Hora:", 25, ypos)
+            doc.text(examenesEspeciales.miscelaneosWintrobe.data.vsg_1hora ? `${examenesEspeciales.miscelaneosWintrobe.data.vsg_1hora} mm/h` : 'No especificado', 55, ypos)
+            ypos += 6
+            doc.text("VR: 0-10 mm en 1 hora (hombres)", 25, ypos)
+            ypos += 5
+            doc.text("0-15 mm en 1 hora (mujeres)", 25, ypos)
+            ypos += 5
+            doc.text("(Método: Wintrobe)", 25, ypos)
+            ypos += 5
+          }
+        }
+      }
+
       if (examenesEspeciales.miscelaneos.enabled) {
         if (ensurePageSpace(20)) {
           ypos += 5
@@ -1630,11 +1683,15 @@ function Examenes() {
         heces: examenesEspeciales.heces.enabled ? examenesEspeciales.heces.data : null,
         miscelaneos: examenesEspeciales.miscelaneos.enabled ? {
           ...examenesEspeciales.miscelaneos.data,
-          metodo: 'Wistergreen'
+          metodo: 'Westergreen'
+        } : null,
+        miscelaneosWintrobe: examenesEspeciales.miscelaneosWintrobe.enabled ? {
+          ...examenesEspeciales.miscelaneosWintrobe.data,
+          metodo: 'Wintrobe'
         } : null,
         coagulacion: examenesEspeciales.coagulacion.enabled ? examenesEspeciales.coagulacion.data : null,
-        perfil20: examenesEspeciales.perfil20.enabled ? examenesEspeciales.perfil20.data : null
-        ,perfilPreoperatorio: examenesEspeciales.perfilPreoperatorio.enabled ? examenesEspeciales.perfilPreoperatorio.data : null
+        perfil20: examenesEspeciales.perfil20.enabled ? examenesEspeciales.perfil20.data : null,
+        perfilPreoperatorio: examenesEspeciales.perfilPreoperatorio.enabled ? examenesEspeciales.perfilPreoperatorio.data : null
       }))
 
       // uploadPDF ya sube y registra en examenes_pdf; no duplicar con saveExamenPDF
@@ -1661,13 +1718,13 @@ function Examenes() {
     const hasResults = Object.values(resultados).some((valor) => valor && valor.trim() !== '')
 
     // Permitir generar si hay resultados en pruebas normales o si algún examen especial está habilitado
-    const hasEspeciales = examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled || examenesEspeciales.perfilPreoperatorio.enabled
+    const hasEspeciales = examenesEspeciales.orina.enabled || examenesEspeciales.heces.enabled || examenesEspeciales.miscelaneos.enabled || examenesEspeciales.miscelaneosWintrobe.enabled || examenesEspeciales.coagulacion.enabled || examenesEspeciales.perfil20.enabled || examenesEspeciales.perfilPreoperatorio.enabled
 
     return hasResults || hasEspeciales
   }
 
   const handleEnviarWhatsApp = () => {
-    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled)) {
+    if (!selectedPaciente || (selectedPruebas.length === 0 && !examenesEspeciales.orina.enabled && !examenesEspeciales.heces.enabled && !examenesEspeciales.miscelaneos.enabled && !examenesEspeciales.miscelaneosWintrobe.enabled && !examenesEspeciales.coagulacion.enabled && !examenesEspeciales.perfil20.enabled && !examenesEspeciales.perfilPreoperatorio.enabled)) {
       setMensaje({ type: 'warning', text: 'Completa el formulario antes de enviar por WhatsApp' })
       return
     }
@@ -2093,6 +2150,15 @@ function Examenes() {
                           />
                           <span className="checkmark"></span>
                           Misceláneos
+                        </label>
+                        <label className="examen-especial-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={examenesEspeciales.miscelaneosWintrobe.enabled}
+                            onChange={() => toggleExamenEspecial('miscelaneosWintrobe')}
+                          />
+                          <span className="checkmark"></span>
+                          Misceláneos Wintrobe
                         </label>
                         <label className="examen-especial-checkbox">
                           <input
@@ -2751,6 +2817,43 @@ function Examenes() {
                             <div className="examen-section">
                               <h4 className="section-title">Método</h4>
                               <p className="field-value">Westergreen</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {examenesEspeciales.miscelaneosWintrobe.enabled && (
+                      <div className="examen-especial-form-container">
+                        <div className="examen-especial-card">
+                          <div className="examen-header">
+                            <div className="examen-icon">🧾</div>
+                            <div className="examen-title">
+                              <h3>Misceláneos Wintrobe</h3>
+                              <p>VSG por método Wintrobe</p>
+                            </div>
+                          </div>
+
+                          <div className="examen-content">
+                            <div className="examen-section">
+                              <h4 className="section-title">Resultados</h4>
+                              <div className="fields-grid">
+                                <div className="field-group">
+                                  <label className="field-label">(V.S.G.) 1er Hora</label>
+                                  <input
+                                    type="text"
+                                    className="field-input"
+                                    value={examenesEspeciales.miscelaneosWintrobe.data.vsg_1hora || ''}
+                                    onChange={(e) => handleExamenEspecialChange('miscelaneosWintrobe', 'vsg_1hora', e.target.value)}
+                                    placeholder="mm/h"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="examen-section">
+                              <h4 className="section-title">Método</h4>
+                              <p className="field-value">Wintrobe</p>
                             </div>
                           </div>
                         </div>
