@@ -2243,9 +2243,9 @@ function Examenes() {
                                       onChange={(e) => handleExamenEspecialChange('orina', 'olor', e.target.value)}
                                     >
                                       <option value="">Seleccionar</option>
-                                      <option value="normal">Amoniacal</option>
-                                      <option value="fragrante">Característico</option>
-                                      <option value="fuerte">Suigeneris</option>
+                                      <option value="Amoniacal">Amoniacal</option>
+                                      <option value="Característico">Característico</option>
+                                      <option value="Suigeneris">Suigeneris</option>
                                     </select>
                                   </div>
 
