@@ -1351,7 +1351,7 @@ function Examenes() {
               `Color: ${examenesEspeciales.heces.data.color || 'No especificado'}`,
               `Olor: ${examenesEspeciales.heces.data.olor || 'No especificado'}`,
               `Moco: ${examenesEspeciales.heces.data.moco || 'No especificado'}`,
-              `Sangre oculta: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
+              `Sangre: ${examenesEspeciales.heces.data.sangre_oculta || 'No especificado'}`,
               `Restos alimenticios: ${examenesEspeciales.heces.data.restos_alimenticios || 'No especificado'}`
             ]
             ypos = printTwoPerLine(doc, macroData, 25, 90, 155, ypos)
@@ -1411,15 +1411,18 @@ function Examenes() {
           ypos += 5
           doc.setFont("Helvetica", "bold")
           doc.setFontSize(11)
-          doc.text("EXAMEN DE QUÍMICA SANGUÍNEA (PERFIL 20)", 20, ypos)
+          doc.text("PERFIL 20", 20, ypos)
           ypos += 6
           doc.setLineWidth(0.3)
           doc.line(20, ypos, 190, ypos)
           ypos += 6
+          doc.setFont("Helvetica", "bold")
+          doc.text("HEMATOLOGÍA", 20, ypos)
+          ypos += 5
           doc.setFont("Helvetica", "normal")
           doc.setFontSize(9)
 
-          const perfilData = [
+          const hemaPerfil20Data = [
             { nombre: 'Hemoglobina', valor: examenesEspeciales.perfil20.data.hemoglobina, unidad: 'g/dl', referencia: '(12 - 16)' },
             { nombre: 'Hematocrito', valor: examenesEspeciales.perfil20.data.hematocrito, unidad: '%', referencia: '(36 - 48)' },
             { nombre: 'C.H.C.M.', valor: examenesEspeciales.perfil20.data.chcm, unidad: '%', referencia: '(32 - 36)' },
@@ -1430,7 +1433,21 @@ function Examenes() {
             { nombre: 'Eosinófilos', valor: examenesEspeciales.perfil20.data.eosinofilos, unidad: '%', referencia: '(1 - 4)' },
             { nombre: 'Monocitos', valor: examenesEspeciales.perfil20.data.monocitos, unidad: '%', referencia: '(2 - 8)' },
             { nombre: 'Bastones', valor: examenesEspeciales.perfil20.data.bastones, unidad: '%', referencia: '(0 - 5)' },
-            { nombre: 'Basófilos', valor: examenesEspeciales.perfil20.data.basofilos, unidad: '%', referencia: '(0 - 1)' },
+            { nombre: 'Basófilos', valor: examenesEspeciales.perfil20.data.basofilos, unidad: '%', referencia: '(0 - 1)' }
+          ]
+
+          ypos = printTableThreeColumns(doc, hemaPerfil20Data, 25, 100, 190, ypos)
+
+          ypos += 6
+          doc.setLineWidth(0.3)
+          doc.line(20, ypos, 190, ypos)
+          ypos += 6
+          doc.setFont("Helvetica", "bold")
+          doc.text("QUÍMICA SANGUÍNEA", 20, ypos)
+          ypos += 5
+          doc.setFont("Helvetica", "normal")
+
+          const quimicaPerfil20Data = [
             { nombre: 'Glicemia', valor: examenesEspeciales.perfil20.data.glicemia, unidad: 'mg/dl', referencia: '(70 - 110)' },
             { nombre: 'Urea', valor: examenesEspeciales.perfil20.data.urea, unidad: 'mg/dl', referencia: '(10 - 50)' },
             { nombre: 'Creatinina', valor: examenesEspeciales.perfil20.data.creatinina, unidad: 'mg/dl', referencia: '(0.6 - 1.2)' },
@@ -1452,7 +1469,7 @@ function Examenes() {
             { nombre: 'Fosfatasas alcalinas', valor: examenesEspeciales.perfil20.data.fosfatasas_alcalinas, unidad: 'IU/L', referencia: '(30 - 120)' }
           ]
 
-          ypos = printTableThreeColumns(doc, perfilData, 25, 100, 190, ypos)
+          ypos = printTableThreeColumns(doc, quimicaPerfil20Data, 25, 100, 190, ypos)
 
           if (examenesEspeciales.perfil20.data.observaciones && ensurePageSpace(10)) {
             ypos += 4
@@ -2198,7 +2215,7 @@ function Examenes() {
                                     >
                                       <option value="">Seleccionar</option>
                                       <option value="claro">Claro</option>
-                                      <option value="turbio">Ligeramente turbio</option>
+                                      <option value="Ligeramente turbio">Ligeramente turbio</option>
                                       <option value="lechoso">Turbio</option>
                                     </select>
                                   </div>
@@ -2637,19 +2654,14 @@ function Examenes() {
                                   </div>
 
                                   <div className="field-group">
-                                    <label className="field-label">Sangre oculta</label>
-                                    <select
-                                      className="field-select"
+                                    <label className="field-label">Sangre</label>
+                                    <input
+                                      type="text"
+                                      className="field-input"
                                       value={examenesEspeciales.heces.data.sangre_oculta || ''}
                                       onChange={(e) => handleExamenEspecialChange('heces', 'sangre_oculta', e.target.value)}
-                                    >
-                                      <option value="">Seleccionar</option>
-                                      <option value="-">-</option>
-                                      <option value="+">+</option>
-                                      <option value="++">++</option>
-                                      <option value="+++">+++</option>
-                                      <option value="NO ESPECIFICADO">NO ESPECIFICADO</option>
-                                    </select>
+                                      placeholder="Ej: -, +, negativo, positivo..."
+                                    />
                                   </div>
 
                                   <div className="field-group">
@@ -3908,15 +3920,13 @@ function Examenes() {
                                     </select>
                                   </div>
                                   <div className="form-field">
-                                    <label>Sangre oculta</label>
-                                    <select
+                                    <label>Sangre</label>
+                                    <input
+                                      type="text"
                                       value={examenesEspeciales[prueba.id].data.sangre_oculta || ''}
                                       onChange={(e) => handleExamenEspecialChange(prueba.id, 'sangre_oculta', e.target.value)}
-                                    >
-                                      <option value="">Seleccionar</option>
-                                      <option value="negativo">Negativo</option>
-                                      <option value="positivo">Positivo</option>
-                                    </select>
+                                      placeholder="Ej: -, +, negativo, positivo..."
+                                    />
                                   </div>
                                   <div className="form-field">
                                     <label>Restos alimenticios</label>
